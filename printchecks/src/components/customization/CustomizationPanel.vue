@@ -58,7 +58,7 @@
                         v-for="font in getFontsByCategory(category)" 
                         :key="font.name" 
                         :value="font.name"
-                        :style="{ fontFamily: font.name }"
+                        :style="getDropdownOptionStyle(font.name)"
                         :title="font.description"
                       >
                         {{ font.displayName }}
@@ -281,17 +281,23 @@ function getFontPreviewStyle(fontKey: string) {
   const font = currentSettings.value?.fonts[fontKey]
   if (!font) return {}
   
-  // Use readable font for MICR banking font preview (banking font is unreadable for preview)
-  const previewFontFamily = font.family === 'banking, monospace' 
-    ? 'Courier New, monospace' 
-    : font.family
-  
   return {
-    fontFamily: previewFontFamily,
+    fontFamily: font.family,
     fontSize: `${Math.min(font.size, 24)}px`,
     fontWeight: font.weight,
     color: font.color,
     fontStyle: font.style || 'normal'
+  }
+}
+
+function getDropdownOptionStyle(fontName: string) {
+  // Use readable font for MICR banking font in dropdown options only
+  const dropdownFontFamily = fontName === 'banking, monospace' 
+    ? 'Courier New, monospace' 
+    : fontName
+  
+  return {
+    fontFamily: dropdownFontFamily
   }
 }
 
