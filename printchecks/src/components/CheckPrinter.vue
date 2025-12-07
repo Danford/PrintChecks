@@ -7,8 +7,8 @@
                     {{check.accountHolderAddress}}<br>
                     {{check.accountHolderCity}}, {{check.accountHolderState}} {{check.accountHolderZip}}
                 </div>
-                <div class="check-number-human" :style="{ ...checkStyles.bankInfo, position: 'absolute', top: '40px', left: '1060px' }">{{check.checkNumber}}</div>
-                <div class="date-data" :style="{ ...checkStyles.bankInfo, position: 'absolute', top: '80px', left: '850px' }">{{check.date}}</div>
+                <div class="check-number-human" :style="{ ...checkStyles.checkNumber, position: 'absolute', top: '40px', left: '1060px' }">{{check.checkNumber}}</div>
+                <div class="date-data" :style="{ ...checkStyles.date, position: 'absolute', top: '80px', left: '850px' }">{{check.date}}</div>
                 <div class="date" style="position: absolute; top: 90px; left: 760px">Date: _____________________ </div>
                 <div class="amount-box" style="position: absolute; top: 175px; left: 950px">
 
@@ -18,7 +18,7 @@
                 <div class="pay-to" style="position: absolute; top: 170px; left: 60px">
                     Pay to the <br>Order of <span class="payto-line"></span>
                 </div>
-                <div class="amount-line-data" ref="line" :style="{ ...checkStyles.amount, position: 'absolute', top: '240px', left: '100px' }">
+                <div class="amount-line-data" ref="line" :style="{ ...checkStyles.amountWords, position: 'absolute', top: '240px', left: '100px' }">
                     ***
                     {{toWords(check.amount)}} 
                     ***
@@ -265,37 +265,55 @@ const checkStyles = computed(() => {
             fontFamily: settings.fonts.accountHolder.family,
             fontSize: `${settings.fonts.accountHolder.size}px`,
             fontWeight: settings.fonts.accountHolder.weight,
-            color: settings.colors.primary
+            color: settings.fonts.accountHolder.color
         },
         payTo: {
             fontFamily: settings.fonts.payTo.family,
             fontSize: `${settings.fonts.payTo.size}px`,
             fontWeight: settings.fonts.payTo.weight,
-            color: settings.colors.text
+            color: settings.fonts.payTo.color
         },
         amount: {
             fontFamily: settings.fonts.amount.family,
             fontSize: `${settings.fonts.amount.size}px`,
             fontWeight: settings.fonts.amount.weight,
-            color: settings.colors.accent
+            color: settings.fonts.amount.color
         },
         memo: {
             fontFamily: settings.fonts.memo.family,
             fontSize: `${settings.fonts.memo.size}px`,
             fontWeight: settings.fonts.memo.weight,
-            color: settings.colors.text
+            color: settings.fonts.memo.color
         },
         signature: {
             fontFamily: settings.fonts.signature.family,
             fontSize: `${settings.fonts.signature.size}px`,
             fontWeight: settings.fonts.signature.weight,
-            color: settings.colors.text
+            color: settings.fonts.signature.color
         },
         bankInfo: {
             fontFamily: settings.fonts.bankInfo.family,
             fontSize: `${settings.fonts.bankInfo.size}px`,
             fontWeight: settings.fonts.bankInfo.weight,
-            color: settings.colors.text
+            color: settings.fonts.bankInfo.color
+        },
+        amountWords: {
+            fontFamily: settings.fonts.amountWords.family,
+            fontSize: `${settings.fonts.amountWords.size}px`,
+            fontWeight: settings.fonts.amountWords.weight,
+            color: settings.fonts.amountWords.color
+        },
+        checkNumber: {
+            fontFamily: settings.fonts.checkNumber.family,
+            fontSize: `${settings.fonts.checkNumber.size}px`,
+            fontWeight: settings.fonts.checkNumber.weight,
+            color: settings.fonts.checkNumber.color
+        },
+        date: {
+            fontFamily: settings.fonts.date.family,
+            fontSize: `${settings.fonts.date.size}px`,
+            fontWeight: settings.fonts.date.weight,
+            color: settings.fonts.date.color
         }
     }
 })
