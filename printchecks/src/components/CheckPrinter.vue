@@ -334,41 +334,70 @@ const dynamicTextPositions = computed(() => {
     bankInfo: { top: '420px', left: '80px' }
   }
 
-  // Adjust positions based on logo placement
-  if (logoPosition.includes('top-left')) {
-    // Move account holder info down if logo overlaps
-    if (bounds.bottom > 40) {
-      positions.accountHolderName.top = `${bounds.bottom + 10}px`
-      positions.accountHolderAddress.top = `${bounds.bottom + 40}px`
-    }
-    // Move account holder info right if logo overlaps
+  // Adjust positions based on logo placement - prefer horizontal movement to keep on same row
+  if (logoPosition === 'top-left') {
+    // For top-left logo, move account holder info right if logo overlaps horizontally
     if (bounds.right > 60) {
-      positions.accountHolderName.left = `${bounds.right + 20}px`
-      positions.accountHolderAddress.left = `${bounds.right + 20}px`
+      positions.accountHolderName.left = `${bounds.right + 15}px`
+      positions.accountHolderAddress.left = `${bounds.right + 15}px`
+    }
+    // Only move down if logo is very tall and would overlap vertically
+    if (bounds.bottom > 70) {
+      positions.accountHolderAddress.top = `${bounds.bottom + 5}px`
     }
   }
 
-  if (logoPosition.includes('top-right')) {
-    // Move check number and date left if logo overlaps
-    if (bounds.left < 1060) {
-      positions.checkNumber.left = `${bounds.left - 150}px`
+  if (logoPosition === 'top-center') {
+    // For top-center, check if it overlaps with account holder or check number areas
+    if (bounds.left < 300) {
+      // Logo extends into left area, move account holder right
+      positions.accountHolderName.left = `${bounds.right + 15}px`
+      positions.accountHolderAddress.left = `${bounds.right + 15}px`
     }
-    if (bounds.left < 850) {
-      positions.date.left = `${bounds.left - 150}px`
+    if (bounds.right > 800) {
+      // Logo extends into right area, move check number left
+      positions.checkNumber.left = `${bounds.left - 100}px`
+      positions.date.left = `${bounds.left - 100}px`
+    }
+  }
+
+  if (logoPosition === 'top-right') {
+    // For top-right logo, move check number and date left if logo overlaps
+    if (bounds.left < 1060) {
+      positions.checkNumber.left = `${Math.max(bounds.left - 100, 700)}px`
+    }
+    if (bounds.left < 950) {
+      positions.date.left = `${Math.max(bounds.left - 100, 700)}px`
     }
   }
 
   if (logoPosition.includes('bottom')) {
-    // Move bottom elements up if logo overlaps
-    if (bounds.top < 420) {
-      positions.bankInfo.top = `${bounds.top - 30}px`
+    // For bottom logos, move elements up only if necessary, prefer horizontal movement
+    if (logoPosition === 'bottom-left') {
+      if (bounds.right > 80 && bounds.top < 420) {
+        positions.bankInfo.left = `${bounds.right + 15}px`
+      }
+      if (bounds.right > 120 && bounds.top < 367) {
+        positions.memo.left = `${bounds.right + 15}px`
+      }
     }
-    if (bounds.top < 367) {
-      positions.memo.top = `${bounds.top - 50}px`
-      positions.signature.top = `${bounds.top - 50}px`
+    
+    if (logoPosition === 'bottom-right') {
+      if (bounds.left < 770 && bounds.top < 366) {
+        positions.signature.left = `${Math.max(bounds.left - 200, 500)}px`
+      }
     }
-    if (bounds.top < 300) {
-      positions.bankName.top = `${bounds.top - 70}px`
+    
+    // Only move up if logo is very tall
+    if (bounds.top < 350) {
+      positions.memo.top = `${bounds.top - 20}px`
+      positions.signature.top = `${bounds.top - 20}px`
+    }
+    if (bounds.top < 320) {
+      positions.bankName.top = `${bounds.top - 30}px`
+    }
+    if (bounds.top < 400) {
+      positions.bankInfo.top = `${bounds.top - 20}px`
     }
   }
 
