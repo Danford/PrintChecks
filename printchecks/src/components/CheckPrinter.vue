@@ -112,9 +112,9 @@
                 </div>
 
                 <!-- Payment Statistics Section -->
-                <div class="payment-stats" style="position: absolute; top: 700px; left: 60px; width: calc(100% - 120px);">
+                <div class="payment-stats" style="position: absolute; top: 750px; left: 60px; width: calc(100% - 120px);">
+            <h5 style="margin-bottom: 15px; color: #333;">💰 Payment Summary</h5>
             <div class="stats-card" style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3;">
-                <h6 style="margin: 0 0 10px 0; color: #1976d2;">💰 Payment Summary</h6>
                 <div style="font-size: 12px; line-height: 1.4;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                         <span>This Year ({{ new Date().getFullYear() }}):</span>
@@ -528,7 +528,7 @@ function printCheck () {
         }
         .line-items-section {
           page-break-inside: avoid;
-          width: 600px !important; /* Fixed width for print */
+          width: 800px !important; /* Wider to match check width */
         }
         .line-items-table {
           background: white !important;
@@ -542,7 +542,7 @@ function printCheck () {
           border: 1px solid #000 !important;
         }
         .payment-stats {
-          width: 600px !important; /* Same width as Payment Details for print */
+          width: 800px !important; /* Wider to match check width */
         }
         .stats-card {
           background: white !important;
