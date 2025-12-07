@@ -95,6 +95,13 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         style: 'normal',
         color: '#000000'
       },
+      bankName: {
+        family: 'Arial, sans-serif',
+        size: 24,
+        weight: 'bold',
+        style: 'normal',
+        color: '#000000'
+      },
       checkNumber: {
         family: 'Arial, sans-serif',
         size: 20,
@@ -628,7 +635,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         description: 'Windows console font'
       },
       {
-        name: 'MICR E13B Banking, monospace',
+        name: 'banking, monospace',
         displayName: 'MICR E13B (Banking)',
         category: 'banking',
         variants: ['normal'],

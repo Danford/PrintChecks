@@ -26,7 +26,7 @@
                 <div class="amount-line" style="position: absolute; top: 250px; left: 60px">
                     <span class="dollar-line"></span>
                 </div>
-                <div class="bank-name" :style="{ ...checkStyles.bankInfo, position: 'absolute', top: '300px', left: '60px' }">{{check.bankName}}</div>
+                <div class="bank-name" :style="{ ...checkStyles.bankName, position: 'absolute', top: '300px', left: '60px' }">{{check.bankName}}</div>
                 <div class="memo-data" :style="{ ...checkStyles.memo, position: 'absolute', top: '367px', left: '120px' }">{{check.memo}}</div>
                 <div class="memo" style="position: absolute; top: 390px; left: 60px">
                     Memo: ____________________________________
@@ -314,6 +314,12 @@ const checkStyles = computed(() => {
             fontSize: `${settings.fonts.date.size}px`,
             fontWeight: settings.fonts.date.weight,
             color: settings.fonts.date.color
+        },
+        bankName: {
+            fontFamily: settings.fonts.bankName.family,
+            fontSize: `${settings.fonts.bankName.size}px`,
+            fontWeight: settings.fonts.bankName.weight,
+            color: settings.fonts.bankName.color
         }
     }
 })

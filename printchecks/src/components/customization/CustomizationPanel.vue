@@ -225,7 +225,7 @@ const availableFonts = computed(() => customizationStore.availableFonts)
 // Font elements that can be customized
 const fontElements = [
   'accountHolder', 'payTo', 'amount', 'amountWords', 
-  'memo', 'signature', 'bankInfo', 'checkNumber', 'date'
+  'memo', 'signature', 'bankInfo', 'bankName', 'checkNumber', 'date'
 ] as const
 
 // Font categories for organized display
@@ -247,6 +247,7 @@ function formatFontLabel(key: string): string {
     memo: 'Memo',
     signature: 'Signature',
     bankInfo: 'Bank Info',
+    bankName: 'Bank Name',
     checkNumber: 'Check Number',
     date: 'Date'
   }
@@ -298,6 +299,7 @@ function getFontPreviewText(fontKey: string): string {
     memo: 'Rent Payment',
     signature: 'John Smith',
     bankInfo: 'a022303659a 000000000000c 100',
+    bankName: 'First National Bank',
     checkNumber: '100',
     date: '12/07/2025'
   }
