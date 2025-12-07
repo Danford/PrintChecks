@@ -112,7 +112,7 @@
                 </div>
 
                 <!-- Payment Statistics Section -->
-                <div class="payment-stats" style="position: absolute; top: 500px; right: 60px; width: 300px;">
+                <div class="payment-stats" style="position: absolute; top: 650px; right: 60px; width: 300px;">
             <div class="stats-card" style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3;">
                 <h6 style="margin: 0 0 10px 0; color: #1976d2;">💰 Payment Summary</h6>
                 <div style="font-size: 12px; line-height: 1.4;">
@@ -528,6 +528,7 @@ function printCheck () {
         }
         .line-items-section {
           page-break-inside: avoid;
+          width: 600px !important; /* Fixed width for print */
         }
         .line-items-table {
           background: white !important;
@@ -538,6 +539,13 @@ function printCheck () {
         }
         .line-items-table th,
         .line-items-table td {
+          border: 1px solid #000 !important;
+        }
+        .payment-stats {
+          width: 300px !important; /* Fixed width for print */
+        }
+        .stats-card {
+          background: white !important;
           border: 1px solid #000 !important;
         }
       }
