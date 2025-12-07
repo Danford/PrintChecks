@@ -509,25 +509,24 @@ function printCheck () {
           margin: 0;
           padding: 0;
         }
-        /* Hide all navigation and extra elements */
-        .check-data,
-        nav,
-        .navbar,
-        .navigation,
-        header,
-        footer,
-        .sidebar,
-        .menu {
+        /* Hide specific navigation and form elements */
+        .check-data {
             display: none !important;
         }
         
-        /* Hide everything except wrapper and its 3 sections */
-        body > *:not(.wrapper) {
-          display: none !important;
+        /* Ensure wrapper and 3 sections are visible */
+        .wrapper {
+          display: block !important;
         }
         
-        /* Show only the 3 sections - hide everything else */
-        .wrapper > *:not(.check-box):not(.payment-details-section):not(.payment-summary-section) {
+        .check-box,
+        .payment-details-section,
+        .payment-summary-section {
+          display: block !important;
+        }
+        
+        /* Hide only the form section within wrapper */
+        .wrapper .check-data {
           display: none !important;
         }
         
