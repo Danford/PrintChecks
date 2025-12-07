@@ -68,72 +68,77 @@
                          @load="handleLogoLoad" />
                 </div>
                 
-                <!-- Line Items Section -->
-                <div v-if="hasLineItems || true" class="line-items-section" style="position: absolute; top: 500px; left: 60px; width: calc(100% - 120px);">
-            <h5 style="margin-bottom: 15px; color: #333;">📋 Payment Details</h5>
-            <div class="line-items-table" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
-                <table style="width: 100%; font-size: 12px;">
+
+            </div>
+        </div>
+
+        <!-- SECTION 1: Check (Top Third) -->
+        <!-- Check is already above in check-box container -->
+
+        <!-- SECTION 2: Payment Details (Middle Third) -->
+        <div v-if="hasLineItems || true" class="payment-details-section" style="margin-top: 50px; padding: 30px; border-top: 2px solid #ddd;">
+            <h3 style="margin-bottom: 20px; color: #333; text-align: center;">📋 Payment Details</h3>
+            <div class="line-items-table" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; max-width: 800px; margin: 0 auto;">
+                <table style="width: 100%; font-size: 14px;">
                     <thead>
-                        <tr style="border-bottom: 1px solid #dee2e6;">
-                            <th style="text-align: left; padding: 8px;">Description</th>
-                            <th style="text-align: center; padding: 8px;">Qty</th>
-                            <th style="text-align: right; padding: 8px;">Rate</th>
-                            <th style="text-align: right; padding: 8px;">Amount</th>
+                        <tr style="border-bottom: 2px solid #333;">
+                            <th style="text-align: left; padding: 12px;">Description</th>
+                            <th style="text-align: center; padding: 12px;">Qty</th>
+                            <th style="text-align: right; padding: 12px;">Rate</th>
+                            <th style="text-align: right; padding: 12px;">Amount</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="item in (lineItems.length > 0 ? lineItems : testLineItems)" :key="item.id" style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 6px 8px;">{{ item.description }}</td>
-                            <td style="text-align: center; padding: 6px 8px;">{{ item.quantity }}</td>
-                            <td style="text-align: right; padding: 6px 8px;">${{ item.rate.toFixed(2) }}</td>
-                            <td style="text-align: right; padding: 6px 8px;">${{ (item.quantity * item.rate).toFixed(2) }}</td>
+                            <td style="padding: 10px 12px;">{{ item.description }}</td>
+                            <td style="text-align: center; padding: 10px 12px;">{{ item.quantity }}</td>
+                            <td style="text-align: right; padding: 10px 12px;">${{ item.rate.toFixed(2) }}</td>
+                            <td style="text-align: right; padding: 10px 12px;">${{ (item.quantity * item.rate).toFixed(2) }}</td>
                         </tr>
                     </tbody>
                     <tfoot v-if="calculatedTotals || testTotals">
                         <tr style="border-top: 2px solid #333; font-weight: bold;">
-                            <td colspan="3" style="text-align: right; padding: 8px;">Subtotal:</td>
-                            <td style="text-align: right; padding: 8px;">${{ (calculatedTotals?.subtotal || testTotals.subtotal).toFixed(2) }}</td>
+                            <td colspan="3" style="text-align: right; padding: 12px; font-size: 16px;">Subtotal:</td>
+                            <td style="text-align: right; padding: 12px; font-size: 16px;">${{ (calculatedTotals?.subtotal || testTotals.subtotal).toFixed(2) }}</td>
                         </tr>
                         <tr v-if="(calculatedTotals?.taxAmount || testTotals.taxAmount) > 0">
-                            <td colspan="3" style="text-align: right; padding: 4px 8px;">Tax:</td>
-                            <td style="text-align: right; padding: 4px 8px;">${{ (calculatedTotals?.taxAmount || testTotals.taxAmount).toFixed(2) }}</td>
+                            <td colspan="3" style="text-align: right; padding: 8px 12px;">Tax:</td>
+                            <td style="text-align: right; padding: 8px 12px;">${{ (calculatedTotals?.taxAmount || testTotals.taxAmount).toFixed(2) }}</td>
                         </tr>
                         <tr v-if="(calculatedTotals?.shippingAmount || testTotals.shippingAmount) > 0">
-                            <td colspan="3" style="text-align: right; padding: 4px 8px;">Shipping:</td>
-                            <td style="text-align: right; padding: 4px 8px;">${{ (calculatedTotals?.shippingAmount || testTotals.shippingAmount).toFixed(2) }}</td>
+                            <td colspan="3" style="text-align: right; padding: 8px 12px;">Shipping:</td>
+                            <td style="text-align: right; padding: 8px 12px;">${{ (calculatedTotals?.shippingAmount || testTotals.shippingAmount).toFixed(2) }}</td>
                         </tr>
-                        <tr style="border-top: 1px solid #333; font-weight: bold; font-size: 14px;">
-                            <td colspan="3" style="text-align: right; padding: 8px;">Total:</td>
-                            <td style="text-align: right; padding: 8px;">${{ (calculatedTotals?.total || testTotals.total).toFixed(2) }}</td>
+                        <tr style="border-top: 2px solid #333; font-weight: bold; font-size: 18px; background: #f0f0f0;">
+                            <td colspan="3" style="text-align: right; padding: 15px 12px;">Total:</td>
+                            <td style="text-align: right; padding: 15px 12px;">${{ (calculatedTotals?.total || testTotals.total).toFixed(2) }}</td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
-                </div>
+        </div>
 
-                <!-- Payment Statistics Section -->
-                <div class="payment-stats" style="position: absolute; top: 750px; left: 60px; width: calc(100% - 120px);">
-            <h5 style="margin-bottom: 15px; color: #333;">💰 Payment Summary</h5>
-            <div class="stats-card" style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3;">
-                <div style="font-size: 12px; line-height: 1.4;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <span>This Year ({{ new Date().getFullYear() }}):</span>
-                        <strong>${{ paymentStats.thisYear.toFixed(2) }}</strong>
+        <!-- SECTION 3: Payment Summary (Bottom Third) -->
+        <div class="payment-summary-section" style="margin-top: 50px; padding: 30px; border-top: 2px solid #ddd;">
+            <h3 style="margin-bottom: 20px; color: #333; text-align: center;">💰 Payment Summary</h3>
+            <div class="stats-card" style="background: #e3f2fd; padding: 25px; border-radius: 12px; border-left: 6px solid #2196f3; max-width: 600px; margin: 0 auto;">
+                <div style="font-size: 16px; line-height: 1.6;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #bbdefb;">
+                        <span style="font-weight: 500;">This Year ({{ new Date().getFullYear() }}):</span>
+                        <strong style="color: #1976d2; font-size: 18px;">${{ paymentStats.thisYear.toFixed(2) }}</strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <span>All Time Total:</span>
-                        <strong>${{ paymentStats.allTime.toFixed(2) }}</strong>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #bbdefb;">
+                        <span style="font-weight: 500;">All Time Total:</span>
+                        <strong style="color: #1976d2; font-size: 18px;">${{ paymentStats.allTime.toFixed(2) }}</strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <span>Payments This Year:</span>
-                        <strong>{{ paymentStats.thisYearCount }}</strong>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #bbdefb;">
+                        <span style="font-weight: 500;">Payments This Year:</span>
+                        <strong style="color: #1976d2; font-size: 18px;">{{ paymentStats.thisYearCount }}</strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span>Total Payments:</span>
-                        <strong>{{ paymentStats.count }}</strong>
+                    <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                        <span style="font-weight: 500;">Total Payments:</span>
+                        <strong style="color: #1976d2; font-size: 18px;">{{ paymentStats.count }}</strong>
                     </div>
-                </div>
-            </div>
                 </div>
             </div>
         </div>
@@ -504,35 +509,48 @@ function printCheck () {
           margin: 0;
           padding: 0;
         }
-        .wrapper > *:not(.check-box) {
-          display: none !important;
-        }
+        /* Hide form data in print */
         .check-data {
-            display: none;
+            display: none !important;
         }
+        
+        /* Show all 3 sections in print */
+        .wrapper > * {
+          display: block !important;
+        }
+        
+        /* Section 1: Check (Top Third) */
         .check-box {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
+          page-break-after: always;
+          height: 33vh;
           margin: 0;
-          padding: 0px;
-          background-color: white;
+          padding: 20px;
           background: white !important;
-          border: none !important;
+          border: 2px solid #000 !important;
           box-shadow: none !important;
+          position: relative !important;
+          top: auto !important;
+          left: auto !important;
+          width: auto !important;
         }
         .check-box-print {
           position: relative;
         }
-        .line-items-section {
-          page-break-inside: avoid;
-          width: 800px !important; /* Wider to match check width */
+        
+        /* Section 2: Payment Details (Middle Third) */
+        .payment-details-section {
+          page-break-after: always;
+          height: 33vh;
+          margin: 0 !important;
+          padding: 20px !important;
+          border-top: 2px solid #000 !important;
+          background: white !important;
         }
         .line-items-table {
           background: white !important;
-          border: 1px solid #000 !important;
+          border: 2px solid #000 !important;
+          max-width: none !important;
+          margin: 0 !important;
         }
         .line-items-table table {
           border-collapse: collapse;
@@ -541,12 +559,20 @@ function printCheck () {
         .line-items-table td {
           border: 1px solid #000 !important;
         }
-        .payment-stats {
-          width: 800px !important; /* Wider to match check width */
+        
+        /* Section 3: Payment Summary (Bottom Third) */
+        .payment-summary-section {
+          height: 33vh;
+          margin: 0 !important;
+          padding: 20px !important;
+          border-top: 2px solid #000 !important;
+          background: white !important;
         }
         .stats-card {
           background: white !important;
-          border: 1px solid #000 !important;
+          border: 2px solid #000 !important;
+          max-width: none !important;
+          margin: 0 !important;
         }
       }
     `;
