@@ -5,8 +5,13 @@ import { RouterLink, RouterView } from 'vue-router'
 <template>
 
     <div class="container">
-        <div style="padding-bottom: 20px; padding-top: 20px;">
-            <img src="@/assets/pmc.png"  />
+        <div style="padding-bottom: 20px; padding-top: 20px; text-align: center;">
+            <h1 style="color: #007bff; margin: 0; font-weight: bold;">
+                🏦 PrintChecks
+            </h1>
+            <p style="color: #6c757d; margin: 5px 0 0 0; font-size: 14px;">
+                Professional Check Printing & Payment Documentation
+            </p>
         </div>
         <ul class="nav nav-tabs">
             <li class="nav-item">
