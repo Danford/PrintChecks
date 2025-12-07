@@ -154,6 +154,24 @@
                 📁 Choose Logo File
               </label>
             </div>
+
+            <!-- Logo Preview -->
+            <div v-if="hasLogoFile" class="logo-preview-section">
+              <label>Preview</label>
+              <div class="logo-preview-container">
+                <img 
+                  :src="logoPreviewSrc" 
+                  alt="Logo Preview"
+                  class="logo-preview-image"
+                  :style="logoPreviewStyle"
+                />
+                <div class="preview-overlay">
+                  <span class="preview-dimensions">
+                    {{ currentSettings?.logo.size.width }}×{{ currentSettings?.logo.size.height }}px
+                  </span>
+                </div>
+              </div>
+            </div>
             
             <div class="logo-position">
               <label>Position</label>
@@ -172,24 +190,137 @@
             
             <div class="logo-size">
               <label>Size</label>
-              <div class="size-inputs">
-                <input 
-                  type="number" 
-                  :value="currentSettings?.logo.size.width || 100"
-                  @input="updateLogoSize('width', parseInt($event.target.value))"
-                  placeholder="Width"
-                  min="10"
-                  max="500"
-                />
-                <span>×</span>
-                <input 
-                  type="number" 
-                  :value="currentSettings?.logo.size.height || 50"
-                  @input="updateLogoSize('height', parseInt($event.target.value))"
-                  placeholder="Height"
-                  min="10"
-                  max="500"
-                />
+              <div class="size-controls">
+                <div class="size-inputs">
+                  <input 
+                    type="number" 
+                    :value="currentSettings?.logo.size.width || 100"
+                    @input="updateLogoSize('width', parseInt($event.target.value))"
+                    placeholder="Width"
+                    min="10"
+                    max="500"
+                  />
+                  <span>×</span>
+                  <input 
+                    type="number" 
+                    :value="currentSettings?.logo.size.height || 50"
+                    @input="updateLogoSize('height', parseInt($event.target.value))"
+                    placeholder="Height"
+                    min="10"
+                    max="500"
+                  />
+                </div>
+                <div class="aspect-ratio-controls">
+                  <div class="checkbox-row">
+                    <input 
+                      type="checkbox" 
+                      id="maintain-aspect-ratio"
+                      :checked="maintainAspectRatio"
+                      @change="maintainAspectRatio = $event.target.checked"
+                    />
+                    <label for="maintain-aspect-ratio">Lock Aspect Ratio</label>
+                  </div>
+                  <button @click="resetToOriginalSize" class="btn btn-small">
+                    🔄 Original Size
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Padding/Margin Controls -->
+            <div class="logo-spacing">
+              <label>Spacing & Position Fine-tuning</label>
+              <div class="spacing-grid">
+                <div class="spacing-input">
+                  <label>Top</label>
+                  <input 
+                    type="number" 
+                    :value="currentSettings?.logo.margin?.top || 10"
+                    @input="updateLogoMargin('top', parseInt($event.target.value))"
+                    min="0"
+                    max="100"
+                  />
+                </div>
+                <div class="spacing-input">
+                  <label>Right</label>
+                  <input 
+                    type="number" 
+                    :value="currentSettings?.logo.margin?.right || 10"
+                    @input="updateLogoMargin('right', parseInt($event.target.value))"
+                    min="0"
+                    max="100"
+                  />
+                </div>
+                <div class="spacing-input">
+                  <label>Bottom</label>
+                  <input 
+                    type="number" 
+                    :value="currentSettings?.logo.margin?.bottom || 10"
+                    @input="updateLogoMargin('bottom', parseInt($event.target.value))"
+                    min="0"
+                    max="100"
+                  />
+                </div>
+                <div class="spacing-input">
+                  <label>Left</label>
+                  <input 
+                    type="number" 
+                    :value="currentSettings?.logo.margin?.left || 10"
+                    @input="updateLogoMargin('left', parseInt($event.target.value))"
+                    min="0"
+                    max="100"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Opacity Control -->
+            <div class="logo-opacity">
+              <label>Opacity: {{ Math.round((currentSettings?.logo.opacity || 1) * 100) }}%</label>
+              <input 
+                type="range" 
+                :value="currentSettings?.logo.opacity || 1"
+                @input="updateLogo('opacity', parseFloat($event.target.value))"
+                min="0.1"
+                max="1"
+                step="0.1"
+                class="opacity-slider"
+              />
+            </div>
+
+            <!-- Cropping Controls -->
+            <div v-if="hasLogoFile" class="logo-cropping">
+              <label>Image Adjustment</label>
+              <div class="cropping-controls">
+                <div class="object-fit-control">
+                  <label>Fit Mode</label>
+                  <select 
+                    :value="currentSettings?.logo.objectFit || 'contain'"
+                    @change="updateLogo('objectFit', $event.target.value)"
+                  >
+                    <option value="contain">Fit (Show All)</option>
+                    <option value="cover">Fill (Crop to Fit)</option>
+                    <option value="fill">Stretch</option>
+                    <option value="scale-down">Scale Down</option>
+                  </select>
+                </div>
+                <div class="object-position-control">
+                  <label>Image Position</label>
+                  <select 
+                    :value="currentSettings?.logo.objectPosition || 'center'"
+                    @change="updateLogo('objectPosition', $event.target.value)"
+                  >
+                    <option value="center">Center</option>
+                    <option value="top">Top</option>
+                    <option value="bottom">Bottom</option>
+                    <option value="left">Left</option>
+                    <option value="right">Right</option>
+                    <option value="top left">Top Left</option>
+                    <option value="top right">Top Right</option>
+                    <option value="bottom left">Bottom Left</option>
+                    <option value="bottom right">Bottom Right</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -210,17 +341,44 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useCustomizationStore } from '@/stores/customization'
 import type { CustomizationPreset, FontSettings } from '@/types'
 
 const customizationStore = useCustomizationStore()
+
+// Reactive variables
+const maintainAspectRatio = ref(false)
+const originalImageDimensions = ref<{ width: number; height: number } | null>(null)
 
 // Computed properties
 const currentSettings = computed(() => customizationStore.currentSettings)
 const presets = computed(() => customizationStore.presets)
 const currentPreset = computed(() => customizationStore.currentPreset)
 const availableFonts = computed(() => customizationStore.availableFonts)
+
+// Logo-specific computed properties
+const hasLogoFile = computed(() => {
+  return currentSettings.value?.logo?.file || currentSettings.value?.logo?.url
+})
+
+const logoPreviewSrc = computed(() => {
+  if (!currentSettings.value?.logo) return ''
+  return currentSettings.value.logo.file?.url || currentSettings.value.logo.url || ''
+})
+
+const logoPreviewStyle = computed(() => {
+  if (!currentSettings.value?.logo) return {}
+  
+  const logo = currentSettings.value.logo
+  return {
+    width: `${Math.min(logo.size?.width || 100, 200)}px`,
+    height: `${Math.min(logo.size?.height || 50, 100)}px`,
+    objectFit: logo.objectFit || 'contain',
+    objectPosition: logo.objectPosition || 'center',
+    opacity: logo.opacity || 1
+  }
+})
 
 // Font elements that can be customized
 const fontElements = [
@@ -329,7 +487,21 @@ function updateLogoSize(dimension: 'width' | 'height', value: number) {
   if (!currentSettings.value) return
   
   const newSize = { ...currentSettings.value.logo.size }
-  newSize[dimension] = value
+  
+  if (maintainAspectRatio.value && originalImageDimensions.value) {
+    const aspectRatio = originalImageDimensions.value.width / originalImageDimensions.value.height
+    
+    if (dimension === 'width') {
+      newSize.width = value
+      newSize.height = Math.round(value / aspectRatio)
+    } else {
+      newSize.height = value
+      newSize.width = Math.round(value * aspectRatio)
+    }
+  } else {
+    newSize[dimension] = value
+  }
+  
   customizationStore.updateLogo({ size: newSize })
 }
 
@@ -341,19 +513,58 @@ function handleLogoUpload(event: Event) {
     const reader = new FileReader()
     reader.onload = (e) => {
       const url = e.target?.result as string
-      customizationStore.updateLogo({
-        enabled: true,
-        file: {
-          file,
-          url,
-          name: file.name,
-          size: file.size,
-          type: file.type
+      
+      // Create image to get dimensions
+      const img = new Image()
+      img.onload = () => {
+        // Store original dimensions for aspect ratio calculations
+        originalImageDimensions.value = {
+          width: img.width,
+          height: img.height
         }
-      })
+        
+        // Update logo with file and auto-enable
+        customizationStore.updateLogo({
+          enabled: true,
+          file: {
+            file,
+            url,
+            name: file.name,
+            size: file.size,
+            type: file.type
+          }
+        })
+      }
+      img.src = url
     }
     reader.readAsDataURL(file)
   }
+}
+
+// New logo enhancement functions
+function updateLogoMargin(side: 'top' | 'right' | 'bottom' | 'left', value: number) {
+  if (!currentSettings.value) return
+  
+  const newMargin = { 
+    top: 10, 
+    right: 10, 
+    bottom: 10, 
+    left: 10,
+    ...currentSettings.value.logo.margin 
+  }
+  newMargin[side] = value
+  customizationStore.updateLogo({ margin: newMargin })
+}
+
+function resetToOriginalSize() {
+  if (!originalImageDimensions.value) return
+  
+  customizationStore.updateLogo({
+    size: {
+      width: originalImageDimensions.value.width,
+      height: originalImageDimensions.value.height
+    }
+  })
 }
 
 function getPresetPreviewStyle(preset: CustomizationPreset) {
@@ -765,5 +976,179 @@ onMounted(() => {
 
 .btn-secondary:hover {
   background: #545b62;
+}
+
+/* Logo Enhancement Styles */
+.logo-preview-section {
+  margin: 15px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.logo-preview-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 120px;
+  background: white;
+  border: 2px dashed #dee2e6;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.logo-preview-image {
+  max-width: 200px;
+  max-height: 100px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.preview-overlay {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+
+.size-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aspect-ratio-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.btn-small {
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-small:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+}
+
+.logo-spacing {
+  margin: 15px 0;
+}
+
+.spacing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.spacing-input {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.spacing-input label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+}
+
+.spacing-input input {
+  padding: 6px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.logo-opacity {
+  margin: 15px 0;
+}
+
+.opacity-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e0e0e0;
+  outline: none;
+  -webkit-appearance: none;
+  margin-top: 8px;
+}
+
+.opacity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.opacity-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.logo-cropping {
+  margin: 15px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.cropping-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.object-fit-control,
+.object-position-control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.object-fit-control label,
+.object-position-control label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+}
+
+.object-fit-control select,
+.object-position-control select {
+  padding: 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: white;
+  font-size: 13px;
 }
 </style>

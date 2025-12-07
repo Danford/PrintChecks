@@ -133,7 +133,9 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       position: 'top-left',
       size: { width: 100, height: 50 },
       opacity: 1,
-      margin: { top: 10, right: 10, bottom: 10, left: 10 }
+      margin: { top: 10, right: 10, bottom: 10, left: 10 },
+      objectFit: 'contain',
+      objectPosition: 'center'
     },
     layout: {
       checkPosition: { x: 0, y: 0 },

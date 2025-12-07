@@ -54,7 +54,12 @@
                      }">
                     <img :src="logoImageSrc" 
                          alt="Logo"
-                         style="width: 100%; height: 100%; object-fit: contain;"
+                         :style="{
+                           width: '100%',
+                           height: '100%',
+                           objectFit: currentSettings?.logo?.objectFit || 'contain',
+                           objectPosition: currentSettings?.logo?.objectPosition || 'center'
+                         }"
                          @error="handleLogoError"
                          @load="handleLogoLoad" />
                 </div>
