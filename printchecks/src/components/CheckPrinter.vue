@@ -44,7 +44,7 @@
                 </div>
 
                 <!-- Logo Section -->
-                <div v-if="hasCustomLogo" 
+                <div v-if="hasCustomLogo && logoImageSrc" 
                      class="logo-container" 
                      :class="`logo-${currentSettings?.logo?.position || 'top-left'}`"
                      :style="{ 
@@ -52,9 +52,11 @@
                        height: `${currentSettings?.logo?.size?.height || 50}px`,
                        opacity: currentSettings?.logo?.opacity || 1
                      }">
-                    <img :src="currentSettings?.logo?.file?.url || currentSettings?.logo?.url" 
+                    <img :src="logoImageSrc" 
                          alt="Logo"
-                         style="width: 100%; height: 100%; object-fit: contain;" />
+                         style="width: 100%; height: 100%; object-fit: contain;"
+                         @error="handleLogoError"
+                         @load="handleLogoLoad" />
                 </div>
             </div>
         </div>
@@ -237,6 +239,10 @@ const toWords: (denom: number | string) => string = (denom) => {
 // Computed properties for customization
 const currentSettings = computed(() => customizationStore.currentSettings)
 const hasCustomLogo = computed(() => customizationStore.hasCustomLogo)
+const logoImageSrc = computed(() => {
+  if (!currentSettings.value?.logo) return ''
+  return currentSettings.value.logo.file?.url || currentSettings.value.logo.url || ''
+})
 const lineItems = computed(() => receiptStore.currentReceipt?.lineItems || [])
 const hasLineItems = computed(() => receiptStore.hasLineItems)
 const calculatedTotals = computed(() => receiptStore.calculatedTotals)
@@ -427,6 +433,16 @@ function handlePrintShortcut(event: KeyboardEvent) {
         event.preventDefault();
         printCheck();
     }
+}
+
+// Logo error handling functions
+function handleLogoError(event: Event) {
+    console.warn('Logo failed to load:', event)
+    // Could add user notification here if needed
+}
+
+function handleLogoLoad(event: Event) {
+    console.log('Logo loaded successfully:', event)
 }
 
 onMounted(() => {
