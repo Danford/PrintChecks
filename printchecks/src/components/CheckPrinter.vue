@@ -509,22 +509,21 @@ function printCheck () {
           margin: 0;
           padding: 0;
         }
-        /* Hide form data in print */
+        /* Hide everything except the 3 sections in print */
         .check-data {
             display: none !important;
         }
         
-        /* Show all 3 sections in print */
-        .wrapper > * {
-          display: block !important;
+        /* Show only the 3 sections - hide everything else */
+        .wrapper > *:not(.check-box):not(.payment-details-section):not(.payment-summary-section) {
+          display: none !important;
         }
         
-        /* Section 1: Check (Top Third) */
+        /* Section 1: Check (Top Third) - NO page break */
         .check-box {
-          page-break-after: always;
           height: 33vh;
-          margin: 0;
-          padding: 20px;
+          margin: 0 !important;
+          padding: 20px !important;
           background: white !important;
           border: 2px solid #000 !important;
           box-shadow: none !important;
@@ -537,9 +536,8 @@ function printCheck () {
           position: relative;
         }
         
-        /* Section 2: Payment Details (Middle Third) */
+        /* Section 2: Payment Details (Middle Third) - NO page break */
         .payment-details-section {
-          page-break-after: always;
           height: 33vh;
           margin: 0 !important;
           padding: 20px !important;
@@ -560,7 +558,7 @@ function printCheck () {
           border: 1px solid #000 !important;
         }
         
-        /* Section 3: Payment Summary (Bottom Third) */
+        /* Section 3: Payment Summary (Bottom Third) - NO page break */
         .payment-summary-section {
           height: 33vh;
           margin: 0 !important;
