@@ -1,6 +1,9 @@
 <template>
-    <div class="wrapper" id="wrapper" style="position: relative;">
-        <div class="check-box" id="check-box">
+    <!-- MAIN PRINT CONTAINER - All 3 sections in one div -->
+    <div class="print-container" id="print-container">
+        <!-- SECTION 1: Check (Top Third) -->
+        <div class="check-section">
+            <div class="check-box" id="check-box">
             <div style="position: relative;" id="check-box-print">
                 <div class="account-holder-name" :style="{ ...checkStyles.accountHolderName, position: 'absolute', ...dynamicTextPositions.accountHolderName }">{{check.accountHolderName}}</div>
                 <div class="account-holder-address" :style="{ ...checkStyles.accountHolderName, position: 'absolute', ...dynamicTextPositions.accountHolderAddress }">
@@ -70,13 +73,11 @@
                 
 
             </div>
+            </div>
         </div>
 
-        <!-- SECTION 1: Check (Top Third) -->
-        <!-- Check is already above in check-box container -->
-
         <!-- SECTION 2: Payment Details (Middle Third) -->
-        <div v-if="hasLineItems || true" class="payment-details-section" style="margin-top: 50px; padding: 30px; border-top: 2px solid #ddd;">
+        <div class="payment-details-section">
             <h3 style="margin-bottom: 20px; color: #333; text-align: center;">📋 Payment Details</h3>
             <div class="line-items-table" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; max-width: 800px; margin: 0 auto;">
                 <table style="width: 100%; font-size: 14px;">
@@ -142,8 +143,11 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="check-data" style="position: absolute; top: 450px">
+    <!-- FORM SECTION - Outside print container -->
+    <div class="form-container">
+        <div class="check-data">
             <div class="alert alert-primary" role="alert"><strong>Background does not print.</strong></div>
             <button type="button" style="float: right;" class="btn btn-primary" @click="printCheck">Print (Ctrl + P)</button>
             <form class="row g-3">
@@ -502,97 +506,77 @@ function printCheck () {
         @page {
           margin: 0;
         }
-        body {
-          transform: scale(1);
-          transform-origin: top center;
-          width: 149%;
-          margin: 0;
-          padding: 0;
-        }
-        /* Hide specific form elements */
-        .check-data {
-            display: none !important;
-        }
         
-        /* Hide navigation elements by specific class names */
-        .nav,
-        .nav-tabs,
-        .nav-item,
-        .nav-link,
-        .panel-header,
-        .header {
-            display: none !important;
-        }
-        
-        /* Hide title and slogan from App.vue */
-        .container h1,
-        .container p {
-            display: none !important;
-        }
-        
-        /* Explicitly show wrapper and 3 sections */
-        .wrapper {
-          display: block !important;
-        }
-        
-        .check-box,
-        .payment-details-section,
-        .payment-summary-section {
-          display: block !important;
-        }
-        
-        /* Hide only the form section within wrapper */
-        .wrapper .check-data {
+        /* Hide everything except the print container */
+        body > *:not(#app) {
           display: none !important;
         }
         
-        /* Section 1: Check (Top Third) - NO border, NO page break */
+        #app > *:not(.print-container) {
+          display: none !important;
+        }
+        
+        /* Show only the print container */
+        .print-container {
+          display: block !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+        }
+        
+        /* Section 1: Check (Top Third) */
+        .check-section {
+          height: 33.33vh !important;
+          width: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          position: relative !important;
+        }
+        
         .check-box {
-          height: 33vh;
+          height: 100% !important;
+          width: 100% !important;
           margin: 0 !important;
           padding: 20px !important;
           background: white !important;
           border: none !important;
           box-shadow: none !important;
           position: relative !important;
-          top: auto !important;
-          left: auto !important;
-          width: auto !important;
-        }
-        .check-box-print {
-          position: relative;
         }
         
-        /* Section 2: Payment Details (Middle Third) - NO page break */
+        /* Section 2: Payment Details (Middle Third) */
         .payment-details-section {
-          height: 33vh;
+          height: 33.33vh !important;
+          width: 100% !important;
           margin: 0 !important;
           padding: 20px !important;
           border-top: 2px solid #000 !important;
           background: white !important;
+          position: relative !important;
         }
+        
         .line-items-table {
           background: white !important;
           border: 2px solid #000 !important;
           max-width: none !important;
           margin: 0 !important;
         }
-        .line-items-table table {
-          border-collapse: collapse;
-        }
-        .line-items-table th,
-        .line-items-table td {
-          border: 1px solid #000 !important;
-        }
         
-        /* Section 3: Payment Summary (Bottom Third) - NO page break */
+        /* Section 3: Payment Summary (Bottom Third) */
         .payment-summary-section {
-          height: 33vh;
+          height: 33.33vh !important;
+          width: 100% !important;
           margin: 0 !important;
           padding: 20px !important;
           border-top: 2px solid #000 !important;
           background: white !important;
+          position: relative !important;
         }
+        
         .stats-card {
           background: white !important;
           border: 2px solid #000 !important;
