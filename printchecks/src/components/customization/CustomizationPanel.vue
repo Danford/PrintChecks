@@ -342,6 +342,7 @@ function handleLogoUpload(event: Event) {
     reader.onload = (e) => {
       const url = e.target?.result as string
       customizationStore.updateLogo({
+        enabled: true,
         file: {
           file,
           url,
