@@ -32,36 +32,96 @@
       
       <!-- Font Customization -->
       <div class="section">
-        <h4>Fonts</h4>
+        <h4>🔤 Font Customization</h4>
         <div class="font-controls">
           <div class="font-element" v-for="(fontKey, index) in fontElements" :key="fontKey">
-            <label>{{ formatFontLabel(fontKey) }}</label>
-            <div class="font-row">
-              <select 
-                :value="currentSettings?.fonts[fontKey]?.family || ''"
-                @change="updateFont(fontKey, 'family', $event.target.value)"
-                class="font-family-select"
-              >
-                <option v-for="font in availableFonts" :key="font.name" :value="font.name">
-                  {{ font.displayName }}
-                </option>
-              </select>
+            <div class="font-element-header">
+              <label class="font-element-label">{{ formatFontLabel(fontKey) }}</label>
+              <div class="font-preview" 
+                   :style="getFontPreviewStyle(fontKey)">
+                {{ getFontPreviewText(fontKey) }}
+              </div>
+            </div>
+            
+            <div class="font-controls-grid">
+              <!-- Font Family with Enhanced Dropdown -->
+              <div class="font-control-group">
+                <label class="control-label">Font Family</label>
+                <div class="font-family-dropdown">
+                  <select 
+                    :value="currentSettings?.fonts[fontKey]?.family || ''"
+                    @change="updateFont(fontKey, 'family', $event.target.value)"
+                    class="font-family-select enhanced"
+                  >
+                    <optgroup v-for="category in fontCategories" :key="category" :label="getCategoryLabel(category)">
+                      <option 
+                        v-for="font in getFontsByCategory(category)" 
+                        :key="font.name" 
+                        :value="font.name"
+                        :style="{ fontFamily: font.name }"
+                        :title="font.description"
+                      >
+                        {{ font.displayName }}
+                      </option>
+                    </optgroup>
+                  </select>
+                  <div class="font-description" v-if="getSelectedFontDescription(fontKey)">
+                    {{ getSelectedFontDescription(fontKey) }}
+                  </div>
+                </div>
+              </div>
               
-              <input 
-                type="number" 
-                :value="currentSettings?.fonts[fontKey]?.size || 16"
-                @input="updateFont(fontKey, 'size', parseInt($event.target.value))"
-                min="8" 
-                max="72" 
-                class="font-size-input"
-              />
+              <!-- Font Size -->
+              <div class="font-control-group">
+                <label class="control-label">Size (px)</label>
+                <div class="size-control">
+                  <input 
+                    type="range"
+                    :value="currentSettings?.fonts[fontKey]?.size || 16"
+                    @input="updateFont(fontKey, 'size', parseInt($event.target.value))"
+                    min="8" 
+                    max="72" 
+                    class="font-size-slider"
+                  />
+                  <input 
+                    type="number" 
+                    :value="currentSettings?.fonts[fontKey]?.size || 16"
+                    @input="updateFont(fontKey, 'size', parseInt($event.target.value))"
+                    min="8" 
+                    max="72" 
+                    class="font-size-input"
+                  />
+                </div>
+              </div>
               
-              <input 
-                type="color" 
-                :value="currentSettings?.fonts[fontKey]?.color || '#000000'"
-                @input="updateFont(fontKey, 'color', $event.target.value)"
-                class="color-input"
-              />
+              <!-- Font Weight -->
+              <div class="font-control-group">
+                <label class="control-label">Weight</label>
+                <select 
+                  :value="currentSettings?.fonts[fontKey]?.weight || 'normal'"
+                  @change="updateFont(fontKey, 'weight', $event.target.value)"
+                  class="font-weight-select"
+                >
+                  <option value="normal">Normal</option>
+                  <option value="bold">Bold</option>
+                  <option value="lighter">Light</option>
+                  <option value="bolder">Extra Bold</option>
+                </select>
+              </div>
+              
+              <!-- Font Color -->
+              <div class="font-control-group">
+                <label class="control-label">Color</label>
+                <div class="color-control">
+                  <input 
+                    type="color" 
+                    :value="currentSettings?.fonts[fontKey]?.color || '#000000'"
+                    @input="updateFont(fontKey, 'color', $event.target.value)"
+                    class="color-input enhanced"
+                  />
+                  <span class="color-value">{{ currentSettings?.fonts[fontKey]?.color || '#000000' }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -190,6 +250,15 @@ const colorKeys = [
   'text', 'border'
 ] as const
 
+// Font categories for organized display
+const fontCategories = computed(() => {
+  const categories = [...new Set(availableFonts.value.map(font => font.category))]
+  return categories.sort((a, b) => {
+    const order = ['sans-serif', 'serif', 'handwriting', 'monospace', 'banking']
+    return order.indexOf(a) - order.indexOf(b)
+  })
+})
+
 // Methods
 function formatFontLabel(key: string): string {
   const labels: Record<string, string> = {
@@ -216,6 +285,57 @@ function formatColorLabel(key: string): string {
     border: 'Border'
   }
   return labels[key] || key
+}
+
+function getCategoryLabel(category: string): string {
+  const labels: Record<string, string> = {
+    'sans-serif': '📝 Sans-Serif (Clean & Modern)',
+    'serif': '📖 Serif (Traditional & Formal)',
+    'handwriting': '✍️ Handwriting & Signatures',
+    'monospace': '💻 Monospace (Fixed Width)',
+    'banking': '🏦 Banking & MICR Fonts'
+  }
+  return labels[category] || category
+}
+
+function getFontsByCategory(category: string) {
+  return availableFonts.value.filter(font => font.category === category)
+}
+
+function getSelectedFontDescription(fontKey: string): string {
+  const selectedFamily = currentSettings.value?.fonts[fontKey]?.family
+  if (!selectedFamily) return ''
+  
+  const font = availableFonts.value.find(f => f.name === selectedFamily)
+  return font?.description || ''
+}
+
+function getFontPreviewStyle(fontKey: string) {
+  const font = currentSettings.value?.fonts[fontKey]
+  if (!font) return {}
+  
+  return {
+    fontFamily: font.family,
+    fontSize: `${Math.min(font.size, 24)}px`,
+    fontWeight: font.weight,
+    color: font.color,
+    fontStyle: font.style || 'normal'
+  }
+}
+
+function getFontPreviewText(fontKey: string): string {
+  const previews: Record<string, string> = {
+    accountHolder: 'John Smith',
+    payTo: 'Michael Johnson',
+    amount: '$1,234.56',
+    amountWords: 'One Thousand Two Hundred Thirty-Four and 56/100',
+    memo: 'Rent Payment',
+    signature: 'John Smith',
+    bankInfo: 'a022303659a 000000000000c 100',
+    checkNumber: '100',
+    date: '12/07/2025'
+  }
+  return previews[fontKey] || 'Sample Text'
 }
 
 function updateFont(element: keyof typeof currentSettings.value.fonts, property: keyof FontSettings, value: any) {
@@ -384,38 +504,183 @@ onMounted(() => {
 .font-controls {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 25px;
 }
 
 .font-element {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.font-element-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.font-element-label {
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+}
+
+.font-preview {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 8px 12px;
+  min-width: 200px;
+  text-align: center;
+  max-height: 32px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.font-controls-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 15px;
+  align-items: start;
+}
+
+.font-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.font-family-dropdown {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.font-element label {
+.font-family-select.enhanced {
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.font-family-select.enhanced:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.font-family-select.enhanced optgroup {
   font-weight: bold;
-  color: #555;
+  color: #333;
+  background: #f8f9fa;
 }
 
-.font-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.font-family-select {
-  flex: 1;
+.font-family-select.enhanced option {
   padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  font-weight: normal;
+}
+
+.font-description {
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.size-control {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.font-size-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e0e0e0;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.font-size-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.font-size-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .font-size-input {
-  width: 80px;
+  width: 100%;
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 2px solid #e0e0e0;
   border-radius: 4px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.font-weight-select {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  background: white;
+}
+
+.color-control {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+}
+
+.color-input.enhanced {
+  width: 50px;
+  height: 50px;
+  border: 3px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.color-input.enhanced:hover {
+  transform: scale(1.1);
+}
+
+.color-value {
+  font-size: 10px;
+  font-family: monospace;
+  color: #666;
+  text-align: center;
 }
 
 .color-input {

@@ -39,11 +39,11 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
   const isLoadingFonts = ref(false)
   const isLoadingPresets = ref(false)
   
-  // Default settings
+  // Default settings - matching original PrintChecks styling exactly
   const defaultSettings: CustomizationSettings = {
     id: 'default',
     name: 'Default',
-    description: 'Default PrintChecks styling',
+    description: 'Original PrintChecks styling',
     isDefault: true,
     fonts: {
       accountHolder: {
@@ -476,45 +476,231 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
   }
   
   function loadAvailableFonts() {
-    // Load web-safe fonts and any custom fonts
+    // Load comprehensive font collection with professional options
     availableFonts.value = [
+      // System Sans-Serif Fonts
       {
-        name: 'Arial',
+        name: 'Arial, sans-serif',
         displayName: 'Arial',
         category: 'sans-serif',
         variants: ['normal', 'bold'],
-        isWebFont: false
+        isWebFont: false,
+        description: 'Clean, professional sans-serif'
       },
       {
-        name: 'Times New Roman',
+        name: 'Helvetica, Arial, sans-serif',
+        displayName: 'Helvetica',
+        category: 'sans-serif',
+        variants: ['normal', 'bold'],
+        isWebFont: false,
+        description: 'Classic Swiss design'
+      },
+      {
+        name: 'Verdana, sans-serif',
+        displayName: 'Verdana',
+        category: 'sans-serif',
+        variants: ['normal', 'bold'],
+        isWebFont: false,
+        description: 'Highly readable screen font'
+      },
+      {
+        name: 'Tahoma, sans-serif',
+        displayName: 'Tahoma',
+        category: 'sans-serif',
+        variants: ['normal', 'bold'],
+        isWebFont: false,
+        description: 'Compact and clear'
+      },
+      
+      // System Serif Fonts
+      {
+        name: 'Times New Roman, serif',
         displayName: 'Times New Roman',
         category: 'serif',
         variants: ['normal', 'bold', 'italic'],
-        isWebFont: false
+        isWebFont: false,
+        description: 'Traditional serif typeface'
       },
       {
-        name: 'Courier New',
+        name: 'Georgia, serif',
+        displayName: 'Georgia',
+        category: 'serif',
+        variants: ['normal', 'bold'],
+        isWebFont: false,
+        description: 'Elegant serif for screens'
+      },
+      {
+        name: 'Book Antiqua, serif',
+        displayName: 'Book Antiqua',
+        category: 'serif',
+        variants: ['normal', 'bold'],
+        isWebFont: false,
+        description: 'Classic book-style serif'
+      },
+      
+      // Monospace Fonts
+      {
+        name: 'Courier New, monospace',
         displayName: 'Courier New',
         category: 'monospace',
         variants: ['normal', 'bold'],
-        isWebFont: false
+        isWebFont: false,
+        description: 'Traditional typewriter font'
       },
       {
-        name: 'Caveat',
+        name: 'Consolas, monospace',
+        displayName: 'Consolas',
+        category: 'monospace',
+        variants: ['normal', 'bold'],
+        isWebFont: false,
+        description: 'Modern programming font'
+      },
+      {
+        name: 'banking, monospace',
+        displayName: 'MICR E13B (Banking)',
+        category: 'banking',
+        variants: ['normal'],
+        isWebFont: false,
+        description: 'Official banking check font'
+      },
+      
+      // Google Web Fonts - Handwriting/Signature Styles
+      {
+        name: 'Caveat, cursive',
         displayName: 'Caveat',
-        category: 'cursive',
+        category: 'handwriting',
         variants: ['normal', 'bold'],
         isWebFont: true,
-        url: 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap'
+        url: 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap',
+        description: 'Casual handwritten style'
       },
       {
-        name: 'banking',
-        displayName: 'MICR E13B (Banking)',
-        category: 'monospace',
+        name: 'Dancing Script, cursive',
+        displayName: 'Dancing Script',
+        category: 'handwriting',
+        variants: ['normal', 'bold'],
+        isWebFont: true,
+        url: 'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap',
+        description: 'Elegant script font'
+      },
+      {
+        name: 'Great Vibes, cursive',
+        displayName: 'Great Vibes',
+        category: 'handwriting',
         variants: ['normal'],
-        isWebFont: false
+        isWebFont: true,
+        url: 'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap',
+        description: 'Formal signature style'
+      },
+      {
+        name: 'Pacifico, cursive',
+        displayName: 'Pacifico',
+        category: 'handwriting',
+        variants: ['normal'],
+        isWebFont: true,
+        url: 'https://fonts.googleapis.com/css2?family=Pacifico&display=swap',
+        description: 'Friendly brush script'
+      },
+      {
+        name: 'Satisfy, cursive',
+        displayName: 'Satisfy',
+        category: 'handwriting',
+        variants: ['normal'],
+        isWebFont: true,
+        url: 'https://fonts.googleapis.com/css2?family=Satisfy&display=swap',
+        description: 'Casual marker style'
+      },
+      
+      // Google Web Fonts - Professional Sans-Serif
+      {
+        name: 'Open Sans, sans-serif',
+        displayName: 'Open Sans',
+        category: 'sans-serif',
+        variants: ['normal', 'bold'],
+        isWebFont: true,
+        url: 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap',
+        description: 'Friendly and readable'
+      },
+      {
+        name: 'Roboto, sans-serif',
+        displayName: 'Roboto',
+        category: 'sans-serif',
+        variants: ['normal', 'bold'],
+        isWebFont: true,
+        url: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap',
+        description: 'Modern and geometric'
+      },
+      {
+        name: 'Lato, sans-serif',
+        displayName: 'Lato',
+        category: 'sans-serif',
+        variants: ['normal', 'bold'],
+        isWebFont: true,
+        url: 'https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap',
+        description: 'Humanist sans-serif'
+      },
+      {
+        name: 'Montserrat, sans-serif',
+        displayName: 'Montserrat',
+        category: 'sans-serif',
+        variants: ['normal', 'bold'],
+        isWebFont: true,
+        url: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap',
+        description: 'Urban inspired design'
+      },
+      
+      // Google Web Fonts - Professional Serif
+      {
+        name: 'Playfair Display, serif',
+        displayName: 'Playfair Display',
+        category: 'serif',
+        variants: ['normal', 'bold'],
+        isWebFont: true,
+        url: 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap',
+        description: 'High-contrast serif'
+      },
+      {
+        name: 'Merriweather, serif',
+        displayName: 'Merriweather',
+        category: 'serif',
+        variants: ['normal', 'bold'],
+        isWebFont: true,
+        url: 'https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap',
+        description: 'Designed for screens'
+      },
+      {
+        name: 'Crimson Text, serif',
+        displayName: 'Crimson Text',
+        category: 'serif',
+        variants: ['normal', 'bold'],
+        isWebFont: true,
+        url: 'https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&display=swap',
+        description: 'Inspired by old-style serif'
       }
     ]
+    
+    // Load Google Fonts dynamically
+    loadGoogleFonts()
+  }
+  
+  function loadGoogleFonts() {
+    const webFonts = availableFonts.value.filter(font => font.isWebFont && font.url)
+    const existingLinks = document.querySelectorAll('link[data-font-loader]')
+    
+    // Remove existing font links to avoid duplicates
+    existingLinks.forEach(link => link.remove())
+    
+    // Load each unique Google Font
+    const uniqueUrls = [...new Set(webFonts.map(font => font.url))]
+    uniqueUrls.forEach(url => {
+      if (url) {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        link.setAttribute('data-font-loader', 'true')
+        document.head.appendChild(link)
+      }
+    })
   }
   
   function loadColorPalettes() {
@@ -578,6 +764,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     loadPresets,
     deletePreset,
     loadAvailableFonts,
+    loadGoogleFonts,
     loadColorPalettes
   }
 })
