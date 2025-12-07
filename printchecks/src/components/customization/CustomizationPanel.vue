@@ -127,22 +127,6 @@
         </div>
       </div>
       
-      <!-- Color Scheme -->
-      <div class="section">
-        <h4>Colors</h4>
-        <div class="color-grid">
-          <div v-for="(colorKey, index) in colorKeys" :key="colorKey" class="color-control">
-            <label>{{ formatColorLabel(colorKey) }}</label>
-            <input 
-              type="color" 
-              :value="currentSettings?.colors[colorKey] || '#000000'"
-              @input="updateColor(colorKey, $event.target.value)"
-              class="color-input large"
-            />
-          </div>
-        </div>
-      </div>
-      
       <!-- Logo Settings -->
       <div class="section">
         <h4>Logo</h4>
@@ -244,12 +228,6 @@ const fontElements = [
   'memo', 'signature', 'bankInfo', 'checkNumber', 'date'
 ] as const
 
-// Color keys that can be customized
-const colorKeys = [
-  'primary', 'secondary', 'accent', 'background', 
-  'text', 'border'
-] as const
-
 // Font categories for organized display
 const fontCategories = computed(() => {
   const categories = [...new Set(availableFonts.value.map(font => font.category))]
@@ -271,18 +249,6 @@ function formatFontLabel(key: string): string {
     bankInfo: 'Bank Info',
     checkNumber: 'Check Number',
     date: 'Date'
-  }
-  return labels[key] || key
-}
-
-function formatColorLabel(key: string): string {
-  const labels: Record<string, string> = {
-    primary: 'Primary',
-    secondary: 'Secondary',
-    accent: 'Accent',
-    background: 'Background',
-    text: 'Text',
-    border: 'Border'
   }
   return labels[key] || key
 }
@@ -340,10 +306,6 @@ function getFontPreviewText(fontKey: string): string {
 
 function updateFont(element: keyof typeof currentSettings.value.fonts, property: keyof FontSettings, value: any) {
   customizationStore.updateFont(element, { [property]: value })
-}
-
-function updateColor(colorKey: keyof typeof currentSettings.value.colors, value: string) {
-  customizationStore.updateColors({ [colorKey]: value })
 }
 
 function updateLogo(property: string, value: any) {
@@ -696,24 +658,7 @@ onMounted(() => {
   height: 60px;
 }
 
-.color-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 15px;
-}
 
-.color-control {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.color-control label {
-  font-size: 12px;
-  font-weight: bold;
-  color: #555;
-}
 
 .logo-controls {
   display: flex;
