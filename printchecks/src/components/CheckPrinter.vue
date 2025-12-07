@@ -113,26 +113,28 @@
 
                 <!-- Payment Statistics Section -->
                 <div class="payment-stats" style="position: absolute; top: 650px; right: 60px; width: 300px;">
-            <div class="stats-card" style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3;">
-                <h6 style="margin: 0 0 10px 0; color: #1976d2;">💰 Payment Summary</h6>
-                <div style="font-size: 12px; line-height: 1.4;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <span>This Year ({{ new Date().getFullYear() }}):</span>
-                        <strong>${{ paymentStats.thisYear.toFixed(2) }}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <span>All Time Total:</span>
-                        <strong>${{ paymentStats.allTime.toFixed(2) }}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <span>Payments This Year:</span>
-                        <strong>{{ paymentStats.thisYearCount }}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span>Total Payments:</span>
-                        <strong>{{ paymentStats.count }}</strong>
-                    </div>
-                </div>
+            <h5 style="margin-bottom: 15px; color: #333;">💰 Payment Summary</h5>
+            <div class="stats-table" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
+                <table style="width: 100%; font-size: 12px;">
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 6px 8px;">This Year ({{ new Date().getFullYear() }}):</td>
+                            <td style="text-align: right; padding: 6px 8px; font-weight: bold;">${{ paymentStats.thisYear.toFixed(2) }}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 6px 8px;">All Time Total:</td>
+                            <td style="text-align: right; padding: 6px 8px; font-weight: bold;">${{ paymentStats.allTime.toFixed(2) }}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 6px 8px;">Payments This Year:</td>
+                            <td style="text-align: right; padding: 6px 8px; font-weight: bold;">{{ paymentStats.thisYearCount }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 8px;">Total Payments:</td>
+                            <td style="text-align: right; padding: 6px 8px; font-weight: bold;">{{ paymentStats.count }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
                 </div>
             </div>
@@ -544,8 +546,15 @@ function printCheck () {
         .payment-stats {
           width: 300px !important; /* Fixed width for print */
         }
-        .stats-card {
+        .stats-table {
           background: white !important;
+          border: 1px solid #000 !important;
+        }
+        .stats-table table {
+          border-collapse: collapse;
+        }
+        .stats-table th,
+        .stats-table td {
           border: 1px solid #000 !important;
         }
       }
