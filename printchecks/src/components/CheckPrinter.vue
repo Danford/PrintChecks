@@ -278,70 +278,30 @@ const paymentStats = computed(() => {
 
 // Dynamic styles based on customization
 const checkStyles = computed(() => {
-    if (!currentSettings.value) return {}
+    if (!currentSettings.value || !currentSettings.value.fonts) return {}
     
     const settings = currentSettings.value
+    const fonts = settings.fonts
+    
+    // Helper function to safely get font styles with fallbacks
+    const getFontStyle = (fontConfig: any, fallback = { family: 'Arial, sans-serif', size: 16, weight: 'normal', color: '#000000' }) => ({
+        fontFamily: fontConfig?.family || fallback.family,
+        fontSize: `${fontConfig?.size || fallback.size}px`,
+        fontWeight: fontConfig?.weight || fallback.weight,
+        color: fontConfig?.color || fallback.color
+    })
+    
     return {
-        accountHolderName: {
-            fontFamily: settings.fonts.accountHolder.family,
-            fontSize: `${settings.fonts.accountHolder.size}px`,
-            fontWeight: settings.fonts.accountHolder.weight,
-            color: settings.fonts.accountHolder.color
-        },
-        payTo: {
-            fontFamily: settings.fonts.payTo.family,
-            fontSize: `${settings.fonts.payTo.size}px`,
-            fontWeight: settings.fonts.payTo.weight,
-            color: settings.fonts.payTo.color
-        },
-        amount: {
-            fontFamily: settings.fonts.amount.family,
-            fontSize: `${settings.fonts.amount.size}px`,
-            fontWeight: settings.fonts.amount.weight,
-            color: settings.fonts.amount.color
-        },
-        memo: {
-            fontFamily: settings.fonts.memo.family,
-            fontSize: `${settings.fonts.memo.size}px`,
-            fontWeight: settings.fonts.memo.weight,
-            color: settings.fonts.memo.color
-        },
-        signature: {
-            fontFamily: settings.fonts.signature.family,
-            fontSize: `${settings.fonts.signature.size}px`,
-            fontWeight: settings.fonts.signature.weight,
-            color: settings.fonts.signature.color
-        },
-        bankInfo: {
-            fontFamily: settings.fonts.bankInfo.family,
-            fontSize: `${settings.fonts.bankInfo.size}px`,
-            fontWeight: settings.fonts.bankInfo.weight,
-            color: settings.fonts.bankInfo.color
-        },
-        amountWords: {
-            fontFamily: settings.fonts.amountWords.family,
-            fontSize: `${settings.fonts.amountWords.size}px`,
-            fontWeight: settings.fonts.amountWords.weight,
-            color: settings.fonts.amountWords.color
-        },
-        checkNumber: {
-            fontFamily: settings.fonts.checkNumber.family,
-            fontSize: `${settings.fonts.checkNumber.size}px`,
-            fontWeight: settings.fonts.checkNumber.weight,
-            color: settings.fonts.checkNumber.color
-        },
-        date: {
-            fontFamily: settings.fonts.date.family,
-            fontSize: `${settings.fonts.date.size}px`,
-            fontWeight: settings.fonts.date.weight,
-            color: settings.fonts.date.color
-        },
-        bankName: {
-            fontFamily: settings.fonts.bankName.family,
-            fontSize: `${settings.fonts.bankName.size}px`,
-            fontWeight: settings.fonts.bankName.weight,
-            color: settings.fonts.bankName.color
-        }
+        accountHolderName: getFontStyle(fonts.accountHolder),
+        payTo: getFontStyle(fonts.payTo),
+        amount: getFontStyle(fonts.amount),
+        memo: getFontStyle(fonts.memo),
+        signature: getFontStyle(fonts.signature, { family: 'Caveat, cursive', size: 40, weight: 'normal', color: '#000000' }),
+        bankInfo: getFontStyle(fonts.bankInfo, { family: 'banking, monospace', size: 37, weight: 'normal', color: '#000000' }),
+        amountWords: getFontStyle(fonts.amountWords),
+        checkNumber: getFontStyle(fonts.checkNumber),
+        date: getFontStyle(fonts.date),
+        bankName: getFontStyle(fonts.bankName, { family: 'Open Sans, sans-serif', size: 24, weight: 'bold', color: '#000000' })
     }
 })
 
