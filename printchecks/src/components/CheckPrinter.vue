@@ -334,87 +334,80 @@ const dynamicTextPositions = computed(() => {
     bankInfo: { top: '420px', left: '80px' }
   }
 
-  // Adjust positions based on logo placement - prefer horizontal movement to keep on same row
+  // Adjust positions based on logo placement - text flows around logo
   if (logoPosition === 'top-left') {
-    // For top-left logo, move account holder info right if logo overlaps horizontally
+    // For top-left logo, move account holder info right to flow around logo
     if (bounds.right > 60) {
       positions.accountHolderName.left = `${bounds.right + 15}px`
       positions.accountHolderAddress.left = `${bounds.right + 15}px`
     }
-    // Only move down if logo is very tall and would overlap vertically - move both elements together
-    if (bounds.bottom > 70) {
-      const verticalOffset = bounds.bottom + 5
-      positions.accountHolderName.top = `${verticalOffset}px`
-      positions.accountHolderAddress.top = `${verticalOffset + 30}px` // Maintain 30px spacing between name and address
-    }
+    // Keep text at original vertical positions - no downward movement
+    // Text flows horizontally around the logo space
   }
 
   if (logoPosition === 'top-center') {
-    // For top-center, check if it overlaps with account holder or check number areas
+    // For top-center, text flows around both sides of the logo
     if (bounds.left < 300) {
-      // Logo extends into left area, move account holder right
+      // Logo extends into left area, move account holder right to flow around
       positions.accountHolderName.left = `${bounds.right + 15}px`
       positions.accountHolderAddress.left = `${bounds.right + 15}px`
     }
     if (bounds.right > 800) {
-      // Logo extends into right area, move check number left
-      positions.checkNumber.left = `${bounds.left - 100}px`
-      positions.date.left = `${bounds.left - 100}px`
+      // Logo extends into right area, move check number left to flow around
+      positions.checkNumber.left = `${Math.max(bounds.left - 100, 600)}px`
+      positions.date.left = `${Math.max(bounds.left - 100, 600)}px`
     }
-    // Move elements down if logo is very tall - maintain spacing relationships
-    if (bounds.bottom > 70) {
-      const verticalOffset = bounds.bottom + 5
-      if (bounds.left < 300) {
-        // If logo affects left side, move account holder elements
-        positions.accountHolderName.top = `${verticalOffset}px`
-        positions.accountHolderAddress.top = `${verticalOffset + 30}px`
-      }
-      if (bounds.right > 800) {
-        // If logo affects right side, move check number and date
-        positions.checkNumber.top = `${verticalOffset}px`
-        positions.date.top = `${verticalOffset + 40}px`
-      }
-    }
+    // Text maintains original vertical positions - flows horizontally around logo
   }
 
   if (logoPosition === 'top-right') {
-    // For top-right logo, move check number and date left if logo overlaps
+    // For top-right logo, text flows around to the left of the logo
     if (bounds.left < 1060) {
       positions.checkNumber.left = `${Math.max(bounds.left - 100, 700)}px`
     }
     if (bounds.left < 950) {
       positions.date.left = `${Math.max(bounds.left - 100, 700)}px`
     }
+    // Text maintains original vertical positions - flows horizontally around logo
   }
 
   if (logoPosition.includes('bottom')) {
-    // For bottom logos, move elements up only if necessary, prefer horizontal movement
+    // For bottom logos, text flows around horizontally - no vertical movement
     if (logoPosition === 'bottom-left') {
-      if (bounds.right > 80 && bounds.top < 420) {
+      // Text flows to the right of the logo
+      if (bounds.right > 80) {
         positions.bankInfo.left = `${bounds.right + 15}px`
       }
-      if (bounds.right > 120 && bounds.top < 367) {
+      if (bounds.right > 120) {
         positions.memo.left = `${bounds.right + 15}px`
+      }
+      if (bounds.right > 60) {
+        positions.bankName.left = `${bounds.right + 15}px`
       }
     }
     
     if (logoPosition === 'bottom-right') {
-      if (bounds.left < 770 && bounds.top < 366) {
+      // Text flows to the left of the logo
+      if (bounds.left < 770) {
         positions.signature.left = `${Math.max(bounds.left - 200, 500)}px`
       }
     }
     
-    // Only move up if logo is very tall
-    if (bounds.top < 350) {
-      positions.memo.top = `${bounds.top - 20}px`
-      positions.signature.top = `${bounds.top - 20}px`
+    if (logoPosition === 'bottom-center') {
+      // Text flows around both sides of centered logo
+      if (bounds.left < 400) {
+        // Logo extends left, move left elements right
+        positions.bankInfo.left = `${bounds.right + 15}px`
+        positions.memo.left = `${bounds.right + 15}px`
+        positions.bankName.left = `${bounds.right + 15}px`
+      }
+      if (bounds.right > 700) {
+        // Logo extends right, move right elements left
+        positions.signature.left = `${Math.max(bounds.left - 200, 500)}px`
+      }
     }
-    if (bounds.top < 320) {
-      positions.bankName.top = `${bounds.top - 30}px`
-    }
-    if (bounds.top < 400) {
-      positions.bankInfo.top = `${bounds.top - 20}px`
-    }
+    
+    // Text maintains original vertical positions - flows horizontally around logo
   }
 
   return positions
