@@ -281,8 +281,13 @@ function getFontPreviewStyle(fontKey: string) {
   const font = currentSettings.value?.fonts[fontKey]
   if (!font) return {}
   
+  // Use readable font for MICR banking font preview (banking font is unreadable for preview)
+  const previewFontFamily = font.family === 'banking, monospace' 
+    ? 'Courier New, monospace' 
+    : font.family
+  
   return {
-    fontFamily: font.family,
+    fontFamily: previewFontFamily,
     fontSize: `${Math.min(font.size, 24)}px`,
     fontWeight: font.weight,
     color: font.color,

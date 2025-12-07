@@ -96,7 +96,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         color: '#000000'
       },
       bankName: {
-        family: 'Arial, sans-serif',
+        family: 'Open Sans, sans-serif',
         size: 24,
         weight: 'bold',
         style: 'normal',
