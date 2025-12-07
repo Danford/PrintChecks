@@ -509,9 +509,21 @@ function printCheck () {
           margin: 0;
           padding: 0;
         }
-        /* Hide everything except the 3 sections in print */
-        .check-data {
+        /* Hide all navigation and extra elements */
+        .check-data,
+        nav,
+        .navbar,
+        .navigation,
+        header,
+        footer,
+        .sidebar,
+        .menu {
             display: none !important;
+        }
+        
+        /* Hide everything except wrapper and its 3 sections */
+        body > *:not(.wrapper) {
+          display: none !important;
         }
         
         /* Show only the 3 sections - hide everything else */
@@ -519,13 +531,13 @@ function printCheck () {
           display: none !important;
         }
         
-        /* Section 1: Check (Top Third) - NO page break */
+        /* Section 1: Check (Top Third) - NO border, NO page break */
         .check-box {
           height: 33vh;
           margin: 0 !important;
           padding: 20px !important;
           background: white !important;
-          border: 2px solid #000 !important;
+          border: none !important;
           box-shadow: none !important;
           position: relative !important;
           top: auto !important;
