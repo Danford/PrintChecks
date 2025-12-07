@@ -42,51 +42,66 @@
                     <div class="bank-account" style="display: inline;">{{check.bankAccountNumber}}c</div>
                     <div class="check-number" style="display: inline; margin-left:20px">{{check.checkNumber}}</div>
                 </div>
+
+                <!-- Logo Section -->
+                <div v-if="hasCustomLogo" 
+                     class="logo-container" 
+                     :class="`logo-${currentSettings?.logo.position || 'top-left'}`"
+                     :style="{ 
+                       width: `${currentSettings?.logo.size.width || 100}px`,
+                       height: `${currentSettings?.logo.size.height || 50}px`,
+                       opacity: currentSettings?.logo.opacity || 1
+                     }">
+                    <img :src="currentSettings?.logo.file || currentSettings?.logo.url" 
+                         alt="Logo"
+                         style="width: 100%; height: 100%; object-fit: contain;" />
+                </div>
+
+                <!-- Line Items Section (Paystub) - Positioned at 2/3rds of page -->
+                <div v-if="hasLineItems" class="line-items-section" style="position: absolute; top: 1035px; left: 60px; right: 60px;">
+                    <h5 style="margin-bottom: 15px; color: #333;">📋 Payment Details</h5>
+                    <div class="line-items-table" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
+                        <table style="width: 100%; font-size: 12px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <th style="text-align: left; padding: 8px;">Description</th>
+                                    <th style="text-align: center; padding: 8px;">Qty</th>
+                                    <th style="text-align: right; padding: 8px;">Rate</th>
+                                    <th style="text-align: right; padding: 8px;">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="item in lineItems" :key="item.id" style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 6px 8px;">{{ item.description }}</td>
+                                    <td style="text-align: center; padding: 6px 8px;">{{ item.quantity }}</td>
+                                    <td style="text-align: right; padding: 6px 8px;">${{ item.rate.toFixed(2) }}</td>
+                                    <td style="text-align: right; padding: 6px 8px;">${{ (item.quantity * item.rate).toFixed(2) }}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot v-if="calculatedTotals">
+                                <tr style="border-top: 2px solid #333; font-weight: bold;">
+                                    <td colspan="3" style="text-align: right; padding: 8px;">Subtotal:</td>
+                                    <td style="text-align: right; padding: 8px;">${{ calculatedTotals.subtotal.toFixed(2) }}</td>
+                                </tr>
+                                <tr v-if="calculatedTotals.taxAmount > 0">
+                                    <td colspan="3" style="text-align: right; padding: 4px 8px;">Tax:</td>
+                                    <td style="text-align: right; padding: 4px 8px;">${{ calculatedTotals.taxAmount.toFixed(2) }}</td>
+                                </tr>
+                                <tr v-if="calculatedTotals.shippingAmount > 0">
+                                    <td colspan="3" style="text-align: right; padding: 4px 8px;">Shipping:</td>
+                                    <td style="text-align: right; padding: 4px 8px;">${{ calculatedTotals.shippingAmount.toFixed(2) }}</td>
+                                </tr>
+                                <tr style="border-top: 1px solid #333; font-weight: bold; font-size: 14px;">
+                                    <td colspan="3" style="text-align: right; padding: 8px;">Total:</td>
+                                    <td style="text-align: right; padding: 8px;">${{ calculatedTotals.total.toFixed(2) }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-        
-        <!-- Line Items Section -->
-        <div v-if="hasLineItems" class="line-items-section" style="position: absolute; top: 480px; left: 60px; right: 60px;">
-            <h5 style="margin-bottom: 15px; color: #333;">📋 Payment Details</h5>
-            <div class="line-items-table" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
-                <table style="width: 100%; font-size: 12px;">
-                    <thead>
-                        <tr style="border-bottom: 1px solid #dee2e6;">
-                            <th style="text-align: left; padding: 8px;">Description</th>
-                            <th style="text-align: center; padding: 8px;">Qty</th>
-                            <th style="text-align: right; padding: 8px;">Rate</th>
-                            <th style="text-align: right; padding: 8px;">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="item in lineItems" :key="item.id" style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 6px 8px;">{{ item.description }}</td>
-                            <td style="text-align: center; padding: 6px 8px;">{{ item.quantity }}</td>
-                            <td style="text-align: right; padding: 6px 8px;">${{ item.rate.toFixed(2) }}</td>
-                            <td style="text-align: right; padding: 6px 8px;">${{ (item.quantity * item.rate).toFixed(2) }}</td>
-                        </tr>
-                    </tbody>
-                    <tfoot v-if="calculatedTotals">
-                        <tr style="border-top: 2px solid #333; font-weight: bold;">
-                            <td colspan="3" style="text-align: right; padding: 8px;">Subtotal:</td>
-                            <td style="text-align: right; padding: 8px;">${{ calculatedTotals.subtotal.toFixed(2) }}</td>
-                        </tr>
-                        <tr v-if="calculatedTotals.taxAmount > 0">
-                            <td colspan="3" style="text-align: right; padding: 4px 8px;">Tax:</td>
-                            <td style="text-align: right; padding: 4px 8px;">${{ calculatedTotals.taxAmount.toFixed(2) }}</td>
-                        </tr>
-                        <tr v-if="calculatedTotals.shippingAmount > 0">
-                            <td colspan="3" style="text-align: right; padding: 4px 8px;">Shipping:</td>
-                            <td style="text-align: right; padding: 4px 8px;">${{ calculatedTotals.shippingAmount.toFixed(2) }}</td>
-                        </tr>
-                        <tr style="border-top: 1px solid #333; font-weight: bold; font-size: 14px;">
-                            <td colspan="3" style="text-align: right; padding: 8px;">Total:</td>
-                            <td style="text-align: right; padding: 8px;">${{ calculatedTotals.total.toFixed(2) }}</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
+
 
         <!-- Payment Statistics Section -->
         <div class="payment-stats" style="position: absolute; top: 450px; right: 60px; width: 300px;">
@@ -222,6 +237,7 @@ const toWords: (denom: number | string) => string = (denom) => {
 
 // Computed properties for customization
 const currentSettings = computed(() => customizationStore.currentSettings)
+const hasCustomLogo = computed(() => customizationStore.hasCustomLogo)
 const lineItems = computed(() => receiptStore.currentReceipt?.lineItems || [])
 const hasLineItems = computed(() => receiptStore.hasLineItems)
 const calculatedTotals = computed(() => receiptStore.calculatedTotals)
@@ -545,5 +561,43 @@ label {
     border-right: 1px solid black;
     height: 28px;
     margin-top: -32px;
+}
+
+/* Logo positioning classes */
+.logo-container {
+    position: absolute;
+    z-index: 10;
+}
+
+.logo-top-left {
+    top: 20px;
+    left: 20px;
+}
+
+.logo-top-center {
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.logo-top-right {
+    top: 20px;
+    right: 20px;
+}
+
+.logo-bottom-left {
+    bottom: 20px;
+    left: 20px;
+}
+
+.logo-bottom-center {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.logo-bottom-right {
+    bottom: 20px;
+    right: 20px;
 }
 </style>
