@@ -42,6 +42,20 @@
                     <div class="bank-account" style="display: inline;">{{check.bankAccountNumber}}c</div>
                     <div class="check-number" style="display: inline; margin-left:20px">{{check.checkNumber}}</div>
                 </div>
+
+                <!-- Logo Section -->
+                <div v-if="hasCustomLogo" 
+                     class="logo-container" 
+                     :class="`logo-${currentSettings?.logo?.position || 'top-left'}`"
+                     :style="{ 
+                       width: `${currentSettings?.logo?.size?.width || 100}px`,
+                       height: `${currentSettings?.logo?.size?.height || 50}px`,
+                       opacity: currentSettings?.logo?.opacity || 1
+                     }">
+                    <img :src="currentSettings?.logo?.file || currentSettings?.logo?.url" 
+                         alt="Logo"
+                         style="width: 100%; height: 100%; object-fit: contain;" />
+                </div>
             </div>
         </div>
         
@@ -222,6 +236,7 @@ const toWords: (denom: number | string) => string = (denom) => {
 
 // Computed properties for customization
 const currentSettings = computed(() => customizationStore.currentSettings)
+const hasCustomLogo = computed(() => customizationStore.hasCustomLogo)
 const lineItems = computed(() => receiptStore.currentReceipt?.lineItems || [])
 const hasLineItems = computed(() => receiptStore.hasLineItems)
 const calculatedTotals = computed(() => receiptStore.calculatedTotals)
@@ -545,5 +560,43 @@ label {
     border-right: 1px solid black;
     height: 28px;
     margin-top: -32px;
+}
+
+/* Logo positioning classes */
+.logo-container {
+    position: absolute;
+    z-index: 10;
+}
+
+.logo-top-left {
+    top: 20px;
+    left: 20px;
+}
+
+.logo-top-center {
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.logo-top-right {
+    top: 20px;
+    right: 20px;
+}
+
+.logo-bottom-left {
+    bottom: 20px;
+    left: 20px;
+}
+
+.logo-bottom-center {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.logo-bottom-right {
+    bottom: 20px;
+    right: 20px;
 }
 </style>
