@@ -2,23 +2,23 @@
     <div class="wrapper" id="wrapper" style="position: relative;">
         <div class="check-box" id="check-box">
             <div style="position: relative;" id="check-box-print">
-                <div class="account-holder-name" :style="{ ...checkStyles.accountHolderName, position: 'absolute', top: '40px', left: '60px' }">{{check.accountHolderName}}</div>
-                <div class="account-holder-address" :style="{ ...checkStyles.accountHolderName, position: 'absolute', top: '70px', left: '60px' }">
+                <div class="account-holder-name" :style="{ ...checkStyles.accountHolderName, position: 'absolute', ...dynamicTextPositions.accountHolderName }">{{check.accountHolderName}}</div>
+                <div class="account-holder-address" :style="{ ...checkStyles.accountHolderName, position: 'absolute', ...dynamicTextPositions.accountHolderAddress }">
                     {{check.accountHolderAddress}}<br>
                     {{check.accountHolderCity}}, {{check.accountHolderState}} {{check.accountHolderZip}}
                 </div>
-                <div class="check-number-human" :style="{ ...checkStyles.checkNumber, position: 'absolute', top: '40px', left: '1060px' }">{{check.checkNumber}}</div>
-                <div class="date-data" :style="{ ...checkStyles.date, position: 'absolute', top: '80px', left: '850px' }">{{check.date}}</div>
+                <div class="check-number-human" :style="{ ...checkStyles.checkNumber, position: 'absolute', ...dynamicTextPositions.checkNumber }">{{check.checkNumber}}</div>
+                <div class="date-data" :style="{ ...checkStyles.date, position: 'absolute', ...dynamicTextPositions.date }">{{check.date}}</div>
                 <div class="date" style="position: absolute; top: 90px; left: 760px">Date: _____________________ </div>
                 <div class="amount-box" style="position: absolute; top: 175px; left: 950px">
 
                 </div>
-                <div class="amount-data" :style="{ ...checkStyles.amount, position: 'absolute', top: '182px', left: '970px' }">{{formatMoney(check.amount)}}</div>
-                <div class="pay-to-data" :style="{ ...checkStyles.payTo, position: 'absolute', top: '180px', left: '180px' }">{{check.payTo}}</div>
+                <div class="amount-data" :style="{ ...checkStyles.amount, position: 'absolute', ...dynamicTextPositions.amount }">{{formatMoney(check.amount)}}</div>
+                <div class="pay-to-data" :style="{ ...checkStyles.payTo, position: 'absolute', ...dynamicTextPositions.payTo }">{{check.payTo}}</div>
                 <div class="pay-to" style="position: absolute; top: 170px; left: 60px">
                     Pay to the <br>Order of <span class="payto-line"></span>
                 </div>
-                <div class="amount-line-data" ref="line" :style="{ ...checkStyles.amountWords, position: 'absolute', top: '240px', left: '100px' }">
+                <div class="amount-line-data" ref="line" :style="{ ...checkStyles.amountWords, position: 'absolute', ...dynamicTextPositions.amountWords }">
                     ***
                     {{toWords(check.amount)}} 
                     ***
@@ -26,16 +26,16 @@
                 <div class="amount-line" style="position: absolute; top: 250px; left: 60px">
                     <span class="dollar-line"></span>
                 </div>
-                <div class="bank-name" :style="{ ...checkStyles.bankName, position: 'absolute', top: '300px', left: '60px' }">{{check.bankName}}</div>
-                <div class="memo-data" :style="{ ...checkStyles.memo, position: 'absolute', top: '367px', left: '120px' }">{{check.memo}}</div>
+                <div class="bank-name" :style="{ ...checkStyles.bankName, position: 'absolute', ...dynamicTextPositions.bankName }">{{check.bankName}}</div>
+                <div class="memo-data" :style="{ ...checkStyles.memo, position: 'absolute', ...dynamicTextPositions.memo }">{{check.memo}}</div>
                 <div class="memo" style="position: absolute; top: 390px; left: 60px">
                     Memo: ____________________________________
                 </div>
-                <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', top: '366px', left: '770px' }">{{check.signature}}</div>
+                <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">{{check.signature}}</div>
                 <div class="signature" style="position: absolute; top: 390px; left: 750px">
                     _________________________________________________
                 </div>
-                <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', top: '420px', left: '80px' }">
+                <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo }">
                     <div class="routing" style="display: inline;">
                         a{{check.routingNumber}}a
                     </div>
@@ -251,6 +251,129 @@ const logoImageSrc = computed(() => {
 const lineItems = computed(() => receiptStore.currentReceipt?.lineItems || [])
 const hasLineItems = computed(() => receiptStore.hasLineItems)
 const calculatedTotals = computed(() => receiptStore.calculatedTotals)
+
+// Dynamic text positioning to avoid logo overlap
+const dynamicTextPositions = computed(() => {
+  const logo = currentSettings.value?.logo
+  if (!hasCustomLogo.value || !logo) {
+    // Return default positions when no logo
+    return {
+      accountHolderName: { top: '40px', left: '60px' },
+      accountHolderAddress: { top: '70px', left: '60px' },
+      checkNumber: { top: '40px', left: '1060px' },
+      date: { top: '80px', left: '850px' },
+      payTo: { top: '180px', left: '180px' },
+      amount: { top: '182px', left: '970px' },
+      amountWords: { top: '240px', left: '100px' },
+      bankName: { top: '300px', left: '60px' },
+      memo: { top: '367px', left: '120px' },
+      signature: { top: '366px', left: '770px' },
+      bankInfo: { top: '420px', left: '80px' }
+    }
+  }
+
+  const logoWidth = logo.size?.width || 100
+  const logoHeight = logo.size?.height || 50
+  const logoPosition = logo.position || 'top-left'
+  const margin = logo.margin || { top: 10, right: 10, bottom: 10, left: 10 }
+  
+  // Calculate logo boundaries
+  const logoBounds = {
+    'top-left': { 
+      left: 20, 
+      right: 20 + logoWidth, 
+      top: 20, 
+      bottom: 20 + logoHeight 
+    },
+    'top-center': { 
+      left: (1200 - logoWidth) / 2, 
+      right: (1200 + logoWidth) / 2, 
+      top: 20, 
+      bottom: 20 + logoHeight 
+    },
+    'top-right': { 
+      left: 1200 - 20 - logoWidth, 
+      right: 1200 - 20, 
+      top: 20, 
+      bottom: 20 + logoHeight 
+    },
+    'bottom-left': { 
+      left: 20, 
+      right: 20 + logoWidth, 
+      top: 450 - logoHeight - 20, 
+      bottom: 450 - 20 
+    },
+    'bottom-center': { 
+      left: (1200 - logoWidth) / 2, 
+      right: (1200 + logoWidth) / 2, 
+      top: 450 - logoHeight - 20, 
+      bottom: 450 - 20 
+    },
+    'bottom-right': { 
+      left: 1200 - 20 - logoWidth, 
+      right: 1200 - 20, 
+      top: 450 - logoHeight - 20, 
+      bottom: 450 - 20 
+    }
+  }
+
+  const bounds = logoBounds[logoPosition]
+  
+  // Default positions
+  let positions = {
+    accountHolderName: { top: '40px', left: '60px' },
+    accountHolderAddress: { top: '70px', left: '60px' },
+    checkNumber: { top: '40px', left: '1060px' },
+    date: { top: '80px', left: '850px' },
+    payTo: { top: '180px', left: '180px' },
+    amount: { top: '182px', left: '970px' },
+    amountWords: { top: '240px', left: '100px' },
+    bankName: { top: '300px', left: '60px' },
+    memo: { top: '367px', left: '120px' },
+    signature: { top: '366px', left: '770px' },
+    bankInfo: { top: '420px', left: '80px' }
+  }
+
+  // Adjust positions based on logo placement
+  if (logoPosition.includes('top-left')) {
+    // Move account holder info down if logo overlaps
+    if (bounds.bottom > 40) {
+      positions.accountHolderName.top = `${bounds.bottom + 10}px`
+      positions.accountHolderAddress.top = `${bounds.bottom + 40}px`
+    }
+    // Move account holder info right if logo overlaps
+    if (bounds.right > 60) {
+      positions.accountHolderName.left = `${bounds.right + 20}px`
+      positions.accountHolderAddress.left = `${bounds.right + 20}px`
+    }
+  }
+
+  if (logoPosition.includes('top-right')) {
+    // Move check number and date left if logo overlaps
+    if (bounds.left < 1060) {
+      positions.checkNumber.left = `${bounds.left - 150}px`
+    }
+    if (bounds.left < 850) {
+      positions.date.left = `${bounds.left - 150}px`
+    }
+  }
+
+  if (logoPosition.includes('bottom')) {
+    // Move bottom elements up if logo overlaps
+    if (bounds.top < 420) {
+      positions.bankInfo.top = `${bounds.top - 30}px`
+    }
+    if (bounds.top < 367) {
+      positions.memo.top = `${bounds.top - 50}px`
+      positions.signature.top = `${bounds.top - 50}px`
+    }
+    if (bounds.top < 300) {
+      positions.bankName.top = `${bounds.top - 70}px`
+    }
+  }
+
+  return positions
+})
 
 // Payment statistics
 const paymentStats = computed(() => {
