@@ -509,22 +509,33 @@ function printCheck () {
           margin: 0;
           padding: 0;
         }
+        /* Hide everything except wrapper and its 3 sections */
+        body > *:not(#app) {
+          display: none !important;
+        }
+        
+        #app > *:not(.wrapper) {
+          display: none !important;
+        }
+        
         /* Hide specific form elements */
         .check-data {
             display: none !important;
         }
         
-        /* Hide common navigation elements */
-        nav,
+        /* Hide navigation elements by class */
+        .nav,
+        .nav-tabs,
+        .nav-item,
+        .nav-link,
         .navbar,
         .navigation,
         header,
         footer,
         .sidebar,
         .menu,
-        .nav-bar,
-        .top-nav,
-        .main-nav {
+        .panel-header,
+        .header {
             display: none !important;
         }
         
