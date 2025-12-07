@@ -52,7 +52,7 @@
                        height: `${currentSettings?.logo?.size?.height || 50}px`,
                        opacity: currentSettings?.logo?.opacity || 1
                      }">
-                    <img :src="currentSettings?.logo?.file || currentSettings?.logo?.url" 
+                    <img :src="currentSettings?.logo?.file?.url || currentSettings?.logo?.url" 
                          alt="Logo"
                          style="width: 100%; height: 100%; object-fit: contain;" />
                 </div>
