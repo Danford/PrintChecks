@@ -1105,6 +1105,14 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         description: 'Retro display font'
       },
       {
+        name: 'Old English Text MT, serif',
+        displayName: 'Old English Text MT',
+        category: 'display',
+        variants: ['normal'],
+        isWebFont: false,
+        description: 'Classic blackletter/Gothic style font'
+      },
+      {
         name: 'Lato, sans-serif',
         displayName: 'Lato',
         category: 'sans-serif',
