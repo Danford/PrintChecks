@@ -67,11 +67,9 @@
                          @error="handleLogoError"
                          @load="handleLogoLoad" />
                 </div>
-            </div>
-        </div>
-        
-        <!-- Line Items Section -->
-        <div v-if="hasLineItems" class="line-items-section" style="position: absolute; top: 480px; left: 60px; right: 60px;">
+                
+                <!-- Line Items Section -->
+                <div v-if="hasLineItems" class="line-items-section" style="position: absolute; top: 500px; left: 60px; width: calc(100% - 120px);">
             <h5 style="margin-bottom: 15px; color: #333;">📋 Payment Details</h5>
             <div class="line-items-table" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
                 <table style="width: 100%; font-size: 12px;">
@@ -111,10 +109,10 @@
                     </tfoot>
                 </table>
             </div>
-        </div>
+                </div>
 
-        <!-- Payment Statistics Section -->
-        <div class="payment-stats" style="position: absolute; top: 450px; right: 60px; width: 300px;">
+                <!-- Payment Statistics Section -->
+                <div class="payment-stats" style="position: absolute; top: 500px; right: 60px; width: 300px;">
             <div class="stats-card" style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3;">
                 <h6 style="margin: 0 0 10px 0; color: #1976d2;">💰 Payment Summary</h6>
                 <div style="font-size: 12px; line-height: 1.4;">
@@ -134,6 +132,8 @@
                         <span>Total Payments:</span>
                         <strong>{{ paymentStats.count }}</strong>
                     </div>
+                </div>
+            </div>
                 </div>
             </div>
         </div>
@@ -510,6 +510,20 @@ function printCheck () {
         }
         .check-box-print {
           position: relative;
+        }
+        .line-items-section {
+          page-break-inside: avoid;
+        }
+        .line-items-table {
+          background: white !important;
+          border: 1px solid #000 !important;
+        }
+        .line-items-table table {
+          border-collapse: collapse;
+        }
+        .line-items-table th,
+        .line-items-table td {
+          border: 1px solid #000 !important;
         }
       }
     `;
