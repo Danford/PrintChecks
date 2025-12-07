@@ -341,9 +341,11 @@ const dynamicTextPositions = computed(() => {
       positions.accountHolderName.left = `${bounds.right + 15}px`
       positions.accountHolderAddress.left = `${bounds.right + 15}px`
     }
-    // Only move down if logo is very tall and would overlap vertically
+    // Only move down if logo is very tall and would overlap vertically - move both elements together
     if (bounds.bottom > 70) {
-      positions.accountHolderAddress.top = `${bounds.bottom + 5}px`
+      const verticalOffset = bounds.bottom + 5
+      positions.accountHolderName.top = `${verticalOffset}px`
+      positions.accountHolderAddress.top = `${verticalOffset + 30}px` // Maintain 30px spacing between name and address
     }
   }
 
@@ -358,6 +360,20 @@ const dynamicTextPositions = computed(() => {
       // Logo extends into right area, move check number left
       positions.checkNumber.left = `${bounds.left - 100}px`
       positions.date.left = `${bounds.left - 100}px`
+    }
+    // Move elements down if logo is very tall - maintain spacing relationships
+    if (bounds.bottom > 70) {
+      const verticalOffset = bounds.bottom + 5
+      if (bounds.left < 300) {
+        // If logo affects left side, move account holder elements
+        positions.accountHolderName.top = `${verticalOffset}px`
+        positions.accountHolderAddress.top = `${verticalOffset + 30}px`
+      }
+      if (bounds.right > 800) {
+        // If logo affects right side, move check number and date
+        positions.checkNumber.top = `${verticalOffset}px`
+        positions.date.top = `${verticalOffset + 40}px`
+      }
     }
   }
 
