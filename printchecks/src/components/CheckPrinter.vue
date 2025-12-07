@@ -509,12 +509,26 @@ function printCheck () {
           margin: 0;
           padding: 0;
         }
-        /* Hide specific navigation and form elements */
+        /* Hide specific form elements */
         .check-data {
             display: none !important;
         }
         
-        /* Ensure wrapper and 3 sections are visible */
+        /* Hide common navigation elements */
+        nav,
+        .navbar,
+        .navigation,
+        header,
+        footer,
+        .sidebar,
+        .menu,
+        .nav-bar,
+        .top-nav,
+        .main-nav {
+            display: none !important;
+        }
+        
+        /* Explicitly show wrapper and 3 sections */
         .wrapper {
           display: block !important;
         }
