@@ -524,6 +524,12 @@ function printCheck () {
             display: none !important;
         }
         
+        /* Hide title and slogan from App.vue */
+        .container h1,
+        .container p {
+            display: none !important;
+        }
+        
         /* Explicitly show wrapper and 3 sections */
         .wrapper {
           display: block !important;
