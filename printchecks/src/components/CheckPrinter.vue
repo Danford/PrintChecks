@@ -50,7 +50,11 @@
                      :style="{ 
                        width: `${currentSettings?.logo?.size?.width || 100}px`,
                        height: `${currentSettings?.logo?.size?.height || 50}px`,
-                       opacity: currentSettings?.logo?.opacity || 1
+                       opacity: currentSettings?.logo?.opacity || 1,
+                       marginTop: `${currentSettings?.logo?.margin?.top || 0}px`,
+                       marginRight: `${currentSettings?.logo?.margin?.right || 0}px`,
+                       marginBottom: `${currentSettings?.logo?.margin?.bottom || 0}px`,
+                       marginLeft: `${currentSettings?.logo?.margin?.left || 0}px`
                      }">
                     <img :src="logoImageSrc" 
                          alt="Logo"
@@ -277,43 +281,43 @@ const dynamicTextPositions = computed(() => {
   const logoPosition = logo.position || 'top-left'
   const margin = logo.margin || { top: 10, right: 10, bottom: 10, left: 10 }
   
-  // Calculate logo boundaries
+  // Calculate logo boundaries including margins
   const logoBounds = {
     'top-left': { 
-      left: 20, 
-      right: 20 + logoWidth, 
-      top: 20, 
-      bottom: 20 + logoHeight 
+      left: 20 + margin.left, 
+      right: 20 + margin.left + logoWidth, 
+      top: 20 + margin.top, 
+      bottom: 20 + margin.top + logoHeight 
     },
     'top-center': { 
-      left: (1200 - logoWidth) / 2, 
-      right: (1200 + logoWidth) / 2, 
-      top: 20, 
-      bottom: 20 + logoHeight 
+      left: (1200 - logoWidth) / 2 + margin.left, 
+      right: (1200 + logoWidth) / 2 + margin.right, 
+      top: 20 + margin.top, 
+      bottom: 20 + margin.top + logoHeight 
     },
     'top-right': { 
-      left: 1200 - 20 - logoWidth, 
-      right: 1200 - 20, 
-      top: 20, 
-      bottom: 20 + logoHeight 
+      left: 1200 - 20 - logoWidth - margin.right, 
+      right: 1200 - 20 - margin.right, 
+      top: 20 + margin.top, 
+      bottom: 20 + margin.top + logoHeight 
     },
     'bottom-left': { 
-      left: 20, 
-      right: 20 + logoWidth, 
-      top: 450 - logoHeight - 20, 
-      bottom: 450 - 20 
+      left: 20 + margin.left, 
+      right: 20 + margin.left + logoWidth, 
+      top: 450 - logoHeight - 20 - margin.bottom, 
+      bottom: 450 - 20 - margin.bottom 
     },
     'bottom-center': { 
-      left: (1200 - logoWidth) / 2, 
-      right: (1200 + logoWidth) / 2, 
-      top: 450 - logoHeight - 20, 
-      bottom: 450 - 20 
+      left: (1200 - logoWidth) / 2 + margin.left, 
+      right: (1200 + logoWidth) / 2 + margin.right, 
+      top: 450 - logoHeight - 20 - margin.bottom, 
+      bottom: 450 - 20 - margin.bottom 
     },
     'bottom-right': { 
-      left: 1200 - 20 - logoWidth, 
-      right: 1200 - 20, 
-      top: 450 - logoHeight - 20, 
-      bottom: 450 - 20 
+      left: 1200 - 20 - logoWidth - margin.right, 
+      right: 1200 - 20 - margin.right, 
+      top: 450 - logoHeight - 20 - margin.bottom, 
+      bottom: 450 - 20 - margin.bottom 
     }
   }
 
