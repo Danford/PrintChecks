@@ -38,7 +38,7 @@
                 <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '750px' }">
                     _________________________________________________
                 </div>
-                <div class="signature-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '405px', left: '750px', width: '300px', textAlign: 'center' }">
+                <div class="signature-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '405px', left: '780px', width: '300px', textAlign: 'center' }">
                     Authorized Signature
                 </div>
                 <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo, width: '100%', textAlign: 'center' }">
@@ -460,7 +460,7 @@ const dynamicTextPositions = computed(() => {
       bankName: { top: '300px', left: '60px' },
       memo: { top: '390px', left: '130px' },
       signature: { top: '366px', left: '770px' },
-      bankInfo: { top: '435px', left: '80px' }
+      bankInfo: { top: '435px', left: '0px' }
     }
   }
 
@@ -523,7 +523,7 @@ const dynamicTextPositions = computed(() => {
     bankName: { top: '300px', left: '60px' },
     memo: { top: '390px', left: '130px' },
     signature: { top: '366px', left: '770px' },
-    bankInfo: { top: '435px', left: '80px' }
+    bankInfo: { top: '435px', left: '0px' }
   }
 
   // Adjust positions based on logo placement - text flows around logo
