@@ -35,8 +35,11 @@
                     Memo: ____________________________________
                 </div>
                 <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">{{check.signature}}</div>
-                <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '680px' }">
-                    Signature: _______________________________
+                <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '750px' }">
+                    _________________________________________________
+                </div>
+                <div class="signature-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '405px', left: '750px', fontSize: '8px' }">
+                    Authorized Signature
                 </div>
                 <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo, width: '100%', textAlign: 'center' }">
                     <div class="routing" style="display: inline;">
@@ -456,7 +459,7 @@ const dynamicTextPositions = computed(() => {
       amountWords: { top: '240px', left: '100px' },
       bankName: { top: '300px', left: '60px' },
       memo: { top: '390px', left: '130px' },
-      signature: { top: '366px', left: '785px' },
+      signature: { top: '366px', left: '770px' },
       bankInfo: { top: '435px', left: '80px' }
     }
   }
@@ -519,7 +522,7 @@ const dynamicTextPositions = computed(() => {
     amountWords: { top: '240px', left: '100px' },
     bankName: { top: '300px', left: '60px' },
     memo: { top: '390px', left: '130px' },
-    signature: { top: '366px', left: '785px' },
+    signature: { top: '366px', left: '770px' },
     bankInfo: { top: '435px', left: '80px' }
   }
 
