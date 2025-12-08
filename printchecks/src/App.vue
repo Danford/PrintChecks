@@ -21,9 +21,6 @@ import { RouterLink, RouterView } from 'vue-router'
                 <RouterLink to="/customization" class="nav-link" :class="{'active': $route.path == '/customization'}">🎨 Customization</RouterLink>
             </li>
             <li class="nav-item">
-                <RouterLink to="/receipt" class="nav-link" :class="{'active': $route.path == '/receipt'}">📋 Receipt</RouterLink>
-            </li>
-            <li class="nav-item">
                 <RouterLink to="/history" class="nav-link" :class="{'active': $route.path == '/history'}">📚 History</RouterLink>
             </li>
             <li class="nav-item">

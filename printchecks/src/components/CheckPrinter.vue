@@ -90,29 +90,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item in (lineItems.length > 0 ? lineItems : testLineItems)" :key="item.id" style="border-bottom: 1px solid #eee;">
+                        <tr v-for="item in currentLineItems" :key="item.id" style="border-bottom: 1px solid #eee;">
                             <td style="padding: 10px 12px;">{{ item.description }}</td>
                             <td style="text-align: center; padding: 10px 12px;">{{ item.quantity }}</td>
                             <td style="text-align: right; padding: 10px 12px;">${{ item.rate.toFixed(2) }}</td>
                             <td style="text-align: right; padding: 10px 12px;">${{ (item.quantity * item.rate).toFixed(2) }}</td>
                         </tr>
+                        <tr v-if="currentLineItems.length === 0">
+                            <td colspan="4" style="text-align: center; padding: 20px; color: #6c757d;">
+                                No line items added. Add service details in the form below.
+                            </td>
+                        </tr>
                     </tbody>
-                    <tfoot v-if="calculatedTotals || testTotals">
-                        <tr style="border-top: 2px solid #333; font-weight: bold;">
-                            <td colspan="3" style="text-align: right; padding: 12px; font-size: 16px;">Subtotal:</td>
-                            <td style="text-align: right; padding: 12px; font-size: 16px;">${{ (calculatedTotals?.subtotal || testTotals.subtotal).toFixed(2) }}</td>
-                        </tr>
-                        <tr v-if="(calculatedTotals?.taxAmount || testTotals.taxAmount) > 0">
-                            <td colspan="3" style="text-align: right; padding: 8px 12px;">Tax:</td>
-                            <td style="text-align: right; padding: 8px 12px;">${{ (calculatedTotals?.taxAmount || testTotals.taxAmount).toFixed(2) }}</td>
-                        </tr>
-                        <tr v-if="(calculatedTotals?.shippingAmount || testTotals.shippingAmount) > 0">
-                            <td colspan="3" style="text-align: right; padding: 8px 12px;">Shipping:</td>
-                            <td style="text-align: right; padding: 8px 12px;">${{ (calculatedTotals?.shippingAmount || testTotals.shippingAmount).toFixed(2) }}</td>
-                        </tr>
+                    <tfoot v-if="currentLineItems.length > 0">
                         <tr style="border-top: 2px solid #333; font-weight: bold; font-size: 18px; background: #f0f0f0;">
                             <td colspan="3" style="text-align: right; padding: 15px 12px;">Total:</td>
-                            <td style="text-align: right; padding: 15px 12px;">${{ (calculatedTotals?.total || testTotals.total).toFixed(2) }}</td>
+                            <td style="text-align: right; padding: 15px 12px;">${{ lineItemsTotal.toFixed(2) }}</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -174,6 +167,83 @@
                         ➕ Write New Check
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- LINE ITEMS SECTION -->
+        <div class="line-items-section" style="background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dee2e6;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h5 style="margin: 0; color: #495057;">📋 Service Line Items</h5>
+                <button type="button" class="btn btn-sm btn-outline-primary" @click="showLineItemForm = !showLineItemForm">
+                    {{ showLineItemForm ? '➖ Hide Form' : '➕ Add Line Item' }}
+                </button>
+            </div>
+            
+            <!-- Add Line Item Form -->
+            <div v-if="showLineItemForm" class="line-item-form" style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label class="form-label">Service Description</label>
+                        <input type="text" class="form-control" v-model="newLineItem.description" placeholder="e.g., Consulting Services">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" class="form-control" v-model.number="newLineItem.quantity" min="0" step="0.01">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Rate ($)</label>
+                        <input type="number" class="form-control" v-model.number="newLineItem.rate" min="0" step="0.01">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Amount</label>
+                        <input type="text" class="form-control" :value="'$' + (newLineItem.quantity * newLineItem.rate).toFixed(2)" readonly style="background: #e9ecef;">
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="button" class="btn btn-primary w-100" @click="addLineItem" :disabled="!newLineItem.description || newLineItem.quantity <= 0 || newLineItem.rate <= 0">
+                            ✓
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Line Items Table -->
+            <div v-if="currentLineItems.length > 0" class="line-items-table-editor">
+                <table class="table table-sm table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Description</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end">Rate</th>
+                            <th class="text-end">Amount</th>
+                            <th class="text-center" style="width: 80px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in currentLineItems" :key="item.id">
+                            <td>{{ item.description }}</td>
+                            <td class="text-center">{{ item.quantity }}</td>
+                            <td class="text-end">${{ item.rate.toFixed(2) }}</td>
+                            <td class="text-end">${{ (item.quantity * item.rate).toFixed(2) }}</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-danger" @click="removeLineItem(index)" title="Remove">
+                                    🗑️
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td class="text-end"><strong>${{ lineItemsTotal.toFixed(2) }}</strong></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div v-else class="alert alert-info mb-0">
+                <strong>ℹ️ No line items added yet.</strong> Click "Add Line Item" to add service details.
             </div>
         </div>
 
@@ -306,6 +376,44 @@ const quickCheckForm = reactive({
     memo: '',
     signature: ''
 })
+
+// Line Items Management
+const showLineItemForm = ref(false)
+const currentLineItems = ref<Array<{id: number, description: string, quantity: number, rate: number}>>([])
+const newLineItem = reactive({
+    description: '',
+    quantity: 1,
+    rate: 0
+})
+
+// Computed line items total
+const lineItemsTotal = computed(() => {
+    return currentLineItems.value.reduce((sum, item) => sum + (item.quantity * item.rate), 0)
+})
+
+// Add line item
+function addLineItem() {
+    if (!newLineItem.description || newLineItem.quantity <= 0 || newLineItem.rate <= 0) return
+    
+    const item = {
+        id: Date.now(),
+        description: newLineItem.description,
+        quantity: newLineItem.quantity,
+        rate: newLineItem.rate
+    }
+    
+    currentLineItems.value.push(item)
+    
+    // Reset form
+    newLineItem.description = ''
+    newLineItem.quantity = 1
+    newLineItem.rate = 0
+}
+
+// Remove line item
+function removeLineItem(index: number) {
+    currentLineItems.value.splice(index, 1)
+}
 
 // Computed properties for bank and vendor selection
 const selectedBank = computed(() => bankAccounts.value.find(b => b.id === selectedBankId.value))
