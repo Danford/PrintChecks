@@ -1,5 +1,35 @@
 <template>
-    <!-- MAIN PRINT CONTAINER - All 3 sections in one div -->
+    <!-- MAIN NAVIGATION -->
+    <div class="main-navigation">
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-panel" type="button" role="tab">
+                    🏠 Check Writer
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="banks-tab" data-bs-toggle="tab" data-bs-target="#banks-panel" type="button" role="tab">
+                    🏦 Bank Accounts
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="vendors-tab" data-bs-toggle="tab" data-bs-target="#vendors-panel" type="button" role="tab">
+                    👥 Vendors
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="analytics-tab" data-bs-toggle="tab" data-bs-target="#analytics-panel" type="button" role="tab">
+                    📊 Analytics
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- TAB CONTENT -->
+    <div class="tab-content" id="mainTabContent">
+        <!-- HOME TAB - Original Check Writer -->
+        <div class="tab-pane fade show active" id="home-panel" role="tabpanel">
+            <!-- MAIN PRINT CONTAINER - All 3 sections in one div -->
     <div class="print-container" id="print-container">
         <!-- SECTION 1: Check (Top Third) -->
         <div class="check-section">
@@ -147,6 +177,66 @@
 
     <!-- FORM SECTION - Outside print container -->
     <div class="form-container">
+        <!-- ENHANCED CHECK CREATION -->
+        <div class="enhanced-check-creation" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h5 style="margin-bottom: 15px; color: #495057;">✏️ Quick Check Creation</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="bankSelect" class="form-label">Select Bank Account</label>
+                    <select class="form-control" id="bankSelect" v-model="selectedBankId" @change="loadBankAccount">
+                        <option value="">Choose Bank Account...</option>
+                        <option v-for="bank in bankAccounts" :key="bank.id" :value="bank.id">
+                            {{ bank.name }} (****{{ bank.accountNumber.slice(-4) }})
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="vendorSelect" class="form-label">Select Vendor</label>
+                    <select class="form-control" id="vendorSelect" v-model="selectedVendorId" @change="loadVendor">
+                        <option value="">Choose Vendor...</option>
+                        <option v-for="vendor in vendors" :key="vendor.id" :value="vendor.id">
+                            {{ vendor.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="button" class="btn btn-success btn-lg w-100" @click="openQuickCheckModal" :disabled="!selectedBankId">
+                        ➕ Write New Check
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK CHECK MODAL -->
+        <div v-if="showQuickCheckModal" class="modal-overlay">
+            <div class="modal-content">
+                <h5>💰 Write New Check</h5>
+                <div class="mb-3">
+                    <strong>Bank:</strong> {{ selectedBank?.name }}<br>
+                    <strong>Vendor:</strong> {{ selectedVendor?.name || 'Custom Payee' }}<br>
+                    <strong>Check #:</strong> {{ nextCheckNumber }}
+                </div>
+                <form @submit.prevent="createQuickCheck">
+                    <div class="mb-3">
+                        <label class="form-label">Pay To</label>
+                        <input type="text" class="form-control" v-model="quickCheckForm.payTo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Amount ($)</label>
+                        <input type="number" step="0.01" class="form-control" v-model="quickCheckForm.amount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Memo</label>
+                        <input type="text" class="form-control" v-model="quickCheckForm.memo">
+                    </div>
+                    <div class="btn-group w-100">
+                        <button type="submit" class="btn btn-primary">Create Check</button>
+                        <button type="button" class="btn btn-secondary" @click="closeQuickCheckModal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div class="check-data">
             <div class="alert alert-primary" role="alert"><strong>Background does not print.</strong></div>
             <button type="button" style="float: right;" class="btn btn-primary" @click="printCheck">Print (Ctrl + P)</button>
@@ -219,6 +309,242 @@
             </div>
         </div>
     </div>
+        </div>
+
+        <!-- BANK ACCOUNTS TAB -->
+        <div class="tab-pane fade" id="banks-panel" role="tabpanel">
+            <div class="bank-management p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4>🏦 Bank Account Management</h4>
+                    <button class="btn btn-success" @click="showAddBankModal = true">
+                        ➕ Add New Bank Account
+                    </button>
+                </div>
+
+                <!-- Bank Accounts List -->
+                <div class="row">
+                    <div v-for="bank in bankAccounts" :key="bank.id" class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ bank.name }}</h5>
+                                <p class="card-text">
+                                    <strong>Account:</strong> ****{{ bank.accountNumber.slice(-4) }}<br>
+                                    <strong>Routing:</strong> {{ bank.routingNumber }}<br>
+                                    <strong>Type:</strong> {{ bank.accountType }}<br>
+                                    <strong>Starting Check #:</strong> {{ bank.startingCheckNumber || '1001' }}
+                                </p>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary btn-sm" @click="editBank(bank)">Edit</button>
+                                    <button class="btn btn-outline-danger btn-sm" @click="deleteBank(bank.id)">Delete</button>
+                                    <button class="btn btn-outline-success btn-sm" @click="setDefaultBank(bank.id)">
+                                        {{ bank.isDefault ? '✓ Default' : 'Set Default' }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add/Edit Bank Modal -->
+                <div v-if="showAddBankModal || editingBank" class="modal-overlay">
+                    <div class="modal-content">
+                        <h5>{{ editingBank ? 'Edit Bank Account' : 'Add New Bank Account' }}</h5>
+                        <form @submit.prevent="saveBankAccount">
+                            <div class="mb-3">
+                                <label class="form-label">Bank Name</label>
+                                <input type="text" class="form-control" v-model="bankForm.name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Account Number</label>
+                                <input type="text" class="form-control" v-model="bankForm.accountNumber" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Routing Number</label>
+                                <input type="text" class="form-control" v-model="bankForm.routingNumber" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Account Type</label>
+                                <select class="form-control" v-model="bankForm.accountType" required>
+                                    <option value="Checking">Checking</option>
+                                    <option value="Savings">Savings</option>
+                                    <option value="Business">Business</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Starting Check Number</label>
+                                <input type="number" class="form-control" v-model="bankForm.startingCheckNumber" placeholder="1001">
+                            </div>
+                            <div class="btn-group w-100">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-secondary" @click="cancelBankEdit">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VENDORS TAB -->
+        <div class="tab-pane fade" id="vendors-panel" role="tabpanel">
+            <div class="vendor-management p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4>👥 Vendor Management</h4>
+                    <button class="btn btn-success" @click="showAddVendorModal = true">
+                        ➕ Add New Vendor
+                    </button>
+                </div>
+
+                <!-- Vendors List -->
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Total Paid</th>
+                                <th>Payment Count</th>
+                                <th>Last Payment</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="vendor in vendorsWithStats" :key="vendor.id">
+                                <td><strong>{{ vendor.name }}</strong></td>
+                                <td>
+                                    {{ vendor.email }}<br>
+                                    <small class="text-muted">{{ vendor.phone }}</small>
+                                </td>
+                                <td><strong>${{ vendor.totalPaid.toFixed(2) }}</strong></td>
+                                <td>{{ vendor.paymentCount }}</td>
+                                <td>{{ vendor.lastPayment || 'Never' }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" @click="editVendor(vendor)">Edit</button>
+                                        <button class="btn btn-outline-danger" @click="deleteVendor(vendor.id)">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add/Edit Vendor Modal -->
+                <div v-if="showAddVendorModal || editingVendor" class="modal-overlay">
+                    <div class="modal-content">
+                        <h5>{{ editingVendor ? 'Edit Vendor' : 'Add New Vendor' }}</h5>
+                        <form @submit.prevent="saveVendor">
+                            <div class="mb-3">
+                                <label class="form-label">Vendor Name</label>
+                                <input type="text" class="form-control" v-model="vendorForm.name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" v-model="vendorForm.email">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Phone</label>
+                                <input type="text" class="form-control" v-model="vendorForm.phone">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <textarea class="form-control" v-model="vendorForm.address" rows="3"></textarea>
+                            </div>
+                            <div class="btn-group w-100">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-secondary" @click="cancelVendorEdit">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANALYTICS TAB -->
+        <div class="tab-pane fade" id="analytics-panel" role="tabpanel">
+            <div class="analytics-dashboard p-4">
+                <h4>📊 Enhanced Payment Analytics</h4>
+                
+                <!-- Two-Column Enhanced Analytics -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="stats-card-enhanced" style="background: #e8f5e8; padding: 25px; border-radius: 12px; border-left: 6px solid #4caf50;">
+                            <h5 style="color: #388e3c; margin-bottom: 20px;">💰 Advanced Payment Totals</h5>
+                            <div class="stat-item">
+                                <span class="stat-label">This Month:</span>
+                                <strong class="stat-value">${{ enhancedStats.thisMonth.toFixed(2) }}</strong>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Last Month:</span>
+                                <strong class="stat-value">${{ enhancedStats.lastMonth.toFixed(2) }}</strong>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Average Payment:</span>
+                                <strong class="stat-value">${{ enhancedStats.averagePayment.toFixed(2) }}</strong>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Largest Payment:</span>
+                                <strong class="stat-value">${{ enhancedStats.largestPayment.toFixed(2) }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stats-card-enhanced" style="background: #fff3e0; padding: 25px; border-radius: 12px; border-left: 6px solid #ff9800;">
+                            <h5 style="color: #f57c00; margin-bottom: 20px;">📈 Vendor Insights</h5>
+                            <div class="stat-item">
+                                <span class="stat-label">Total Vendors:</span>
+                                <strong class="stat-value">{{ enhancedStats.totalVendors }}</strong>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Active This Month:</span>
+                                <strong class="stat-value">{{ enhancedStats.activeThisMonth }}</strong>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Most Frequent Vendor:</span>
+                                <strong class="stat-value">{{ enhancedStats.mostFrequentVendor || 'N/A' }}</strong>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Avg per Vendor:</span>
+                                <strong class="stat-value">${{ enhancedStats.averagePerVendor.toFixed(2) }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Vendors -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="stats-card-enhanced" style="background: #f3e5f5; padding: 25px; border-radius: 12px; border-left: 6px solid #9c27b0;">
+                            <h5 style="color: #7b1fa2; margin-bottom: 20px;">🏆 Top Vendors by Payment Amount</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Rank</th>
+                                            <th>Vendor</th>
+                                            <th>Total Paid</th>
+                                            <th>Payment Count</th>
+                                            <th>Average Payment</th>
+                                            <th>Last Payment</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(vendor, index) in topVendors" :key="vendor.id">
+                                            <td><strong>{{ index + 1 }}</strong></td>
+                                            <td>{{ vendor.name }}</td>
+                                            <td><strong>${{ vendor.totalPaid.toFixed(2) }}</strong></td>
+                                            <td>{{ vendor.paymentCount }}</td>
+                                            <td>${{ vendor.averagePayment.toFixed(2) }}</td>
+                                            <td>{{ vendor.lastPayment || 'Never' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -278,6 +604,142 @@ const testTotals = ref({
   taxAmount: 28.00,
   shippingAmount: 0,
   total: 378.00
+})
+
+// Bank Management
+const bankAccounts = ref(JSON.parse(localStorage.getItem('bankAccounts') || '[]'))
+const selectedBankId = ref('')
+const showAddBankModal = ref(false)
+const editingBank = ref(null)
+const bankForm = reactive({
+    id: '',
+    name: '',
+    accountNumber: '',
+    routingNumber: '',
+    accountType: 'Checking',
+    startingCheckNumber: 1001,
+    isDefault: false
+})
+
+// Vendor Management
+const vendors = ref(JSON.parse(localStorage.getItem('vendors') || '[]'))
+const selectedVendorId = ref('')
+const showAddVendorModal = ref(false)
+const editingVendor = ref(null)
+const vendorForm = reactive({
+    id: '',
+    name: '',
+    email: '',
+    phone: '',
+    address: ''
+})
+
+// Quick Check Modal
+const showQuickCheckModal = ref(false)
+const quickCheckForm = reactive({
+    payTo: '',
+    amount: '',
+    memo: ''
+})
+
+// Computed properties for bank and vendor selection
+const selectedBank = computed(() => bankAccounts.value.find(b => b.id === selectedBankId.value))
+const selectedVendor = computed(() => vendors.value.find(v => v.id === selectedVendorId.value))
+
+// Auto-calculate next check number based on selected bank
+const nextCheckNumber = computed(() => {
+    if (!selectedBank.value) return '1001'
+    
+    const bankChecks = JSON.parse(localStorage.getItem('checkList') || '[]')
+        .filter(check => check.bankName === selectedBank.value.name)
+    
+    if (bankChecks.length === 0) {
+        return selectedBank.value.startingCheckNumber || 1001
+    }
+    
+    const lastCheckNumber = Math.max(...bankChecks.map(check => parseInt(check.checkNumber) || 0))
+    return lastCheckNumber + 1
+})
+
+// Analytics and Statistics
+const paymentHistory = computed(() => JSON.parse(localStorage.getItem('checkList') || '[]'))
+
+const enhancedStats = computed(() => {
+    const payments = paymentHistory.value
+    const currentYear = new Date().getFullYear()
+    const currentMonth = new Date().getMonth()
+    const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1
+    const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear
+    
+    const thisMonthPayments = payments.filter(p => {
+        const paymentDate = new Date(p.date)
+        return paymentDate.getFullYear() === currentYear && paymentDate.getMonth() === currentMonth
+    })
+    
+    const lastMonthPayments = payments.filter(p => {
+        const paymentDate = new Date(p.date)
+        return paymentDate.getFullYear() === lastMonthYear && paymentDate.getMonth() === lastMonth
+    })
+    
+    const thisMonth = thisMonthPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0)
+    const lastMonthTotal = lastMonthPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0)
+    const allTime = payments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0)
+    
+    const amounts = payments.map(p => parseFloat(p.amount || 0))
+    const largestPayment = amounts.length > 0 ? Math.max(...amounts) : 0
+    
+    // Vendor analysis
+    const vendorPayments = {}
+    payments.forEach(p => {
+        if (p.payTo) {
+            vendorPayments[p.payTo] = (vendorPayments[p.payTo] || 0) + 1
+        }
+    })
+    
+    const mostFrequentVendor = Object.keys(vendorPayments).length > 0 
+        ? Object.keys(vendorPayments).reduce((a, b) => vendorPayments[a] > vendorPayments[b] ? a : b)
+        : null
+    
+    const activeThisMonth = new Set(thisMonthPayments.map(p => p.payTo).filter(Boolean)).size
+    const totalVendors = vendors.value.length
+    const averagePerVendor = totalVendors > 0 ? allTime / totalVendors : 0
+    
+    return {
+        thisMonth,
+        lastMonth: lastMonthTotal,
+        averagePayment: payments.length > 0 ? allTime / payments.length : 0,
+        largestPayment,
+        totalVendors,
+        activeThisMonth,
+        mostFrequentVendor,
+        averagePerVendor
+    }
+})
+
+const vendorsWithStats = computed(() => {
+    const payments = paymentHistory.value
+    return vendors.value.map(vendor => {
+        const vendorPayments = payments.filter(p => p.payTo === vendor.name)
+        const totalPaid = vendorPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0)
+        const lastPayment = vendorPayments.length > 0 
+            ? new Date(Math.max(...vendorPayments.map(p => new Date(p.date)))).toLocaleDateString()
+            : null
+        
+        return {
+            ...vendor,
+            totalPaid,
+            paymentCount: vendorPayments.length,
+            lastPayment,
+            averagePayment: vendorPayments.length > 0 ? totalPaid / vendorPayments.length : 0
+        }
+    })
+})
+
+const topVendors = computed(() => {
+    return vendorsWithStats.value
+        .filter(v => v.totalPaid > 0)
+        .sort((a, b) => b.totalPaid - a.totalPaid)
+        .slice(0, 10)
 })
 
 // Dynamic text positioning to avoid logo overlap
@@ -678,6 +1140,182 @@ function handleLogoLoad(event: Event) {
     console.log('Logo loaded successfully:', event)
 }
 
+// Bank Management Methods
+function loadBankAccount() {
+    if (!selectedBankId.value) return
+    
+    const bank = bankAccounts.value.find(b => b.id === selectedBankId.value)
+    if (bank) {
+        check.bankName = bank.name
+        check.routingNumber = bank.routingNumber
+        check.bankAccountNumber = bank.accountNumber
+    }
+}
+
+function saveBankAccount() {
+    if (editingBank.value) {
+        // Update existing bank
+        const index = bankAccounts.value.findIndex(b => b.id === editingBank.value.id)
+        if (index !== -1) {
+            bankAccounts.value[index] = { ...bankForm }
+        }
+    } else {
+        // Add new bank
+        const newBank = {
+            ...bankForm,
+            id: 'bank-' + Date.now()
+        }
+        bankAccounts.value.push(newBank)
+    }
+    
+    localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
+    cancelBankEdit()
+}
+
+function editBank(bank) {
+    editingBank.value = bank
+    Object.assign(bankForm, bank)
+    showAddBankModal.value = true
+}
+
+function deleteBank(bankId) {
+    if (confirm('Are you sure you want to delete this bank account?')) {
+        bankAccounts.value = bankAccounts.value.filter(b => b.id !== bankId)
+        localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
+    }
+}
+
+function setDefaultBank(bankId) {
+    bankAccounts.value.forEach(bank => {
+        bank.isDefault = bank.id === bankId
+    })
+    localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
+    
+    // Auto-load the default bank
+    selectedBankId.value = bankId
+    loadBankAccount()
+}
+
+function cancelBankEdit() {
+    showAddBankModal.value = false
+    editingBank.value = null
+    Object.assign(bankForm, {
+        id: '',
+        name: '',
+        accountNumber: '',
+        routingNumber: '',
+        accountType: 'Checking',
+        startingCheckNumber: 1001,
+        isDefault: false
+    })
+}
+
+// Vendor Management Methods
+function loadVendor() {
+    if (!selectedVendorId.value) return
+    
+    const vendor = vendors.value.find(v => v.id === selectedVendorId.value)
+    if (vendor) {
+        check.payTo = vendor.name
+        quickCheckForm.payTo = vendor.name
+    }
+}
+
+function saveVendor() {
+    if (editingVendor.value) {
+        // Update existing vendor
+        const index = vendors.value.findIndex(v => v.id === editingVendor.value.id)
+        if (index !== -1) {
+            vendors.value[index] = { ...vendorForm }
+        }
+    } else {
+        // Add new vendor
+        const newVendor = {
+            ...vendorForm,
+            id: 'vendor-' + Date.now()
+        }
+        vendors.value.push(newVendor)
+    }
+    
+    localStorage.setItem('vendors', JSON.stringify(vendors.value))
+    cancelVendorEdit()
+}
+
+function editVendor(vendor) {
+    editingVendor.value = vendor
+    Object.assign(vendorForm, vendor)
+    showAddVendorModal.value = true
+}
+
+function deleteVendor(vendorId) {
+    if (confirm('Are you sure you want to delete this vendor?')) {
+        vendors.value = vendors.value.filter(v => v.id !== vendorId)
+        localStorage.setItem('vendors', JSON.stringify(vendors.value))
+    }
+}
+
+function cancelVendorEdit() {
+    showAddVendorModal.value = false
+    editingVendor.value = null
+    Object.assign(vendorForm, {
+        id: '',
+        name: '',
+        email: '',
+        phone: '',
+        address: ''
+    })
+}
+
+// Quick Check Methods
+function openQuickCheckModal() {
+    if (!selectedBankId.value) {
+        alert('Please select a bank account first.')
+        return
+    }
+    
+    // Pre-populate with selected vendor if any
+    if (selectedVendor.value) {
+        quickCheckForm.payTo = selectedVendor.value.name
+    } else {
+        quickCheckForm.payTo = ''
+    }
+    
+    quickCheckForm.amount = ''
+    quickCheckForm.memo = ''
+    showQuickCheckModal.value = true
+}
+
+function createQuickCheck() {
+    if (!selectedBank.value) {
+        alert('Please select a bank account.')
+        return
+    }
+    
+    // Fill in the check form with quick check data
+    check.checkNumber = nextCheckNumber.value.toString()
+    check.date = new Date().toISOString().split('T')[0]
+    check.payTo = quickCheckForm.payTo
+    check.amount = quickCheckForm.amount
+    check.memo = quickCheckForm.memo
+    
+    // Load bank information
+    loadBankAccount()
+    
+    closeQuickCheckModal()
+    
+    // Optionally auto-save to history
+    // saveToHistory()
+}
+
+function closeQuickCheckModal() {
+    showQuickCheckModal.value = false
+    Object.assign(quickCheckForm, {
+        payTo: '',
+        amount: '',
+        memo: ''
+    })
+}
+
 onMounted(() => {
     // Initialize stores
     customizationStore.initializeCustomization()
@@ -714,6 +1352,102 @@ onUnmounted(() => {
 
 label {
     font-weight: bold;
+}
+
+/* Tab styling */
+.tab-content {
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 0.375rem 0.375rem;
+}
+
+/* Modal styling */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+/* Enhanced stats cards */
+.stats-card-enhanced {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.stats-card-enhanced:hover {
+    transform: translateY(-2px);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.stat-label {
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Bank card styling */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Vendor table styling */
+.table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Button group styling */
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
 }
 .memo-data {
     font-family: Caveat;
