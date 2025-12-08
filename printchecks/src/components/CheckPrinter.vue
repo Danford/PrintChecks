@@ -303,7 +303,7 @@
                     🖨️ Print Check (Ctrl + P)
                 </button>
                 <div class="mt-3">
-                    <small class="text-muted">Check will be automatically saved to history when printed</small>
+                    <small class="text-muted">Check is automatically saved to history</small>
                 </div>
             </div>
             
@@ -668,9 +668,6 @@ const checkStyles = computed(() => {
 })
 
 function printCheck () {
-    // Auto-save to history when printing
-    saveToHistory()
-    
     const style = document.createElement('style');
     style.textContent = `
       @media print {
@@ -853,6 +850,8 @@ watch(check, async () => {
         let computedLine = line?.value?.clientWidth
         check.lineLength = computedLine
     })
+    // Auto-save to history whenever check data changes
+    saveToHistory()
 }, { immediate: true })
 
 function handlePrintShortcut(event: KeyboardEvent) {
