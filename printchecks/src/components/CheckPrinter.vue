@@ -634,6 +634,12 @@ function printCheck () {
           position: relative !important;
         }
         
+        /* Hide background image on check during print */
+        #check-box-print {
+          background: none !important;
+          background-image: none !important;
+        }
+        
         /* Section 2: Payment Details (Middle Third) */
         .payment-details-section {
           height: 33.33vh !important;
