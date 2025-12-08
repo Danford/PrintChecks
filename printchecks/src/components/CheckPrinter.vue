@@ -119,37 +119,42 @@
             </div>
         </div>
 
-        <!-- SECTION 3: Payment Summary (Bottom Third) -->
-        <div class="payment-summary-section" style="margin-top: 50px; padding: 30px; border-top: 2px solid #ddd;">
-            <h3 style="margin-bottom: 20px; color: #333; text-align: center;">💰 Payment Summary</h3>
-            <div class="stats-card" style="background: #e3f2fd; padding: 25px; border-radius: 12px; border-left: 6px solid #2196f3; max-width: 600px; margin: 0 auto;">
-                <div style="font-size: 16px; line-height: 1.6;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #bbdefb;">
-                        <span style="font-weight: 500;">This Year ({{ new Date().getFullYear() }}):</span>
-                        <strong style="color: #1976d2; font-size: 18px;">${{ paymentStats.thisYear.toFixed(2) }}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #bbdefb;">
-                        <span style="font-weight: 500;">All Time Total:</span>
-                        <strong style="color: #1976d2; font-size: 18px;">${{ paymentStats.allTime.toFixed(2) }}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #bbdefb;">
-                        <span style="font-weight: 500;">Payments This Year:</span>
-                        <strong style="color: #1976d2; font-size: 18px;">{{ paymentStats.thisYearCount }}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 10px 0;">
-                        <span style="font-weight: 500;">Total Payments:</span>
-                        <strong style="color: #1976d2; font-size: 18px;">{{ paymentStats.count }}</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
+
     </div>
 
     <!-- FORM SECTION - Outside print container -->
     <div class="form-container">
-        <div class="check-data">
-            <div class="alert alert-primary" role="alert"><strong>Background does not print.</strong></div>
-            <button type="button" style="float: right;" class="btn btn-primary" @click="printCheck">Print (Ctrl + P)</button>
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="check-tab" data-bs-toggle="tab" data-bs-target="#check-panel" type="button" role="tab">
+                    ✏️ Check Details
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="banks-tab" data-bs-toggle="tab" data-bs-target="#banks-panel" type="button" role="tab">
+                    🏦 Bank Accounts
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="vendors-tab" data-bs-toggle="tab" data-bs-target="#vendors-panel" type="button" role="tab">
+                    👥 Vendors
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="analytics-tab" data-bs-toggle="tab" data-bs-target="#analytics-panel" type="button" role="tab">
+                    📊 Analytics
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="mainTabContent">
+            <!-- Check Details Tab -->
+            <div class="tab-pane fade show active" id="check-panel" role="tabpanel">
+                <div class="check-data">
+                    <div class="alert alert-primary" role="alert"><strong>Background does not print.</strong></div>
+                    <button type="button" style="float: right;" class="btn btn-primary" @click="printCheck">Print (Ctrl + P)</button>
             <form class="row g-3">
                 <div class="col-md-6">
                     <label for="inputEmail4" class="form-label">Account Holder Name</label>
@@ -180,16 +185,13 @@
                     <input type="email" class="form-control" id="inputEmail4" v-model="check.checkNumber">
                 </div>
                 <div class="col-md-4">
-                    <label for="inputAddress" class="form-label">Bank Name</label>
-                    <input type="text" class="form-control" id="inputAddress" v-model="check.bankName">
-                </div>
-                <div class="col-md-2">
-                    <label for="inputCity" class="form-label">Routing #</label>
-                    <input type="text" class="form-control" v-model="check.routingNumber">
-                </div>
-                <div class="col-md-2">
-                    <label for="inputState" class="form-label">Account #</label>
-                    <input type="text" class="form-control" v-model="check.bankAccountNumber">
+                    <label for="bankSelect" class="form-label">Bank Account</label>
+                    <select class="form-control" id="bankSelect" v-model="selectedBankId" @change="loadBankAccount">
+                        <option value="">Select Bank Account...</option>
+                        <option v-for="bank in bankAccounts" :key="bank.id" :value="bank.id">
+                            {{ bank.name }} ({{ bank.accountNumber.slice(-4) }})
+                        </option>
+                    </select>
                 </div>
                 <div class="col-md-6">
                     <label for="inputZip" class="form-label">Memo</label>
@@ -202,8 +204,16 @@
                     <input type="email" class="form-control" id="inputEmail4" v-model="check.amount">
                 </div>
                 <div class="col-md-6">
-                    <label for="inputZip" class="form-label">Pay To</label>
-                    <input type="text" class="form-control" v-model="check.payTo">
+                    <label for="vendorSelect" class="form-label">Pay To (Vendor)</label>
+                    <div class="input-group">
+                        <select class="form-control" id="vendorSelect" v-model="selectedVendorId" @change="loadVendor">
+                            <option value="">Select Vendor or Enter Custom...</option>
+                            <option v-for="vendor in vendors" :key="vendor.id" :value="vendor.id">
+                                {{ vendor.name }}
+                            </option>
+                        </select>
+                        <input type="text" class="form-control" v-model="check.payTo" placeholder="Or enter custom payee">
+                    </div>
                 </div>
                 <div class="col-md-2">
                     <label for="inputEmail4" class="form-label">Date</label>
@@ -214,8 +224,237 @@
                     <input type="text" class="form-control" v-model="check.signature">
                 </div>
             </form>
-            <div class="col-12" style="margin-top: 30px;">
-                <button type="button" class="btn btn-primary" @click="saveToHistory">Save to History</button>
+                    <div class="col-12" style="margin-top: 30px;">
+                        <button type="button" class="btn btn-primary" @click="saveToHistory">Save to History</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bank Accounts Tab -->
+            <div class="tab-pane fade" id="banks-panel" role="tabpanel">
+                <div class="bank-management">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>🏦 Bank Account Management</h4>
+                        <button class="btn btn-success" @click="showAddBankModal = true">
+                            ➕ Add New Bank Account
+                        </button>
+                    </div>
+
+                    <!-- Bank Accounts List -->
+                    <div class="row">
+                        <div v-for="bank in bankAccounts" :key="bank.id" class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ bank.name }}</h5>
+                                    <p class="card-text">
+                                        <strong>Account:</strong> ****{{ bank.accountNumber.slice(-4) }}<br>
+                                        <strong>Routing:</strong> {{ bank.routingNumber }}<br>
+                                        <strong>Type:</strong> {{ bank.accountType }}
+                                    </p>
+                                    <div class="btn-group">
+                                        <button class="btn btn-primary btn-sm" @click="editBank(bank)">Edit</button>
+                                        <button class="btn btn-outline-danger btn-sm" @click="deleteBank(bank.id)">Delete</button>
+                                        <button class="btn btn-outline-success btn-sm" @click="setDefaultBank(bank.id)">
+                                            {{ bank.isDefault ? '✓ Default' : 'Set Default' }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add/Edit Bank Modal -->
+                    <div v-if="showAddBankModal || editingBank" class="modal-overlay">
+                        <div class="modal-content">
+                            <h5>{{ editingBank ? 'Edit Bank Account' : 'Add New Bank Account' }}</h5>
+                            <form @submit.prevent="saveBankAccount">
+                                <div class="mb-3">
+                                    <label class="form-label">Bank Name</label>
+                                    <input type="text" class="form-control" v-model="bankForm.name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Account Number</label>
+                                    <input type="text" class="form-control" v-model="bankForm.accountNumber" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Routing Number</label>
+                                    <input type="text" class="form-control" v-model="bankForm.routingNumber" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Account Type</label>
+                                    <select class="form-control" v-model="bankForm.accountType" required>
+                                        <option value="Checking">Checking</option>
+                                        <option value="Savings">Savings</option>
+                                        <option value="Business">Business</option>
+                                    </select>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-secondary" @click="cancelBankEdit">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vendors Tab -->
+            <div class="tab-pane fade" id="vendors-panel" role="tabpanel">
+                <div class="vendor-management">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>👥 Vendor Management</h4>
+                        <button class="btn btn-success" @click="showAddVendorModal = true">
+                            ➕ Add New Vendor
+                        </button>
+                    </div>
+
+                    <!-- Vendors List -->
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>Total Paid</th>
+                                    <th>Payment Count</th>
+                                    <th>Last Payment</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="vendor in vendorsWithStats" :key="vendor.id">
+                                    <td><strong>{{ vendor.name }}</strong></td>
+                                    <td>
+                                        {{ vendor.email }}<br>
+                                        <small class="text-muted">{{ vendor.phone }}</small>
+                                    </td>
+                                    <td><strong>${{ vendor.totalPaid.toFixed(2) }}</strong></td>
+                                    <td>{{ vendor.paymentCount }}</td>
+                                    <td>{{ vendor.lastPayment || 'Never' }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary" @click="editVendor(vendor)">Edit</button>
+                                            <button class="btn btn-outline-danger" @click="deleteVendor(vendor.id)">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Add/Edit Vendor Modal -->
+                    <div v-if="showAddVendorModal || editingVendor" class="modal-overlay">
+                        <div class="modal-content">
+                            <h5>{{ editingVendor ? 'Edit Vendor' : 'Add New Vendor' }}</h5>
+                            <form @submit.prevent="saveVendor">
+                                <div class="mb-3">
+                                    <label class="form-label">Vendor Name</label>
+                                    <input type="text" class="form-control" v-model="vendorForm.name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" v-model="vendorForm.email">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone</label>
+                                    <input type="text" class="form-control" v-model="vendorForm.phone">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Address</label>
+                                    <textarea class="form-control" v-model="vendorForm.address" rows="3"></textarea>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-secondary" @click="cancelVendorEdit">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="tab-pane fade" id="analytics-panel" role="tabpanel">
+                <div class="analytics-dashboard">
+                    <h4>📊 Payment Analytics & Insights</h4>
+                    
+                    <!-- Enhanced Payment Summary - Two Columns -->
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="stats-card-enhanced" style="background: #e3f2fd; padding: 25px; border-radius: 12px; border-left: 6px solid #2196f3;">
+                                <h5 style="color: #1976d2; margin-bottom: 20px;">💰 Payment Totals</h5>
+                                <div class="stat-item">
+                                    <span class="stat-label">This Year ({{ new Date().getFullYear() }}):</span>
+                                    <strong class="stat-value">${{ enhancedStats.thisYear.toFixed(2) }}</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">All Time Total:</span>
+                                    <strong class="stat-value">${{ enhancedStats.allTime.toFixed(2) }}</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">This Month:</span>
+                                    <strong class="stat-value">${{ enhancedStats.thisMonth.toFixed(2) }}</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Average Payment:</span>
+                                    <strong class="stat-value">${{ enhancedStats.averagePayment.toFixed(2) }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stats-card-enhanced" style="background: #f3e5f5; padding: 25px; border-radius: 12px; border-left: 6px solid #9c27b0;">
+                                <h5 style="color: #7b1fa2; margin-bottom: 20px;">📈 Payment Counts</h5>
+                                <div class="stat-item">
+                                    <span class="stat-label">Payments This Year:</span>
+                                    <strong class="stat-value">{{ enhancedStats.thisYearCount }}</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Payments:</span>
+                                    <strong class="stat-value">{{ enhancedStats.count }}</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">This Month:</span>
+                                    <strong class="stat-value">{{ enhancedStats.thisMonthCount }}</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Active Vendors:</span>
+                                    <strong class="stat-value">{{ enhancedStats.activeVendors }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Vendors -->
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="stats-card-enhanced" style="background: #e8f5e8; padding: 25px; border-radius: 12px; border-left: 6px solid #4caf50;">
+                                <h5 style="color: #388e3c; margin-bottom: 20px;">🏆 Top Vendors by Payment Amount</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Rank</th>
+                                                <th>Vendor</th>
+                                                <th>Total Paid</th>
+                                                <th>Payment Count</th>
+                                                <th>Average Payment</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(vendor, index) in topVendors" :key="vendor.id">
+                                                <td><strong>{{ index + 1 }}</strong></td>
+                                                <td>{{ vendor.name }}</td>
+                                                <td><strong>${{ vendor.totalPaid.toFixed(2) }}</strong></td>
+                                                <td>{{ vendor.paymentCount }}</td>
+                                                <td>${{ vendor.averagePayment.toFixed(2) }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -278,6 +517,62 @@ const testTotals = ref({
   taxAmount: 28.00,
   shippingAmount: 0,
   total: 378.00
+})
+
+// Analytics and Statistics
+const paymentHistory = computed(() => JSON.parse(localStorage.getItem('checkList') || '[]'))
+
+const enhancedStats = computed(() => {
+    const payments = paymentHistory.value
+    const currentYear = new Date().getFullYear()
+    const currentMonth = new Date().getMonth()
+    
+    const thisYearPayments = payments.filter(p => new Date(p.date).getFullYear() === currentYear)
+    const thisMonthPayments = payments.filter(p => {
+        const paymentDate = new Date(p.date)
+        return paymentDate.getFullYear() === currentYear && paymentDate.getMonth() === currentMonth
+    })
+    
+    const thisYear = thisYearPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0)
+    const allTime = payments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0)
+    const thisMonth = thisMonthPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0)
+    
+    return {
+        thisYear,
+        allTime,
+        thisMonth,
+        thisYearCount: thisYearPayments.length,
+        count: payments.length,
+        thisMonthCount: thisMonthPayments.length,
+        averagePayment: payments.length > 0 ? allTime / payments.length : 0,
+        activeVendors: new Set(payments.map(p => p.payTo).filter(Boolean)).size
+    }
+})
+
+const vendorsWithStats = computed(() => {
+    const payments = paymentHistory.value
+    return vendors.value.map(vendor => {
+        const vendorPayments = payments.filter(p => p.payTo === vendor.name)
+        const totalPaid = vendorPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0)
+        const lastPayment = vendorPayments.length > 0 
+            ? new Date(Math.max(...vendorPayments.map(p => new Date(p.date)))).toLocaleDateString()
+            : null
+        
+        return {
+            ...vendor,
+            totalPaid,
+            paymentCount: vendorPayments.length,
+            lastPayment,
+            averagePayment: vendorPayments.length > 0 ? totalPaid / vendorPayments.length : 0
+        }
+    })
+})
+
+const topVendors = computed(() => {
+    return vendorsWithStats.value
+        .filter(v => v.totalPaid > 0)
+        .sort((a, b) => b.totalPaid - a.totalPaid)
+        .slice(0, 10)
 })
 
 // Dynamic text positioning to avoid logo overlap
@@ -441,34 +736,7 @@ const dynamicTextPositions = computed(() => {
   return positions
 })
 
-// Payment statistics
-const paymentStats = computed(() => {
-    const currentYear = new Date().getFullYear()
-    const allPayments = [
-        ...historyStore.checks.map(check => ({
-            amount: parseFloat(check.amount || '0'),
-            date: new Date(check.date || Date.now())
-        })),
-        ...historyStore.paymentRecords.map(payment => ({
-            amount: payment.amount,
-            date: new Date(payment.date)
-        }))
-    ]
-    
-    const thisYearPayments = allPayments.filter(payment => 
-        payment.date.getFullYear() === currentYear
-    )
-    
-    const thisYearTotal = thisYearPayments.reduce((sum, payment) => sum + payment.amount, 0)
-    const allTimeTotal = allPayments.reduce((sum, payment) => sum + payment.amount, 0)
-    
-    return {
-        thisYear: thisYearTotal,
-        allTime: allTimeTotal,
-        count: allPayments.length,
-        thisYearCount: thisYearPayments.length
-    }
-})
+
 
 // Dynamic styles based on customization
 const checkStyles = computed(() => {
@@ -654,6 +922,33 @@ const check = reactive(
 
 const line = ref(null)
 
+// Bank Management
+const bankAccounts = ref(JSON.parse(localStorage.getItem('bankAccounts') || '[]'))
+const selectedBankId = ref('')
+const showAddBankModal = ref(false)
+const editingBank = ref(null)
+const bankForm = reactive({
+    id: '',
+    name: '',
+    accountNumber: '',
+    routingNumber: '',
+    accountType: 'Checking',
+    isDefault: false
+})
+
+// Vendor Management
+const vendors = ref(JSON.parse(localStorage.getItem('vendors') || '[]'))
+const selectedVendorId = ref('')
+const showAddVendorModal = ref(false)
+const editingVendor = ref(null)
+const vendorForm = reactive({
+    id: '',
+    name: '',
+    email: '',
+    phone: '',
+    address: ''
+})
+
 watch(check, async () => {
     await nextTick(() => {
         let computedLine = line?.value?.clientWidth
@@ -708,12 +1003,246 @@ onUnmounted(() => {
     window.removeEventListener('keydown', handlePrintShortcut);
 });
 
+// Bank Management Methods
+function loadBankAccount() {
+    if (!selectedBankId.value) return
+    
+    const bank = bankAccounts.value.find(b => b.id === selectedBankId.value)
+    if (bank) {
+        check.bankName = bank.name
+        check.routingNumber = bank.routingNumber
+        check.bankAccountNumber = bank.accountNumber
+    }
+}
+
+function saveBankAccount() {
+    if (editingBank.value) {
+        // Update existing bank
+        const index = bankAccounts.value.findIndex(b => b.id === editingBank.value.id)
+        if (index !== -1) {
+            bankAccounts.value[index] = { ...bankForm }
+        }
+    } else {
+        // Add new bank
+        const newBank = {
+            ...bankForm,
+            id: 'bank-' + Date.now()
+        }
+        bankAccounts.value.push(newBank)
+    }
+    
+    localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
+    cancelBankEdit()
+}
+
+function editBank(bank) {
+    editingBank.value = bank
+    Object.assign(bankForm, bank)
+}
+
+function deleteBank(bankId) {
+    if (confirm('Are you sure you want to delete this bank account?')) {
+        bankAccounts.value = bankAccounts.value.filter(b => b.id !== bankId)
+        localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
+    }
+}
+
+function setDefaultBank(bankId) {
+    bankAccounts.value.forEach(bank => {
+        bank.isDefault = bank.id === bankId
+    })
+    localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
+    
+    // Auto-load the default bank
+    selectedBankId.value = bankId
+    loadBankAccount()
+}
+
+function cancelBankEdit() {
+    showAddBankModal.value = false
+    editingBank.value = null
+    Object.assign(bankForm, {
+        id: '',
+        name: '',
+        accountNumber: '',
+        routingNumber: '',
+        accountType: 'Checking',
+        isDefault: false
+    })
+}
+
+// Vendor Management Methods
+function loadVendor() {
+    if (!selectedVendorId.value) return
+    
+    const vendor = vendors.value.find(v => v.id === selectedVendorId.value)
+    if (vendor) {
+        check.payTo = vendor.name
+    }
+}
+
+function saveVendor() {
+    if (editingVendor.value) {
+        // Update existing vendor
+        const index = vendors.value.findIndex(v => v.id === editingVendor.value.id)
+        if (index !== -1) {
+            vendors.value[index] = { ...vendorForm }
+        }
+    } else {
+        // Add new vendor
+        const newVendor = {
+            ...vendorForm,
+            id: 'vendor-' + Date.now()
+        }
+        vendors.value.push(newVendor)
+    }
+    
+    localStorage.setItem('vendors', JSON.stringify(vendors.value))
+    cancelVendorEdit()
+}
+
+function editVendor(vendor) {
+    editingVendor.value = vendor
+    Object.assign(vendorForm, vendor)
+}
+
+function deleteVendor(vendorId) {
+    if (confirm('Are you sure you want to delete this vendor?')) {
+        vendors.value = vendors.value.filter(v => v.id !== vendorId)
+        localStorage.setItem('vendors', JSON.stringify(vendors.value))
+    }
+}
+
+function cancelVendorEdit() {
+    showAddVendorModal.value = false
+    editingVendor.value = null
+    Object.assign(vendorForm, {
+        id: '',
+        name: '',
+        email: '',
+        phone: '',
+        address: ''
+    })
+}
+
 </script>
 
 <style>
 
 label {
     font-weight: bold;
+}
+
+/* Tab styling */
+.tab-content {
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 0.375rem 0.375rem;
+}
+
+/* Modal styling */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+/* Enhanced stats cards */
+.stats-card-enhanced {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.stats-card-enhanced:hover {
+    transform: translateY(-2px);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.stat-label {
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Bank card styling */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Vendor table styling */
+.table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Button group styling */
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Input group styling */
+.input-group .form-control:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group .form-control:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 0;
+}
+
+.input-group .form-control:last-child:focus {
+    border-left: 1px solid #86b7fe;
 }
 .memo-data {
     font-family: Caveat;
