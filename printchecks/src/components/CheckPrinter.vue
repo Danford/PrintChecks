@@ -36,7 +36,7 @@
                 </div>
                 <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">{{check.signature}}</div>
                 <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '680px' }">
-                    Signature: _____________________________________
+                    Signature: _______________________________
                 </div>
                 <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo, width: '100%', textAlign: 'center' }">
                     <div class="routing" style="display: inline;">
