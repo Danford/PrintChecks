@@ -146,36 +146,6 @@
 
     <!-- FORM SECTION - Outside print container -->
     <div class="form-container">
-        <!-- ENHANCED CHECK CREATION -->
-        <div class="enhanced-check-creation" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h5 style="margin-bottom: 15px; color: #495057;">✏️ Quick Check Creation</h5>
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <label for="bankSelect" class="form-label">Select Bank Account</label>
-                    <select class="form-control" id="bankSelect" v-model="selectedBankId" @change="loadBankAccount">
-                        <option value="">Choose Bank Account...</option>
-                        <option v-for="bank in bankAccounts" :key="bank.id" :value="bank.id">
-                            {{ bank.name }} (****{{ bank.accountNumber.slice(-4) }})
-                        </option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="vendorSelect" class="form-label">Select Vendor</label>
-                    <select class="form-control" id="vendorSelect" v-model="selectedVendorId" @change="loadVendor">
-                        <option value="">Choose Vendor...</option>
-                        <option v-for="vendor in vendors" :key="vendor.id" :value="vendor.id">
-                            {{ vendor.name }}
-                        </option>
-                    </select>
-                </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button type="button" class="btn btn-success btn-lg w-100" @click="openQuickCheckModal" :disabled="!selectedBankId">
-                        ➕ Write New Check
-                    </button>
-                </div>
-            </div>
-        </div>
-
         <!-- LINE ITEMS SECTION -->
         <div class="line-items-section" style="background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dee2e6;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -253,10 +223,46 @@
             </div>
         </div>
 
+        <!-- QUICK CHECK CREATION -->
+        <div class="enhanced-check-creation" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h5 style="margin-bottom: 15px; color: #495057;">✏️ Quick Check Creation</h5>
+            <div class="alert alert-warning" role="alert" style="margin-bottom: 15px;">
+                <strong>⚠️ Important:</strong> Once a check is written and printed, it cannot be deleted. Checks can only be voided in the history.
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="bankSelect" class="form-label">Select Bank Account</label>
+                    <select class="form-control" id="bankSelect" v-model="selectedBankId" @change="loadBankAccount">
+                        <option value="">Choose Bank Account...</option>
+                        <option v-for="bank in bankAccounts" :key="bank.id" :value="bank.id">
+                            {{ bank.name }} (****{{ bank.accountNumber.slice(-4) }})
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="vendorSelect" class="form-label">Select Vendor</label>
+                    <select class="form-control" id="vendorSelect" v-model="selectedVendorId" @change="loadVendor">
+                        <option value="">Choose Vendor...</option>
+                        <option v-for="vendor in vendors" :key="vendor.id" :value="vendor.id">
+                            {{ vendor.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="button" class="btn btn-success btn-lg w-100" @click="openQuickCheckModal" :disabled="!selectedBankId">
+                        ➕ Write New Check
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- QUICK CHECK MODAL -->
         <div v-if="showQuickCheckModal" class="modal-overlay">
             <div class="modal-content">
                 <h5>💰 Write New Check</h5>
+                <div class="alert alert-warning mb-3" role="alert" style="font-size: 0.9rem;">
+                    <strong>⚠️ Warning:</strong> Once created and printed, checks cannot be deleted or edited. They can only be voided.
+                </div>
                 <div class="mb-3">
                     <strong>Bank:</strong> {{ selectedBank?.name }}<br>
                     <strong>Vendor:</strong> {{ selectedVendor?.name || 'Custom Payee' }}<br>
