@@ -1018,12 +1018,11 @@ label {
 }
 
 /* Scale the check to fit container width while maintaining aspect ratio */
-@media (max-width: 1199px) {
+/* For widths between 575px and 1200px - use consistent scaling */
+@media (min-width: 576px) and (max-width: 1199px) {
     .check-box {
         width: calc(100vw - 40px);
-        max-width: 1200px;
-        /* Height = width * (500/1200) to maintain aspect ratio */
-        height: calc((100vw - 40px) * 0.4167);
+        height: calc((100vw - 40px) * 500 / 1200);
     }
     
     #check-box-print {
@@ -1031,32 +1030,11 @@ label {
     }
 }
 
-@media (max-width: 991px) {
-    .check-box {
-        width: calc(100vw - 40px);
-        height: calc((100vw - 40px) * 0.4167);
-    }
-    
-    #check-box-print {
-        transform: scale(calc((100vw - 40px) / 1200px));
-    }
-}
-
-@media (max-width: 767px) {
-    .check-box {
-        width: calc(100vw - 40px);
-        height: calc((100vw - 40px) * 0.4167);
-    }
-    
-    #check-box-print {
-        transform: scale(calc((100vw - 40px) / 1200px));
-    }
-}
-
+/* For small screens < 575px */
 @media (max-width: 575px) {
     .check-box {
         width: calc(100vw - 30px);
-        height: calc((100vw - 30px) * 0.4167);
+        height: calc((100vw - 30px) * 500 / 1200);
     }
     
     #check-box-print {
