@@ -263,7 +263,17 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Amount ($)</label>
-                        <input type="number" step="0.01" class="form-control" v-model="quickCheckForm.amount" required>
+                        <input 
+                            type="number" 
+                            step="0.01" 
+                            class="form-control" 
+                            v-model="quickCheckForm.amount" 
+                            :readonly="currentLineItems.length > 0"
+                            :style="currentLineItems.length > 0 ? 'background-color: #e9ecef; cursor: not-allowed;' : ''"
+                            required>
+                        <small v-if="currentLineItems.length > 0" class="text-muted">
+                            💡 Amount is locked to line items total (${{ lineItemsTotal.toFixed(2) }})
+                        </small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Memo</label>
@@ -904,7 +914,13 @@ function openQuickCheckModal() {
         quickCheckForm.payTo = ''
     }
     
-    quickCheckForm.amount = ''
+    // If line items exist, lock amount to line items total
+    if (currentLineItems.value.length > 0) {
+        quickCheckForm.amount = lineItemsTotal.value.toString()
+    } else {
+        quickCheckForm.amount = ''
+    }
+    
     quickCheckForm.memo = ''
     quickCheckForm.signature = check.signature || '' // Pre-fill with previous signature or empty
     showQuickCheckModal.value = true
