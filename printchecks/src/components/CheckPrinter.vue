@@ -13,9 +13,9 @@
                 <div class="check-number-human" :style="{ ...checkStyles.checkNumber, position: 'absolute', ...dynamicTextPositions.checkNumber }">{{check.checkNumber}}</div>
                 <div class="date-data" :style="{ ...checkStyles.date, position: 'absolute', ...dynamicTextPositions.date }">{{check.date}}</div>
                 <div class="date" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '90px', left: '760px' }">Date: _____________________ </div>
-                <div class="amount-box" style="position: absolute; top: 175px; left: 950px">
-
+                <div class="amount-box-border" style="position: absolute; top: 175px; left: 950px; width: 225px; height: 40px; border: 1px solid #c7c7c7; background-color: white;">
                 </div>
+                <div class="amount-dollar-sign" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '181px', left: '935px' }">$</div>
                 <div class="amount-data" :style="{ ...checkStyles.amount, position: 'absolute', ...dynamicTextPositions.amount }">{{formatMoney(check.amount)}}</div>
                 <div class="pay-to-data" :style="{ ...checkStyles.payTo, position: 'absolute', ...dynamicTextPositions.payTo }">{{check.payTo}}</div>
                 <div class="pay-to" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '170px', left: '60px' }">
@@ -38,7 +38,7 @@
                 <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '750px' }">
                     _________________________________________________
                 </div>
-                <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo }">
+                <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo, width: '100%', textAlign: 'center' }">
                     <div class="routing" style="display: inline;">
                         a{{check.routingNumber}}a
                     </div>
@@ -455,7 +455,7 @@ const dynamicTextPositions = computed(() => {
       amount: { top: '182px', left: '970px' },
       amountWords: { top: '240px', left: '100px' },
       bankName: { top: '300px', left: '60px' },
-      memo: { top: '367px', left: '120px' },
+      memo: { top: '390px', left: '120px' },
       signature: { top: '366px', left: '770px' },
       bankInfo: { top: '420px', left: '80px' }
     }
@@ -518,7 +518,7 @@ const dynamicTextPositions = computed(() => {
     amount: { top: '182px', left: '970px' },
     amountWords: { top: '240px', left: '100px' },
     bankName: { top: '300px', left: '60px' },
-    memo: { top: '367px', left: '120px' },
+    memo: { top: '390px', left: '120px' },
     signature: { top: '366px', left: '770px' },
     bankInfo: { top: '420px', left: '80px' }
   }
