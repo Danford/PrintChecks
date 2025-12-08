@@ -674,6 +674,15 @@ const checkStyles = computed(() => {
 })
 
 function printCheck () {
+    // Validate check has required data before printing
+    if (!check.payTo || !check.amount || check.amount <= 0) {
+        alert('Cannot print: Check must have a payee and valid amount.')
+        return
+    }
+    
+    // Save to history before printing
+    saveToHistory()
+    
     const style = document.createElement('style');
     style.textContent = `
       @media print {
@@ -818,8 +827,23 @@ function printCheck () {
 }
 
 function saveToHistory () {
+    // Only save checks that have been properly filled out
+    if (!check.payTo || !check.amount || check.amount <= 0) {
+        console.warn('Cannot save empty check to history')
+        return
+    }
+    
     let checkList = JSON.parse(localStorage.getItem('checkList') || '[]')
-    checkList.push(check)
+    
+    // Create a copy of the check with a unique ID and timestamp
+    const checkToSave = {
+        ...check,
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString(),
+        isVoid: false
+    }
+    
+    checkList.push(checkToSave)
     localStorage.setItem('checkList', JSON.stringify(checkList))
 }
 
@@ -845,14 +869,14 @@ const check = reactive({
 
 const line = ref(null)
 
+// Watch for check changes to update line length only
+// DO NOT auto-save to history - checks should only be saved when printed
 watch(check, async () => {
     await nextTick(() => {
         let computedLine = line?.value?.clientWidth
         check.lineLength = computedLine
     })
-    // Auto-save to history whenever check data changes
-    saveToHistory()
-}, { immediate: true })
+})
 
 function handlePrintShortcut(event: KeyboardEvent) {
     if (event.ctrlKey && event.key === 'p') {
