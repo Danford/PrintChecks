@@ -992,13 +992,13 @@ label {
 }
 .check-box {
     width: 100%;
-    max-width: 1200px;
+    aspect-ratio: 1200 / 500;
     margin: 0 auto;
     border: 1px solid #e6e6e6;
     background-color: white;
     position: relative;
     overflow: hidden;
-    height: 500px;
+    container-type: inline-size;
 }
 
 #check-box {
@@ -1010,36 +1010,11 @@ label {
     position: relative;
     width: 1200px;
     height: 500px;
-    transform-origin: top left;
     background: url('../assets/checkbg.png');
     background-repeat: no-repeat;
     background-size: 1200px 500px;
-    margin: 0;
-}
-
-/* Scale the check to fit container width while maintaining aspect ratio */
-/* For widths between 575px and 1200px - use consistent scaling */
-@media (min-width: 576px) and (max-width: 1199px) {
-    .check-box {
-        width: calc(100vw - 40px);
-        height: calc((100vw - 40px) * 500 / 1200);
-    }
-    
-    #check-box-print {
-        transform: scale(calc((100vw - 40px) / 1200px));
-    }
-}
-
-/* For small screens < 575px */
-@media (max-width: 575px) {
-    .check-box {
-        width: calc(100vw - 30px);
-        height: calc((100vw - 30px) * 500 / 1200);
-    }
-    
-    #check-box-print {
-        transform: scale(calc((100vw - 30px) / 1200px));
-    }
+    transform-origin: top left;
+    transform: scale(calc(100cqw / 1200));
 }
 
 @font-face {
