@@ -26,6 +26,15 @@ import { RouterLink, RouterView } from 'vue-router'
             <li class="nav-item">
                 <RouterLink to="/history" class="nav-link" :class="{'active': $route.path == '/history'}">📚 History</RouterLink>
             </li>
+            <li class="nav-item">
+                <RouterLink to="/banks" class="nav-link" :class="{'active': $route.path == '/banks'}">🏦 Bank Accounts</RouterLink>
+            </li>
+            <li class="nav-item">
+                <RouterLink to="/vendors" class="nav-link" :class="{'active': $route.path == '/vendors'}">👥 Vendors</RouterLink>
+            </li>
+            <li class="nav-item">
+                <RouterLink to="/analytics" class="nav-link" :class="{'active': $route.path == '/analytics'}">📊 Analytics</RouterLink>
+            </li>
         </ul>
       <nav>
       </nav>
