@@ -36,7 +36,7 @@
                 </div>
                 <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">{{check.signature}}</div>
                 <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '750px' }">
-                    _________________________________________________
+                    _________________________________________
                 </div>
                 <div class="signature-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '405px', left: '780px', width: '300px', textAlign: 'center' }">
                     Authorized Signature
