@@ -12,7 +12,7 @@
                 </div>
                 <div class="check-number-human" :style="{ ...checkStyles.checkNumber, position: 'absolute', ...dynamicTextPositions.checkNumber }">{{check.checkNumber}}</div>
                 <div class="bank-name-top" :style="{ ...checkStyles.bankName, position: 'absolute', top: '50px', left: '0px', width: '100%', textAlign: 'center' }">{{check.bankName}}</div>
-                <div class="bank-address-top" :style="{ ...checkStyles.bankName, position: 'absolute', top: '70px', left: '0px', width: '100%', textAlign: 'center', fontSize: '10px' }">
+                <div class="bank-address-top" :style="{ ...checkStyles.bankName, position: 'absolute', top: '70px', left: '0px', width: '100%', textAlign: 'center' }">
                     {{check.bankAddress || ''}}
                 </div>
                 <div class="date-data" :style="{ ...checkStyles.date, position: 'absolute', ...dynamicTextPositions.date }">{{check.date}}</div>
