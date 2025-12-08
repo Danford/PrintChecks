@@ -1028,25 +1028,25 @@ label {
 /* Scale down proportionally when container is smaller than 1200px */
 @media (max-width: 1199px) {
     #check-box-print {
-        transform: scale(calc((100vw - 2px) / 1200));
+        transform: scale(calc((100vw - 2px) / 1200px));
     }
 }
 
 @media (max-width: 991px) {
     #check-box-print {
-        transform: scale(calc((100vw - 2px) / 1200));
+        transform: scale(calc((100vw - 2px) / 1200px));
     }
 }
 
 @media (max-width: 767px) {
     #check-box-print {
-        transform: scale(calc((100vw - 2px) / 1200));
+        transform: scale(calc((100vw - 2px) / 1200px));
     }
 }
 
 @media (max-width: 575px) {
     #check-box-print {
-        transform: scale(calc((100vw - 2px) / 1200));
+        transform: scale(calc((100vw - 2px) / 1200px));
     }
 }
 
