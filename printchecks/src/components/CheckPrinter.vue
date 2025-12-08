@@ -210,30 +210,6 @@
         <div class="check-data">
             <div class="alert alert-primary" role="alert"><strong>Background does not print.</strong></div>
             <button type="button" style="float: right;" class="btn btn-primary" @click="printCheck">Print (Ctrl + P)</button>
-            <form class="row g-3">
-                <div class="col-md-6">
-                    <label for="inputEmail4" class="form-label">Account Holder Name</label>
-                    <input type="email" class="form-control" id="inputEmail4" v-model="check.accountHolderName">
-                </div>
-                <div class="col-md-6">
-                </div>
-                <div class="col-md-4">
-                    <label for="inputAddress" class="form-label">Address</label>
-                    <input type="text" class="form-control" id="inputAddress" v-model="check.accountHolderAddress">
-                </div>
-                <div class="col-md-2">
-                    <label for="inputCity" class="form-label">City</label>
-                    <input type="text" class="form-control" v-model="check.accountHolderCity">
-                </div>
-                <div class="col-md-2">
-                    <label for="inputState" class="form-label">State</label>
-                    <input type="text" class="form-control" v-model="check.accountHolderState">
-                </div>
-                <div class="col-md-2">
-                    <label for="inputZip" class="form-label">Zip</label>
-                    <input type="text" class="form-control" v-model="check.accountHolderZip">
-                </div>
-            </form>
             <form class="row g-3" style="margin-top: 30px; border-top: 1px solid #e7e7e7;">
                 <div class="col-md-2">
                     <label for="inputEmail4" class="form-label">Check Number</label>
@@ -779,9 +755,17 @@ function loadBankAccount() {
     
     const bank = bankAccounts.value.find(b => b.id === selectedBankId.value)
     if (bank) {
+        // Load bank details
         check.bankName = bank.name
         check.routingNumber = bank.routingNumber
         check.bankAccountNumber = bank.accountNumber
+        
+        // Load account holder information from bank account
+        check.accountHolderName = bank.accountHolderName || ''
+        check.accountHolderAddress = bank.accountHolderAddress || ''
+        check.accountHolderCity = bank.accountHolderCity || ''
+        check.accountHolderState = bank.accountHolderState || ''
+        check.accountHolderZip = bank.accountHolderZip || ''
     }
 }
 

@@ -14,6 +14,8 @@
           <div class="card-body">
             <h5 class="card-title">{{ bank.name }}</h5>
             <p class="card-text">
+              <strong>Account Holder:</strong> {{ bank.accountHolderName }}<br>
+              <strong>Address:</strong> {{ bank.accountHolderAddress }}, {{ bank.accountHolderCity }}, {{ bank.accountHolderState }} {{ bank.accountHolderZip }}<br>
               <strong>Account:</strong> ****{{ bank.accountNumber.slice(-4) }}<br>
               <strong>Routing:</strong> {{ bank.routingNumber }}<br>
               <strong>Type:</strong> {{ bank.accountType }}<br>
@@ -36,6 +38,29 @@
       <div class="modal-content">
         <h5>{{ editingBank ? 'Edit Bank Account' : 'Add New Bank Account' }}</h5>
         <form @submit.prevent="saveBankAccount">
+          <div class="mb-3">
+            <label class="form-label">Account Holder Name</label>
+            <input type="text" class="form-control" v-model="bankForm.accountHolderName" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Address</label>
+            <input type="text" class="form-control" v-model="bankForm.accountHolderAddress" required>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">City</label>
+              <input type="text" class="form-control" v-model="bankForm.accountHolderCity" required>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">State</label>
+              <input type="text" class="form-control" v-model="bankForm.accountHolderState" maxlength="2" required>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">ZIP</label>
+              <input type="text" class="form-control" v-model="bankForm.accountHolderZip" required>
+            </div>
+          </div>
+          <hr>
           <div class="mb-3">
             <label class="form-label">Bank Name</label>
             <input type="text" class="form-control" v-model="bankForm.name" required>
@@ -79,6 +104,11 @@ const showAddBankModal = ref(false)
 const editingBank = ref(null)
 const bankForm = reactive({
   id: '',
+  accountHolderName: '',
+  accountHolderAddress: '',
+  accountHolderCity: '',
+  accountHolderState: '',
+  accountHolderZip: '',
   name: '',
   accountNumber: '',
   routingNumber: '',
@@ -132,6 +162,11 @@ function cancelBankEdit() {
   editingBank.value = null
   Object.assign(bankForm, {
     id: '',
+    accountHolderName: '',
+    accountHolderAddress: '',
+    accountHolderCity: '',
+    accountHolderState: '',
+    accountHolderZip: '',
     name: '',
     accountNumber: '',
     routingNumber: '',
@@ -184,4 +219,3 @@ function cancelBankEdit() {
   font-size: 0.875rem;
 }
 </style>
-
