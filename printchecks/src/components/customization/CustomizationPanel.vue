@@ -383,7 +383,7 @@ const logoPreviewStyle = computed(() => {
 // Font elements that can be customized
 const fontElements = [
   'accountHolder', 'payTo', 'amount', 'amountWords', 
-  'memo', 'signature', 'bankInfo', 'bankName', 'checkNumber', 'date'
+  'memo', 'signature', 'bankInfo', 'bankName', 'checkNumber', 'date', 'fieldLabels'
 ] as const
 
 // Font categories for organized display
@@ -407,7 +407,8 @@ function formatFontLabel(key: string): string {
     bankInfo: 'Bank Info',
     bankName: 'Bank Name',
     checkNumber: 'Check Number',
-    date: 'Date'
+    date: 'Date',
+    fieldLabels: 'Field Labels (Date:, Memo:, etc.)'
   }
   return labels[key] || key
 }

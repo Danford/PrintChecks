@@ -115,6 +115,13 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         weight: 'bold',
         style: 'normal',
         color: '#000000'
+      },
+      fieldLabels: {
+        family: 'Arial, sans-serif',
+        size: 14,
+        weight: 'normal',
+        style: 'normal',
+        color: '#000000'
       }
     },
     colors: {

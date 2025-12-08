@@ -12,13 +12,13 @@
                 </div>
                 <div class="check-number-human" :style="{ ...checkStyles.checkNumber, position: 'absolute', ...dynamicTextPositions.checkNumber }">{{check.checkNumber}}</div>
                 <div class="date-data" :style="{ ...checkStyles.date, position: 'absolute', ...dynamicTextPositions.date }">{{check.date}}</div>
-                <div class="date" style="position: absolute; top: 90px; left: 760px">Date: _____________________ </div>
+                <div class="date" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '90px', left: '760px' }">Date: _____________________ </div>
                 <div class="amount-box" style="position: absolute; top: 175px; left: 950px">
 
                 </div>
                 <div class="amount-data" :style="{ ...checkStyles.amount, position: 'absolute', ...dynamicTextPositions.amount }">{{formatMoney(check.amount)}}</div>
                 <div class="pay-to-data" :style="{ ...checkStyles.payTo, position: 'absolute', ...dynamicTextPositions.payTo }">{{check.payTo}}</div>
-                <div class="pay-to" style="position: absolute; top: 170px; left: 60px">
+                <div class="pay-to" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '170px', left: '60px' }">
                     Pay to the <br>Order of <span class="payto-line"></span>
                 </div>
                 <div class="amount-line-data" ref="line" :style="{ ...checkStyles.amountWords, position: 'absolute', ...dynamicTextPositions.amountWords }">
@@ -26,16 +26,16 @@
                     {{toWords(check.amount)}} 
                     ***
                 </div>
-                <div class="amount-line" style="position: absolute; top: 250px; left: 60px">
+                <div class="amount-line" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '250px', left: '60px' }">
                     <span class="dollar-line"></span>
                 </div>
                 <div class="bank-name" :style="{ ...checkStyles.bankName, position: 'absolute', ...dynamicTextPositions.bankName }">{{check.bankName}}</div>
                 <div class="memo-data" :style="{ ...checkStyles.memo, position: 'absolute', ...dynamicTextPositions.memo }">{{check.memo}}</div>
-                <div class="memo" style="position: absolute; top: 390px; left: 60px">
+                <div class="memo" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '60px' }">
                     Memo: ____________________________________
                 </div>
                 <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">{{check.signature}}</div>
-                <div class="signature" style="position: absolute; top: 390px; left: 750px">
+                <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '750px' }">
                     _________________________________________________
                 </div>
                 <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo }">
@@ -656,7 +656,8 @@ const checkStyles = computed(() => {
         amountWords: getFontStyle(fonts.amountWords),
         checkNumber: getFontStyle(fonts.checkNumber),
         date: getFontStyle(fonts.date),
-        bankName: getFontStyle(fonts.bankName, { family: 'Open Sans, sans-serif', size: 24, weight: 'bold', color: '#000000' })
+        bankName: getFontStyle(fonts.bankName, { family: 'Open Sans, sans-serif', size: 24, weight: 'bold', color: '#000000' }),
+        fieldLabels: getFontStyle(fonts.fieldLabels, { family: 'Arial, sans-serif', size: 14, weight: 'normal', color: '#000000' })
     }
 })
 
