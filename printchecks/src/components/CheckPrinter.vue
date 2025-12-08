@@ -507,6 +507,13 @@ function printCheck () {
           margin: 0;
         }
         
+        /* Force background colors to print */
+        * {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        
         /* Hide form container and other elements */
         .form-container {
           display: none !important;
@@ -599,10 +606,13 @@ function printCheck () {
         }
         
         .stats-card {
-          background: white !important;
+          background: #e3f2fd !important;
           border: 2px solid #000 !important;
+          border-left: 6px solid #2196f3 !important;
           max-width: none !important;
           margin: 0 !important;
+          padding: 25px !important;
+          border-radius: 12px !important;
         }
       }
     `;
