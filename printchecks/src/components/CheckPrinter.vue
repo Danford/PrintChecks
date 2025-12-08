@@ -754,7 +754,7 @@ label {
 }
 .check-box {
     width: 1200px;
-    height: 1553px;
+    height: 500px;
     border: 1px solid #e6e6e6;
     background-color: white;
     margin: 0 auto;
