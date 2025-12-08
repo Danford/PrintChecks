@@ -507,16 +507,19 @@ function printCheck () {
           margin: 0;
         }
         
-        /* Hide everything except the print container */
-        body > *:not(#app) {
+        /* Hide form container and other elements */
+        .form-container {
           display: none !important;
         }
         
-        #app > *:not(.print-container) {
+        /* Hide navigation and title elements */
+        .nav, .nav-tabs, .nav-item, .nav-link,
+        .panel-header, .header,
+        .container h1, .container p {
           display: none !important;
         }
         
-        /* Show only the print container */
+        /* Show and position the print container */
         .print-container {
           display: block !important;
           width: 100vw !important;
@@ -526,6 +529,14 @@ function printCheck () {
           position: absolute !important;
           top: 0 !important;
           left: 0 !important;
+          background: white !important;
+        }
+        
+        /* Ensure all sections are visible */
+        .check-section,
+        .payment-details-section,
+        .payment-summary-section {
+          display: block !important;
         }
         
         /* Section 1: Check (Top Third) */
@@ -535,6 +546,7 @@ function printCheck () {
           margin: 0 !important;
           padding: 0 !important;
           position: relative !important;
+          background: white !important;
         }
         
         .check-box {
@@ -564,6 +576,15 @@ function printCheck () {
           border: 2px solid #000 !important;
           max-width: none !important;
           margin: 0 !important;
+          padding: 10px !important;
+          border-radius: 0 !important;
+        }
+        
+        /* Override any inline styles that might cause spacing issues */
+        .payment-details-section h3,
+        .payment-summary-section h3 {
+          margin: 0 0 10px 0 !important;
+          padding: 0 !important;
         }
         
         /* Section 3: Payment Summary (Bottom Third) */
