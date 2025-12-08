@@ -19,7 +19,7 @@
                 <div class="amount-data" :style="{ ...checkStyles.amount, position: 'absolute', ...dynamicTextPositions.amount }">{{formatMoney(check.amount)}}</div>
                 <div class="pay-to-data" :style="{ ...checkStyles.payTo, position: 'absolute', ...dynamicTextPositions.payTo }">{{check.payTo}}</div>
                 <div class="pay-to" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '170px', left: '60px' }">
-                    Pay to the <br>Order of <span class="payto-line"></span>
+                    Pay to the <br>Order of: <span class="payto-line"></span>
                 </div>
                 <div class="amount-line-data" ref="line" :style="{ ...checkStyles.amountWords, position: 'absolute', ...dynamicTextPositions.amountWords }">
                     ***
@@ -35,8 +35,8 @@
                     Memo: ____________________________________
                 </div>
                 <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">{{check.signature}}</div>
-                <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '750px' }">
-                    _________________________________________________
+                <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '680px' }">
+                    Signature: _________________________________________________
                 </div>
                 <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo, width: '100%', textAlign: 'center' }">
                     <div class="routing" style="display: inline;">
@@ -451,11 +451,11 @@ const dynamicTextPositions = computed(() => {
       accountHolderAddress: { top: '70px', left: '60px' },
       checkNumber: { top: '40px', left: '1060px' },
       date: { top: '80px', left: '850px' },
-      payTo: { top: '180px', left: '180px' },
+      payTo: { top: '190px', left: '180px' },
       amount: { top: '182px', left: '970px' },
       amountWords: { top: '240px', left: '100px' },
       bankName: { top: '300px', left: '60px' },
-      memo: { top: '390px', left: '120px' },
+      memo: { top: '390px', left: '130px' },
       signature: { top: '366px', left: '770px' },
       bankInfo: { top: '420px', left: '80px' }
     }
@@ -514,11 +514,11 @@ const dynamicTextPositions = computed(() => {
     accountHolderAddress: { top: '70px', left: '60px' },
     checkNumber: { top: '40px', left: '1060px' },
     date: { top: '80px', left: '850px' },
-    payTo: { top: '180px', left: '180px' },
+    payTo: { top: '190px', left: '180px' },
     amount: { top: '182px', left: '970px' },
     amountWords: { top: '240px', left: '100px' },
     bankName: { top: '300px', left: '60px' },
-    memo: { top: '390px', left: '120px' },
+    memo: { top: '390px', left: '130px' },
     signature: { top: '366px', left: '770px' },
     bankInfo: { top: '420px', left: '80px' }
   }
