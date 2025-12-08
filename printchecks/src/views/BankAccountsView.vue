@@ -19,7 +19,8 @@
               <strong>Account:</strong> ****{{ bank.accountNumber.slice(-4) }}<br>
               <strong>Routing:</strong> {{ bank.routingNumber }}<br>
               <strong>Type:</strong> {{ bank.accountType }}<br>
-              <strong>Starting Check #:</strong> {{ bank.startingCheckNumber || '1001' }}
+              <strong>Starting Check #:</strong> {{ bank.startingCheckNumber || '1001' }}<br>
+              <strong>Signature:</strong> {{ bank.signature || 'Not set' }}
             </p>
             <div class="btn-group">
               <button class="btn btn-primary btn-sm" @click="editBank(bank)">Edit</button>
@@ -85,6 +86,11 @@
             <label class="form-label">Starting Check Number</label>
             <input type="number" class="form-control" v-model="bankForm.startingCheckNumber" placeholder="1001">
           </div>
+          <div class="mb-3">
+            <label class="form-label">Signature</label>
+            <input type="text" class="form-control" v-model="bankForm.signature" placeholder="Your signature">
+            <small class="text-muted">This signature will be used on all checks from this account</small>
+          </div>
           <div class="btn-group w-100">
             <button type="submit" class="btn btn-primary">Save</button>
             <button type="button" class="btn btn-secondary" @click="cancelBankEdit">Cancel</button>
@@ -114,6 +120,7 @@ const bankForm = reactive({
   routingNumber: '',
   accountType: 'Checking',
   startingCheckNumber: 1001,
+  signature: '',
   isDefault: false
 })
 

@@ -279,10 +279,6 @@
                         <label class="form-label">Memo</label>
                         <input type="text" class="form-control" v-model="quickCheckForm.memo">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Signature</label>
-                        <input type="text" class="form-control" v-model="quickCheckForm.signature" placeholder="Your signature">
-                    </div>
                     <div class="btn-group w-100">
                         <button type="submit" class="btn btn-primary">Create Check</button>
                         <button type="button" class="btn btn-secondary" @click="closeQuickCheckModal">Cancel</button>
@@ -383,8 +379,7 @@ const showQuickCheckModal = ref(false)
 const quickCheckForm = reactive({
     payTo: '',
     amount: '',
-    memo: '',
-    signature: ''
+    memo: ''
 })
 
 // Line Items Management
@@ -922,7 +917,6 @@ function openQuickCheckModal() {
     }
     
     quickCheckForm.memo = ''
-    quickCheckForm.signature = check.signature || '' // Pre-fill with previous signature or empty
     showQuickCheckModal.value = true
 }
 
@@ -938,7 +932,7 @@ function createQuickCheck() {
     check.payTo = quickCheckForm.payTo
     check.amount = quickCheckForm.amount
     check.memo = quickCheckForm.memo
-    check.signature = quickCheckForm.signature || check.signature // Use provided signature or keep existing
+    check.signature = selectedBank.value.signature || '' // Use bank's signature
     
     // Load bank information
     loadBankAccount()
@@ -951,8 +945,7 @@ function closeQuickCheckModal() {
     Object.assign(quickCheckForm, {
         payTo: '',
         amount: '',
-        memo: '',
-        signature: ''
+        memo: ''
     })
 }
 
