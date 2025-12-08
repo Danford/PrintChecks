@@ -36,7 +36,7 @@
                 </div>
                 <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">{{check.signature}}</div>
                 <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '680px' }">
-                    Signature: _________________________________________________
+                    Signature: _____________________________________
                 </div>
                 <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo, width: '100%', textAlign: 'center' }">
                     <div class="routing" style="display: inline;">
@@ -456,8 +456,8 @@ const dynamicTextPositions = computed(() => {
       amountWords: { top: '240px', left: '100px' },
       bankName: { top: '300px', left: '60px' },
       memo: { top: '390px', left: '130px' },
-      signature: { top: '366px', left: '770px' },
-      bankInfo: { top: '420px', left: '80px' }
+      signature: { top: '366px', left: '785px' },
+      bankInfo: { top: '435px', left: '80px' }
     }
   }
 
@@ -519,8 +519,8 @@ const dynamicTextPositions = computed(() => {
     amountWords: { top: '240px', left: '100px' },
     bankName: { top: '300px', left: '60px' },
     memo: { top: '390px', left: '130px' },
-    signature: { top: '366px', left: '770px' },
-    bankInfo: { top: '420px', left: '80px' }
+    signature: { top: '366px', left: '785px' },
+    bankInfo: { top: '435px', left: '80px' }
   }
 
   // Adjust positions based on logo placement - text flows around logo
