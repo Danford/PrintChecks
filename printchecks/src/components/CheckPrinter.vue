@@ -565,6 +565,26 @@ function printCheck () {
           print-color-adjust: exact !important;
         }
         
+        /* Reset body for print */
+        body {
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        
+        /* Strip all styling from container but keep the structure */
+        .container {
+          max-width: none !important;
+          width: auto !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          background: none !important;
+        }
+        
+        /* Hide the navigation container completely */
+        .container:has(.nav-tabs) {
+          display: none !important;
+        }
+        
         /* Hide form container and other elements */
         .form-container {
           display: none !important;
@@ -573,20 +593,16 @@ function printCheck () {
         /* Hide navigation and title elements */
         .nav, .nav-tabs, .nav-item, .nav-link,
         .panel-header, .header,
-        .container h1, .container p {
+        h1, p, nav {
           display: none !important;
         }
         
-        /* Show and position the print container */
+        /* Show the print container with its natural flow */
         .print-container {
           display: block !important;
-          width: 100vw !important;
-          height: 100vh !important;
+          width: 100% !important;
           margin: 0 !important;
           padding: 0 !important;
-          position: absolute !important;
-          top: 0 !important;
-          left: 0 !important;
           background: white !important;
         }
         
