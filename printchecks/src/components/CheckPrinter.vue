@@ -823,31 +823,25 @@ function saveToHistory () {
     localStorage.setItem('checkList', JSON.stringify(checkList))
 }
 
-function genNewCheck () {
-    let checkList = JSON.parse(localStorage.getItem('checkList') || '[]')
-    let recentCheck = checkList[checkList.length - 1]
-    let check = {}
-    check.accountHolderName = recentCheck?.accountHolderName || 'John Smith'
-    check.accountHolderAddress = recentCheck?.accountHolderAddress || '123 Cherry Tree Lane'
-    check.accountHolderCity = recentCheck?.accountHolderCity || 'New York'
-    check.accountHolderState = recentCheck?.accountHolderState || 'NY'
-    check.accountHolderZip = recentCheck?.accountHolderZip || '10001'
-    check.checkNumber = recentCheck?.checkNumber ? (parseInt(recentCheck?.checkNumber) + 1) : '100'
-    check.date = new Date().toLocaleDateString()
-    check.bankName = recentCheck?.bankName || 'Bank Name, INC'
-    check.bankAddress = recentCheck?.bankAddress || '123 Bank St, New York, NY 10001'
-    check.amount = '0.00'
-    check.payTo = 'Michael Johnson'
-    check.memo = recentCheck?.memo || 'Rent'
-    check.signature = recentCheck?.signature || 'John Smith'
-    check.routingNumber = recentCheck?.routingNumber || '022303659'
-    check.bankAccountNumber = recentCheck?.bankAccountNumber || '000000000000'
-    return check
-}
-
-const check = reactive(
-    genNewCheck()
-)
+// Initialize check as empty - only populate when user creates a check
+const check = reactive({
+    accountHolderName: '',
+    accountHolderAddress: '',
+    accountHolderCity: '',
+    accountHolderState: '',
+    accountHolderZip: '',
+    checkNumber: '',
+    date: '',
+    bankName: '',
+    bankAddress: '',
+    amount: 0,
+    payTo: '',
+    memo: '',
+    signature: '',
+    routingNumber: '',
+    bankAccountNumber: '',
+    lineLength: 0
+})
 
 const line = ref(null)
 
@@ -878,34 +872,16 @@ function handleLogoLoad(event: Event) {
 }
 
 // Bank Management Methods
+// Bank account selection - don't populate check until user clicks "Create Check"
 function loadBankAccount() {
-    if (!selectedBankId.value) return
-    
-    const bank = bankAccounts.value.find(b => b.id === selectedBankId.value)
-    if (bank) {
-        // Load bank details
-        check.bankName = bank.name
-        check.routingNumber = bank.routingNumber
-        check.bankAccountNumber = bank.accountNumber
-        
-        // Load account holder information from bank account
-        check.accountHolderName = bank.accountHolderName || ''
-        check.accountHolderAddress = bank.accountHolderAddress || ''
-        check.accountHolderCity = bank.accountHolderCity || ''
-        check.accountHolderState = bank.accountHolderState || ''
-        check.accountHolderZip = bank.accountHolderZip || ''
-    }
+    // Bank selection is now just for reference
+    // The actual check data will be populated in createQuickCheck()
 }
 
-// Vendor loading for Quick Check
+// Vendor loading for Quick Check - don't populate check until user clicks "Create Check"
 function loadVendor() {
-    if (!selectedVendorId.value) return
-    
-    const vendor = vendors.value.find(v => v.id === selectedVendorId.value)
-    if (vendor) {
-        check.payTo = vendor.name
-        quickCheckForm.payTo = vendor.name
-    }
+    // Vendor selection is now just for reference
+    // The actual check data will be populated in openQuickCheckModal()
 }
 
 // Quick Check Methods
@@ -939,16 +915,24 @@ function createQuickCheck() {
         return
     }
     
-    // Fill in the check form with quick check data
+    // Fill in the check form with bank account and form data
+    check.accountHolderName = selectedBank.value.accountHolderName || ''
+    check.accountHolderAddress = selectedBank.value.accountHolderAddress || ''
+    check.accountHolderCity = selectedBank.value.accountHolderCity || ''
+    check.accountHolderState = selectedBank.value.accountHolderState || ''
+    check.accountHolderZip = selectedBank.value.accountHolderZip || ''
     check.checkNumber = nextCheckNumber.value.toString()
     check.date = new Date().toISOString().split('T')[0]
+    check.bankName = selectedBank.value.name || ''
+    check.bankAddress = selectedBank.value.address || ''
+    check.routingNumber = selectedBank.value.routingNumber || ''
+    check.bankAccountNumber = selectedBank.value.accountNumber || ''
+    check.signature = selectedBank.value.signature || ''
+    
+    // Fill in the user-entered data
     check.payTo = quickCheckForm.payTo
     check.amount = quickCheckForm.amount
     check.memo = quickCheckForm.memo
-    check.signature = selectedBank.value.signature || '' // Use bank's signature
-    
-    // Load bank information
-    loadBankAccount()
     
     closeQuickCheckModal()
 }
