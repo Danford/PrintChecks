@@ -998,12 +998,12 @@ label {
     background-color: white;
     position: relative;
     overflow: hidden;
-    /* Height will be set by the scaled content */
-    height: auto;
+    height: 500px;
 }
 
 #check-box {
     width: 100%;
+    height: 100%;
 }
 
 #check-box-print {
@@ -1022,6 +1022,8 @@ label {
     .check-box {
         width: calc(100vw - 40px);
         max-width: 1200px;
+        /* Height = width * (500/1200) to maintain aspect ratio */
+        height: calc((100vw - 40px) * 0.4167);
     }
     
     #check-box-print {
@@ -1032,6 +1034,7 @@ label {
 @media (max-width: 991px) {
     .check-box {
         width: calc(100vw - 40px);
+        height: calc((100vw - 40px) * 0.4167);
     }
     
     #check-box-print {
@@ -1042,6 +1045,7 @@ label {
 @media (max-width: 767px) {
     .check-box {
         width: calc(100vw - 40px);
+        height: calc((100vw - 40px) * 0.4167);
     }
     
     #check-box-print {
@@ -1051,11 +1055,12 @@ label {
 
 @media (max-width: 575px) {
     .check-box {
-        width: calc(100vw - 20px);
+        width: calc(100vw - 30px);
+        height: calc((100vw - 30px) * 0.4167);
     }
     
     #check-box-print {
-        transform: scale(calc((100vw - 20px) / 1200px));
+        transform: scale(calc((100vw - 30px) / 1200px));
     }
 }
 
