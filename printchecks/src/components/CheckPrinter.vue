@@ -232,27 +232,6 @@
                     <input type="text" class="form-control" v-model="check.memo">
                 </div>
             </form>
-            <form class="row g-3" style="margin-top: 30px; border-top: 1px solid #e7e7e7;">
-                <div class="col-md-2">
-                    <label for="inputEmail4" class="form-label">Amount</label>
-                    <input type="email" class="form-control" id="inputEmail4" v-model="check.amount">
-                </div>
-                <div class="col-md-6">
-                    <label for="inputZip" class="form-label">Pay To</label>
-                    <input type="text" class="form-control" v-model="check.payTo">
-                </div>
-                <div class="col-md-2">
-                    <label for="inputEmail4" class="form-label">Date</label>
-                    <input type="email" class="form-control" id="inputEmail4" v-model="check.date">
-                </div>
-                <div class="col-md-6">
-                    <label for="inputZip" class="form-label">Signature</label>
-                    <input type="text" class="form-control" v-model="check.signature">
-                </div>
-            </form>
-            <div class="col-12" style="margin-top: 30px;">
-                <button type="button" class="btn btn-primary" @click="saveToHistory">Save to History</button>
-            </div>
         </div>
     </div>
 </template>
@@ -571,6 +550,9 @@ const checkStyles = computed(() => {
 })
 
 function printCheck () {
+    // Auto-save to history when printing
+    saveToHistory()
+    
     const style = document.createElement('style');
     style.textContent = `
       @media print {
