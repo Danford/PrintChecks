@@ -31,7 +31,7 @@
                     ***
                 </div>
                 <div class="amount-line" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '250px', left: '60px' }">
-                    <span class="dollar-line"></span>
+                    <span class="dollar-line" :style="{ width: check.lineLength ? `${840 - check.lineLength}px` : '840px' }"></span>
                 </div>
                 <div class="memo-data" :style="{ ...checkStyles.memo, position: 'absolute', ...dynamicTextPositions.memo }">{{check.memo}}</div>
                 <div class="memo" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '60px' }">
