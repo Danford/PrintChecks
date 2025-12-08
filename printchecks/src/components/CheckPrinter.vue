@@ -1014,7 +1014,7 @@ label {
     background-repeat: no-repeat;
     background-size: 1200px 500px;
     transform-origin: top left;
-    transform: scale(calc(100cqw / 1200));
+    transform: scale(calc(100cqw / 1200px));
 }
 
 @font-face {
