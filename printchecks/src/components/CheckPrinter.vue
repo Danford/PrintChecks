@@ -11,8 +11,12 @@
                     {{check.accountHolderCity}}, {{check.accountHolderState}} {{check.accountHolderZip}}
                 </div>
                 <div class="check-number-human" :style="{ ...checkStyles.checkNumber, position: 'absolute', ...dynamicTextPositions.checkNumber }">{{check.checkNumber}}</div>
+                <div class="bank-name-top" :style="{ ...checkStyles.bankName, position: 'absolute', top: '50px', left: '0px', width: '100%', textAlign: 'center' }">{{check.bankName}}</div>
+                <div class="bank-address-top" :style="{ ...checkStyles.bankName, position: 'absolute', top: '70px', left: '0px', width: '100%', textAlign: 'center', fontSize: '10px' }">
+                    {{check.bankAddress || ''}}
+                </div>
                 <div class="date-data" :style="{ ...checkStyles.date, position: 'absolute', ...dynamicTextPositions.date }">{{check.date}}</div>
-                <div class="date" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '90px', left: '760px' }">Date: _____________________ </div>
+                <div class="date" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '90px', left: '780px' }">Date: _____________________ </div>
                 <div class="amount-box-border" style="position: absolute; top: 175px; left: 950px; width: 225px; height: 40px; border: 1px solid #c7c7c7; background-color: white;">
                 </div>
                 <div class="amount-dollar-sign" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '181px', left: '935px' }">$</div>
@@ -29,7 +33,6 @@
                 <div class="amount-line" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '250px', left: '60px' }">
                     <span class="dollar-line"></span>
                 </div>
-                <div class="bank-name" :style="{ ...checkStyles.bankName, position: 'absolute', ...dynamicTextPositions.bankName }">{{check.bankName}}</div>
                 <div class="memo-data" :style="{ ...checkStyles.memo, position: 'absolute', ...dynamicTextPositions.memo }">{{check.memo}}</div>
                 <div class="memo" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '60px' }">
                     Memo: ____________________________________
@@ -829,6 +832,7 @@ function genNewCheck () {
     check.checkNumber = recentCheck?.checkNumber ? (parseInt(recentCheck?.checkNumber) + 1) : '100'
     check.date = new Date().toLocaleDateString()
     check.bankName = recentCheck?.bankName || 'Bank Name, INC'
+    check.bankAddress = recentCheck?.bankAddress || '123 Bank St, New York, NY 10001'
     check.amount = '0.00'
     check.payTo = 'Michael Johnson'
     check.memo = recentCheck?.memo || 'Rent'
