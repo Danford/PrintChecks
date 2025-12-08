@@ -997,7 +997,7 @@ label {
     border: 1px solid #e6e6e6;
     background-color: white;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
 }
 
 /* Maintain aspect ratio using padding-bottom trick */
@@ -1015,6 +1015,8 @@ label {
     position: absolute;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
     width: 1200px;
     height: 500px;
     transform-origin: top left;
@@ -1023,10 +1025,28 @@ label {
     background-size: 1200px 500px;
 }
 
-/* Scale the entire check content proportionally on smaller screens */
-@media (max-width: 1240px) {
+/* Scale down proportionally when container is smaller than 1200px */
+@media (max-width: 1199px) {
     #check-box-print {
-        transform: scale(calc((100vw - 40px) / 1200));
+        transform: scale(calc((100vw - 2px) / 1200));
+    }
+}
+
+@media (max-width: 991px) {
+    #check-box-print {
+        transform: scale(calc((100vw - 2px) / 1200));
+    }
+}
+
+@media (max-width: 767px) {
+    #check-box-print {
+        transform: scale(calc((100vw - 2px) / 1200));
+    }
+}
+
+@media (max-width: 575px) {
+    #check-box-print {
+        transform: scale(calc((100vw - 2px) / 1200));
     }
 }
 
