@@ -991,18 +991,43 @@ label {
     background-color: white;
 }
 .check-box {
-    width: 1200px;
-    height: 500px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
     border: 1px solid #e6e6e6;
     background-color: white;
-    margin: 0 auto;
-    background: url('../assets/checkbg.png');
-    background-repeat: no-repeat;
-    background-size: contain;
+    position: relative;
+    overflow: visible;
+}
+
+/* Maintain aspect ratio using padding-bottom trick */
+.check-box::before {
+    content: '';
+    display: block;
+    padding-top: 41.67%; /* 500/1200 = 0.4167 = 41.67% for aspect ratio */
 }
 
 #check-box {
     width: 100%;
+}
+
+#check-box-print {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1200px;
+    height: 500px;
+    transform-origin: top left;
+    background: url('../assets/checkbg.png');
+    background-repeat: no-repeat;
+    background-size: 1200px 500px;
+}
+
+/* Scale the entire check content proportionally on smaller screens */
+@media (max-width: 1240px) {
+    #check-box-print {
+        transform: scale(calc((100vw - 40px) / 1200));
+    }
 }
 
 @font-face {
