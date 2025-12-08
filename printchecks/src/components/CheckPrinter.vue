@@ -199,6 +199,10 @@
                         <label class="form-label">Memo</label>
                         <input type="text" class="form-control" v-model="quickCheckForm.memo">
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Signature</label>
+                        <input type="text" class="form-control" v-model="quickCheckForm.signature" placeholder="Your signature">
+                    </div>
                     <div class="btn-group w-100">
                         <button type="submit" class="btn btn-primary">Create Check</button>
                         <button type="button" class="btn btn-secondary" @click="closeQuickCheckModal">Cancel</button>
@@ -208,30 +212,23 @@
         </div>
 
         <div class="check-data">
-            <div class="alert alert-primary" role="alert"><strong>Background does not print.</strong></div>
-            <button type="button" style="float: right;" class="btn btn-primary" @click="printCheck">Print (Ctrl + P)</button>
-            <form class="row g-3" style="margin-top: 30px; border-top: 1px solid #e7e7e7;">
-                <div class="col-md-2">
-                    <label for="inputEmail4" class="form-label">Check Number</label>
-                    <input type="email" class="form-control" id="inputEmail4" v-model="check.checkNumber">
+            <!-- Show Print Button when check is ready -->
+            <div v-if="check.payTo && check.amount > 0" class="text-center" style="padding: 30px;">
+                <div class="alert alert-success mb-4" role="alert">
+                    <strong>✅ Check Ready!</strong> Review the check preview above, then click Print to save and print.
                 </div>
-                <div class="col-md-4">
-                    <label for="inputAddress" class="form-label">Bank Name</label>
-                    <input type="text" class="form-control" id="inputAddress" v-model="check.bankName">
+                <button type="button" class="btn btn-primary btn-lg" @click="printCheck" style="padding: 15px 50px; font-size: 18px;">
+                    🖨️ Print Check (Ctrl + P)
+                </button>
+                <div class="mt-3">
+                    <small class="text-muted">Check will be automatically saved to history when printed</small>
                 </div>
-                <div class="col-md-2">
-                    <label for="inputCity" class="form-label">Routing #</label>
-                    <input type="text" class="form-control" v-model="check.routingNumber">
-                </div>
-                <div class="col-md-2">
-                    <label for="inputState" class="form-label">Account #</label>
-                    <input type="text" class="form-control" v-model="check.bankAccountNumber">
-                </div>
-                <div class="col-md-6">
-                    <label for="inputZip" class="form-label">Memo</label>
-                    <input type="text" class="form-control" v-model="check.memo">
-                </div>
-            </form>
+            </div>
+            
+            <!-- Show Info when no check is created -->
+            <div v-else class="alert alert-info" role="alert">
+                <strong>ℹ️ Info:</strong> Use the "Write New Check" button above to create checks. The check preview will display here. Background does not print.
+            </div>
         </div>
     </div>
 </template>
@@ -306,7 +303,8 @@ const showQuickCheckModal = ref(false)
 const quickCheckForm = reactive({
     payTo: '',
     amount: '',
-    memo: ''
+    memo: '',
+    signature: ''
 })
 
 // Computed properties for bank and vendor selection
@@ -778,6 +776,7 @@ function openQuickCheckModal() {
     
     quickCheckForm.amount = ''
     quickCheckForm.memo = ''
+    quickCheckForm.signature = check.signature || '' // Pre-fill with previous signature or empty
     showQuickCheckModal.value = true
 }
 
@@ -793,14 +792,12 @@ function createQuickCheck() {
     check.payTo = quickCheckForm.payTo
     check.amount = quickCheckForm.amount
     check.memo = quickCheckForm.memo
+    check.signature = quickCheckForm.signature || check.signature // Use provided signature or keep existing
     
     // Load bank information
     loadBankAccount()
     
     closeQuickCheckModal()
-    
-    // Optionally auto-save to history
-    // saveToHistory()
 }
 
 function closeQuickCheckModal() {
@@ -808,7 +805,8 @@ function closeQuickCheckModal() {
     Object.assign(quickCheckForm, {
         payTo: '',
         amount: '',
-        memo: ''
+        memo: '',
+        signature: ''
     })
 }
 
