@@ -993,12 +993,12 @@ label {
 .check-box {
     width: 100%;
     max-width: 1200px;
+    aspect-ratio: 1200 / 500;
     margin: 0 auto;
     border: 1px solid #e6e6e6;
     background-color: white;
     position: relative;
     overflow: hidden;
-    height: 500px;
 }
 
 #check-box {
@@ -1007,60 +1007,43 @@ label {
 }
 
 #check-box-print {
-    position: relative;
-    width: 1200px;
-    height: 500px;
-    transform-origin: top left;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: url('../assets/checkbg.png');
     background-repeat: no-repeat;
-    background-size: 1200px 500px;
-    margin: 0;
+    background-size: 100% 100%;
 }
 
-/* Scale the check to fit container width while maintaining aspect ratio */
+/* Scale all absolutely positioned content proportionally */
+#check-box-print > div {
+    transform-origin: top left;
+}
+
+/* Adjust font sizes and positions proportionally based on container width */
 @media (max-width: 1199px) {
-    .check-box {
-        width: calc(100vw - 40px);
-        max-width: 1200px;
-        /* Height = width * (500/1200) to maintain aspect ratio */
-        height: calc((100vw - 40px) * 0.4167);
-    }
-    
-    #check-box-print {
-        transform: scale(calc((100vw - 40px) / 1200px));
+    #check-box-print > div {
+        transform: scale(calc(100vw / 1200px));
     }
 }
 
 @media (max-width: 991px) {
-    .check-box {
-        width: calc(100vw - 40px);
-        height: calc((100vw - 40px) * 0.4167);
-    }
-    
-    #check-box-print {
-        transform: scale(calc((100vw - 40px) / 1200px));
+    #check-box-print > div {
+        transform: scale(calc(100vw / 1200px));
     }
 }
 
 @media (max-width: 767px) {
-    .check-box {
-        width: calc(100vw - 40px);
-        height: calc((100vw - 40px) * 0.4167);
-    }
-    
-    #check-box-print {
-        transform: scale(calc((100vw - 40px) / 1200px));
+    #check-box-print > div {
+        transform: scale(calc(100vw / 1200px));
     }
 }
 
 @media (max-width: 575px) {
-    .check-box {
-        width: calc(100vw - 30px);
-        height: calc((100vw - 30px) * 0.4167);
-    }
-    
-    #check-box-print {
-        transform: scale(calc((100vw - 30px) / 1200px));
+    #check-box-print > div {
+        transform: scale(calc(100vw / 1200px));
     }
 }
 
