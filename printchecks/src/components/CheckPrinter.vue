@@ -594,7 +594,7 @@ const dynamicTextPositions = computed(() => {
       accountHolderAddress: { top: '70px', left: '60px' },
       checkNumber: { top: '40px', left: '1060px' },
       date: { top: '90px', left: '850px' },
-      payTo: { top: '210px', left: '180px' },
+      payTo: { top: '190px', left: '180px' },
       amount: { top: '182px', left: '970px' },
       amountWords: { top: '240px', left: '100px' },
       bankName: { top: '300px', left: '60px' },
