@@ -463,7 +463,6 @@
                 </div>
                 <div class="modal-body">
                     <form @submit.prevent="saveVendor">
-                    <form @submit.prevent="saveVendor">
                         <div class="mb-3">
                             <label class="form-label">Vendor Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" v-model="vendorForm.name" required>
@@ -480,7 +479,6 @@
                             <label class="form-label">Address</label>
                             <textarea class="form-control" v-model="vendorForm.address" rows="3"></textarea>
                         </div>
-                    </form>
                     </form>
                 </div>
                 <div class="modal-footer">
