@@ -234,8 +234,15 @@
                                 ***
                             </div>
                             <div class="amount-line" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '250px', left: '60px' }">
-                                <span class="dollar-line" :style="{ width: check.lineLength ? `${840 - check.lineLength}px` : '840px' }"></span>
+                                <span class="dollar-line"></span>
                             </div>
+                            <!-- Hand-drawn line after amount words -->
+                            <div v-if="check.lineLength" class="amount-handdrawn-line" :style="{ 
+                                position: 'absolute', 
+                                top: '264px', 
+                                left: `${check.lineLength + 60}px`,
+                                width: `${840 - check.lineLength}px`
+                            }"></div>
                             <div class="memo-data" :style="{ ...checkStyles.memo, position: 'absolute', ...dynamicTextPositions.memo }">{{check.memo}}</div>
                             <div class="memo" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '60px' }">
                                 Memo: ____________________________________
@@ -1478,6 +1485,19 @@ label {
     border-bottom: 1px solid black;
     margin-left: 10px;
     margin-top: 20px;
+}
+.amount-handdrawn-line {
+    height: 2px;
+    background: repeating-linear-gradient(
+        to right,
+        transparent,
+        transparent 2px,
+        #2b2b2b 2px,
+        #2b2b2b 4px
+    );
+    transform: translateY(-1px) rotate(-0.3deg);
+    filter: blur(0.3px);
+    opacity: 0.8;
 }
 .payto-line {
     width: 776px;
