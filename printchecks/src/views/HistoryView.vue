@@ -1,11 +1,6 @@
 <template>
     <div class="about">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1>History</h1>
-            <button v-if="history.length > 0" class="btn btn-danger" @click="clearAllHistory" style="margin-left: auto;">
-                🗑️ Clear All History (Debug)
-            </button>
-        </div>
+        <h1>History</h1>
         <div class="alert alert-info" role="alert">
             <strong>ℹ️ Note:</strong> Checks cannot be deleted once created. You can only void them to mark them as invalid.
         </div>
@@ -77,16 +72,6 @@ const viewItem = (index) => {
     const item = history.value[index]
     state.check = item
     router.push('/')
-}
-
-const clearAllHistory = () => {
-  if (confirm('⚠️ WARNING: This will permanently delete ALL check history. This is for debugging only. Are you sure?')) {
-    if (confirm('Are you ABSOLUTELY sure? This cannot be undone!')) {
-      localStorage.removeItem('checkList')
-      history.value = []
-      alert('✅ All check history has been cleared.')
-    }
-  }
 }
 
 onMounted(() => {
