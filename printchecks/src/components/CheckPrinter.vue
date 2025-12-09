@@ -241,7 +241,7 @@
                                  class="amount-handdrawn-line" 
                                  :style="{ 
                                      position: 'absolute', 
-                                     top: '247px', 
+                                     top: '252px', 
                                      left: `${check.lineLength + 60 + 45}px`,
                                      width: `${840 - check.lineLength - 45}px`,
                                      height: '6px'
@@ -263,7 +263,7 @@
                             <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '750px' }">
                                 _______________________________
                             </div>
-                            <div class="signature-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '405px', left: '780px', width: '300px', textAlign: 'center' }">
+                            <div class="signature-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '410px', left: '780px', width: '300px', textAlign: 'center' }">
                                 Authorized Signature
                             </div>
                             <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo, width: '100%', textAlign: 'center' }">
@@ -593,8 +593,8 @@ const dynamicTextPositions = computed(() => {
       accountHolderName: { top: '40px', left: '60px' },
       accountHolderAddress: { top: '70px', left: '60px' },
       checkNumber: { top: '40px', left: '1060px' },
-      date: { top: '80px', left: '850px' },
-      payTo: { top: '190px', left: '180px' },
+      date: { top: '90px', left: '850px' },
+      payTo: { top: '210px', left: '180px' },
       amount: { top: '182px', left: '970px' },
       amountWords: { top: '240px', left: '100px' },
       bankName: { top: '300px', left: '60px' },
