@@ -16,6 +16,9 @@
                             {{ bank.name }} (****{{ bank.accountNumber.slice(-4) }})
                         </option>
                     </select>
+                    <small class="text-muted">
+                        <a href="#" @click.prevent="openNewBankAccountModal" style="text-decoration: none;">➕ Add New Bank Account</a>
+                    </small>
                 </div>
                 <div class="col-md-6">
                     <label for="vendorSelect" class="form-label">Select Vendor</label>
@@ -25,6 +28,9 @@
                             {{ vendor.name }}
                         </option>
                     </select>
+                    <small class="text-muted">
+                        <a href="#" @click.prevent="openNewVendorModal" style="text-decoration: none;">➕ Add New Vendor</a>
+                    </small>
                 </div>
             </div>
 
@@ -134,7 +140,8 @@
                 <form @submit.prevent="createQuickCheck">
                     <div class="mb-3">
                         <label class="form-label">Pay To</label>
-                        <input type="text" class="form-control" v-model="quickCheckForm.payTo" required>
+                        <input type="text" class="form-control" v-model="quickCheckForm.payTo" readonly style="background-color: #e9ecef; cursor: not-allowed;" required>
+                        <small class="text-muted">🔒 Auto-populated from selected vendor</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Amount ($)</label>
@@ -1070,6 +1077,16 @@ function closeQuickCheckModal() {
         amount: '',
         memo: ''
     })
+}
+
+function openNewBankAccountModal() {
+    // TODO: Implement bank account creation modal
+    alert('Bank account creation modal coming soon! For now, please use the Settings page to add bank accounts.')
+}
+
+function openNewVendorModal() {
+    // TODO: Implement vendor creation modal
+    alert('Vendor creation modal coming soon! For now, please use the Settings page to add vendors.')
 }
 
 onMounted(() => {
