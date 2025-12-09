@@ -1,8 +1,8 @@
 <template>
     <!-- FORM SECTION - Now at the top -->
     <div class="form-container">
-        <!-- QUICK CHECK CREATION -->
-        <div class="enhanced-check-creation" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <!-- QUICK CHECK CREATION (only show when no check data exists) -->
+        <div v-if="!(check.payTo && check.amount > 0)" class="enhanced-check-creation" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <h5 style="margin-bottom: 15px; color: #495057;">✏️ Quick Check Creation</h5>
             <div class="alert alert-warning" role="alert" style="margin-bottom: 15px;">
                 <strong>⚠️ Important:</strong> Once a check is written and printed, it cannot be deleted. Checks can only be voided in the history.
@@ -1185,6 +1185,12 @@ onMounted(() => {
     // Initialize stores
     customizationStore.initializeCustomization()
     historyStore.loadHistory()
+    
+    // Auto-select default bank account if one exists
+    const defaultBank = bankAccounts.value.find(bank => bank.isDefault)
+    if (defaultBank) {
+        selectedBankId.value = defaultBank.id
+    }
     
     if (state.check) {
         console.log('Loading check from history:', state.check)
