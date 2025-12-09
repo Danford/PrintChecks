@@ -150,9 +150,12 @@
         <div class="line-items-section" style="background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dee2e6;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h5 style="margin: 0; color: #495057;">📋 Service Line Items</h5>
-                <button type="button" class="btn btn-sm btn-outline-primary" @click="showLineItemForm = !showLineItemForm">
+                <button type="button" class="btn btn-sm btn-outline-primary" @click="showLineItemForm = !showLineItemForm" :disabled="check.isSaved">
                     {{ showLineItemForm ? '➖ Hide Form' : '➕ Add Line Item' }}
                 </button>
+            </div>
+            <div v-if="check.isSaved" class="alert alert-info mb-3" style="font-size: 0.9rem;">
+                <strong>🔒 Read-Only:</strong> This check has been saved and line items cannot be modified.
             </div>
             
             <!-- Add Line Item Form -->
@@ -201,7 +204,7 @@
                             <td class="text-end">${{ item.rate.toFixed(2) }}</td>
                             <td class="text-end">${{ (item.quantity * item.rate).toFixed(2) }}</td>
                             <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-outline-danger" @click="removeLineItem(index)" title="Remove">
+                                <button type="button" class="btn btn-sm btn-outline-danger" @click="removeLineItem(index)" title="Remove" :disabled="check.isSaved">
                                     🗑️
                                 </button>
                             </td>
@@ -249,9 +252,12 @@
                     </select>
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
-                    <button type="button" class="btn btn-success btn-lg w-100" @click="openQuickCheckModal" :disabled="!selectedBankId">
+                    <button type="button" class="btn btn-success btn-lg w-100" @click="openQuickCheckModal" :disabled="!selectedBankId || check.isSaved">
                         ➕ Write New Check
                     </button>
+                    <small v-if="check.isSaved" class="text-muted mt-1 w-100 text-center">
+                        Check is saved and locked
+                    </small>
                 </div>
             </div>
         </div>
@@ -300,22 +306,58 @@
         </div>
 
         <div class="check-data">
-            <!-- Show Print Button when check is ready -->
+            <!-- Show Save/Print Buttons when check is ready -->
             <div v-if="check.payTo && check.amount > 0" class="text-center" style="padding: 30px;">
-                <div class="alert alert-success mb-4" role="alert">
-                    <strong>✅ Check Ready!</strong> Review the check preview above, then click Print to save and print.
+                <!-- Saved Check Message -->
+                <div v-if="check.isSaved" class="alert alert-info mb-4" role="alert">
+                    <strong>💾 Check Saved!</strong> This check has been saved to history and is now read-only.
                 </div>
-                <button type="button" class="btn btn-primary btn-lg" @click="printCheck" style="padding: 15px 50px; font-size: 18px;">
-                    🖨️ Print Check (Ctrl + P)
-                </button>
+                <!-- Unsaved Check Message -->
+                <div v-else class="alert alert-success mb-4" role="alert">
+                    <strong>✅ Check Ready!</strong> Review the check preview above, then save or print.
+                </div>
+                
+                <!-- Buttons (only show if not saved) -->
+                <div v-if="!check.isSaved" class="d-flex gap-3 justify-content-center">
+                    <button type="button" class="btn btn-success btn-lg" @click="saveToHistory" style="padding: 15px 40px; font-size: 18px;">
+                        💾 Save Check
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg" @click="printCheck" style="padding: 15px 40px; font-size: 18px;">
+                        🖨️ Print Check (Ctrl + P)
+                    </button>
+                </div>
                 <div class="mt-3">
-                    <small class="text-muted">Check is automatically saved to history</small>
+                    <small class="text-muted">{{ check.isSaved ? 'Check is locked and cannot be modified' : 'Save to history or print (saves automatically)' }}</small>
                 </div>
             </div>
             
             <!-- Show Info when no check is created -->
             <div v-else class="alert alert-info" role="alert">
                 <strong>ℹ️ Info:</strong> Use the "Write New Check" button above to create checks. The check preview will display here. Background does not print.
+            </div>
+        </div>
+    </div>
+    
+    <!-- Unsaved Changes Modal -->
+    <div v-if="showUnsavedModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">⚠️ Unsaved Changes</h5>
+                    <button type="button" class="btn-close" @click="cancelLeave"></button>
+                </div>
+                <div class="modal-body">
+                    <p>You have an unsaved check with data that will be lost if you leave this page.</p>
+                    <p class="mb-0"><strong>Are you sure you want to leave without saving?</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="cancelLeave">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger" @click="confirmLeave">
+                        Leave Without Saving
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -330,6 +372,7 @@ import { useAppStore } from '../stores/app.ts'
 import { useCustomizationStore } from '../stores/customization.ts'
 import { useReceiptStore } from '../stores/receipt.ts'
 import { useHistoryStore } from '../stores/history.ts'
+import { onBeforeRouteLeave } from 'vue-router'
 
 const state = useAppStore()
 const customizationStore = useCustomizationStore()
@@ -836,6 +879,12 @@ function saveToHistory () {
         return
     }
     
+    // Don't save if already saved
+    if (check.isSaved) {
+        console.warn('Check has already been saved')
+        return
+    }
+    
     let checkList = JSON.parse(localStorage.getItem('checkList') || '[]')
     
     // Create a copy of the check with a unique ID and timestamp
@@ -846,11 +895,15 @@ function saveToHistory () {
         printedAt: new Date().toISOString(),
         isVoid: false,
         isPrinted: true,
+        isSaved: true,
         lineItems: currentLineItems.value // Include line items when saving
     }
     
     checkList.push(checkToSave)
     localStorage.setItem('checkList', JSON.stringify(checkList))
+    
+    // Mark the current check as saved to make it read-only
+    check.isSaved = true
 }
 
 // Initialize check as empty - only populate when user creates a check
@@ -871,10 +924,43 @@ const check = reactive({
     routingNumber: '',
     bankAccountNumber: '',
     lineLength: 0,
-    isPrinted: false
+    isPrinted: false,
+    isSaved: false
 })
 
 const line = ref(null)
+
+// Navigation guard state
+const showUnsavedModal = ref(false)
+let pendingNavigation: (() => void) | null = null
+
+// Navigation guard to warn about unsaved changes
+onBeforeRouteLeave((to, from, next) => {
+    // Check if there's an unsaved check (has data but not saved)
+    const hasCheckData = check.payTo && check.amount > 0
+    if (hasCheckData && !check.isSaved) {
+        // Show modal instead of navigating
+        showUnsavedModal.value = true
+        pendingNavigation = () => next()
+        next(false) // Prevent navigation for now
+    } else {
+        next() // Allow navigation
+    }
+})
+
+// Modal confirmation handlers
+function confirmLeave() {
+    showUnsavedModal.value = false
+    if (pendingNavigation) {
+        pendingNavigation()
+        pendingNavigation = null
+    }
+}
+
+function cancelLeave() {
+    showUnsavedModal.value = false
+    pendingNavigation = null
+}
 
 // Watch for check changes to update line length only
 // DO NOT auto-save to history - checks should only be saved when printed
