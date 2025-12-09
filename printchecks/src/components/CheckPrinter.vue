@@ -976,7 +976,7 @@ const line = ref(null)
 // Navigation guard state
 const router = useRouter()
 const showUnsavedModal = ref(false)
-let pendingNavigation: (() => void) | null = null
+let pendingRoute: any = null
 
 // Navigation guard to warn about unsaved changes
 onBeforeRouteLeave((to, from, next) => {
@@ -985,17 +985,8 @@ onBeforeRouteLeave((to, from, next) => {
     if (hasCheckData && !check.isSaved) {
         // Show modal instead of navigating
         showUnsavedModal.value = true
-        // Store the navigation callback with the destination
-        pendingNavigation = () => {
-            // Clear check data before navigating
-            check.payTo = ''
-            check.amount = 0
-            check.memo = ''
-            check.date = ''
-            check.checkNumber = null
-            currentLineItems.value = []
-            next() // Now allow navigation
-        }
+        // Store the destination route
+        pendingRoute = to
         next(false) // Prevent navigation for now
     } else {
         next() // Allow navigation
@@ -1005,15 +996,24 @@ onBeforeRouteLeave((to, from, next) => {
 // Modal confirmation handlers
 function confirmLeave() {
     showUnsavedModal.value = false
-    if (pendingNavigation) {
-        pendingNavigation()
-        pendingNavigation = null
+    if (pendingRoute) {
+        // Clear check data first
+        check.payTo = ''
+        check.amount = 0
+        check.memo = ''
+        check.date = ''
+        check.checkNumber = null
+        currentLineItems.value = []
+        
+        // Navigate to the pending route
+        router.push(pendingRoute)
+        pendingRoute = null
     }
 }
 
 function cancelLeave() {
     showUnsavedModal.value = false
-    pendingNavigation = null
+    pendingRoute = null
 }
 
 // Watch for check changes to update line length only
