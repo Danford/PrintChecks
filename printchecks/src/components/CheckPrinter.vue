@@ -945,6 +945,9 @@ function saveToHistory () {
     checkList.push(checkToSave)
     localStorage.setItem('checkList', JSON.stringify(checkList))
     
+    // Reload history store to reflect the new check
+    historyStore.loadHistory()
+    
     // Mark the current check as saved to make it read-only
     check.isSaved = true
 }
