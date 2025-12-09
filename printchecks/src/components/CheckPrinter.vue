@@ -237,12 +237,24 @@
                                 <span class="dollar-line"></span>
                             </div>
                             <!-- Hand-drawn line after amount words -->
-                            <div v-if="check.lineLength" class="amount-handdrawn-line" :style="{ 
-                                position: 'absolute', 
-                                top: '264px', 
-                                left: `${check.lineLength + 60}px`,
-                                width: `${840 - check.lineLength}px`
-                            }"></div>
+                            <svg v-if="check.lineLength" 
+                                 class="amount-handdrawn-line" 
+                                 :style="{ 
+                                     position: 'absolute', 
+                                     top: '262px', 
+                                     left: `${check.lineLength + 60}px`,
+                                     width: `${840 - check.lineLength}px`,
+                                     height: '6px'
+                                 }"
+                                 :viewBox="`0 0 ${840 - check.lineLength} 6`"
+                                 preserveAspectRatio="none">
+                                <path :d="`M 0 3 Q ${(840 - check.lineLength) * 0.1} 2, ${(840 - check.lineLength) * 0.2} 3.5 T ${(840 - check.lineLength) * 0.4} 2.8 T ${(840 - check.lineLength) * 0.6} 3.3 T ${(840 - check.lineLength) * 0.8} 2.5 T ${840 - check.lineLength} 3`"
+                                      stroke="#2b2b2b" 
+                                      stroke-width="1.8" 
+                                      stroke-linecap="round"
+                                      fill="none"
+                                      opacity="0.85"/>
+                            </svg>
                             <div class="memo-data" :style="{ ...checkStyles.memo, position: 'absolute', ...dynamicTextPositions.memo }">{{check.memo}}</div>
                             <div class="memo" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '60px' }">
                                 Memo: ____________________________________
@@ -1487,17 +1499,8 @@ label {
     margin-top: 20px;
 }
 .amount-handdrawn-line {
-    height: 2px;
-    background: repeating-linear-gradient(
-        to right,
-        transparent,
-        transparent 2px,
-        #2b2b2b 2px,
-        #2b2b2b 4px
-    );
-    transform: translateY(-1px) rotate(-0.3deg);
-    filter: blur(0.3px);
-    opacity: 0.8;
+    filter: drop-shadow(0 0.3px 0.2px rgba(0,0,0,0.2));
+    pointer-events: none;
 }
 .payto-line {
     width: 776px;
