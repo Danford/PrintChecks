@@ -152,31 +152,21 @@
             <div class="row g-3">
                 <div class="col-md-4">
                     <label for="bankSelect" class="form-label">Select Bank Account</label>
-                    <div class="d-flex gap-2">
-                        <select class="form-control" id="bankSelect" v-model="selectedBankId" @change="loadBankAccount" style="flex: 1;">
-                            <option value="">Choose Bank Account...</option>
-                            <option v-for="bank in bankAccounts" :key="bank.id" :value="bank.id">
-                                {{ bank.name }} (****{{ bank.accountNumber.slice(-4) }})
-                            </option>
-                        </select>
-                        <button type="button" class="btn btn-outline-primary" @click="showAddBankModal = true" title="Add Bank Account">
-                            ➕
-                        </button>
-                    </div>
+                    <select class="form-control" id="bankSelect" v-model="selectedBankId" @change="loadBankAccount">
+                        <option value="">Choose Bank Account...</option>
+                        <option v-for="bank in bankAccounts" :key="bank.id" :value="bank.id">
+                            {{ bank.name }} (****{{ bank.accountNumber.slice(-4) }})
+                        </option>
+                    </select>
                 </div>
                 <div class="col-md-4">
                     <label for="vendorSelect" class="form-label">Select Vendor</label>
-                    <div class="d-flex gap-2">
-                        <select class="form-control" id="vendorSelect" v-model="selectedVendorId" @change="loadVendor" style="flex: 1;">
-                            <option value="">Choose Vendor...</option>
-                            <option v-for="vendor in vendors" :key="vendor.id" :value="vendor.id">
-                                {{ vendor.name }}
-                            </option>
-                        </select>
-                        <button type="button" class="btn btn-outline-primary" @click="showAddVendorModal = true" title="Add Vendor">
-                            ➕
-                        </button>
-                    </div>
+                    <select class="form-control" id="vendorSelect" v-model="selectedVendorId" @change="loadVendor">
+                        <option value="">Choose Vendor...</option>
+                        <option v-for="vendor in vendors" :key="vendor.id" :value="vendor.id">
+                            {{ vendor.name }}
+                        </option>
+                    </select>
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                     <button type="button" class="btn btn-success btn-lg w-100" @click="openQuickCheckModal" :disabled="!selectedBankId">
@@ -303,100 +293,6 @@
             </div>
         </div>
 
-        <!-- ADD/EDIT BANK MODAL -->
-        <div v-if="showAddBankModal || editingBank" class="modal-overlay">
-            <div class="modal-content">
-                <h5>{{ editingBank ? 'Edit Bank Account' : 'Add New Bank Account' }}</h5>
-                <form @submit.prevent="saveBankAccount">
-                    <div class="mb-3">
-                        <label class="form-label">Account Holder Name</label>
-                        <input type="text" class="form-control" v-model="bankForm.accountHolderName" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Address</label>
-                        <input type="text" class="form-control" v-model="bankForm.accountHolderAddress" required>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">City</label>
-                            <input type="text" class="form-control" v-model="bankForm.accountHolderCity" required>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">State</label>
-                            <input type="text" class="form-control" v-model="bankForm.accountHolderState" maxlength="2" required>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">ZIP</label>
-                            <input type="text" class="form-control" v-model="bankForm.accountHolderZip" required>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="mb-3">
-                        <label class="form-label">Bank Name</label>
-                        <input type="text" class="form-control" v-model="bankForm.name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Account Number</label>
-                        <input type="text" class="form-control" v-model="bankForm.accountNumber" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Routing Number</label>
-                        <input type="text" class="form-control" v-model="bankForm.routingNumber" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Account Type</label>
-                        <select class="form-control" v-model="bankForm.accountType" required>
-                            <option value="Checking">Checking</option>
-                            <option value="Savings">Savings</option>
-                            <option value="Business">Business</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Starting Check Number</label>
-                        <input type="number" class="form-control" v-model="bankForm.startingCheckNumber" placeholder="1001">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Signature</label>
-                        <input type="text" class="form-control" v-model="bankForm.signature" placeholder="Your signature">
-                        <small class="text-muted">This signature will be used on all checks from this account</small>
-                    </div>
-                    <div class="btn-group w-100">
-                        <button type="submit" class="btn btn-primary">Save</button>
-                        <button type="button" class="btn btn-secondary" @click="cancelBankEdit">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- ADD/EDIT VENDOR MODAL -->
-        <div v-if="showAddVendorModal || editingVendor" class="modal-overlay">
-            <div class="modal-content">
-                <h5>{{ editingVendor ? 'Edit Vendor' : 'Add New Vendor' }}</h5>
-                <form @submit.prevent="saveVendor">
-                    <div class="mb-3">
-                        <label class="form-label">Vendor Name</label>
-                        <input type="text" class="form-control" v-model="vendorForm.name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" v-model="vendorForm.email">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Phone</label>
-                        <input type="text" class="form-control" v-model="vendorForm.phone">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Address</label>
-                        <textarea class="form-control" v-model="vendorForm.address" rows="3"></textarea>
-                    </div>
-                    <div class="btn-group w-100">
-                        <button type="submit" class="btn btn-primary">Save</button>
-                        <button type="button" class="btn btn-secondary" @click="cancelVendorEdit">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <div class="check-data">
             <!-- Show Print Button when check is ready -->
             <div v-if="check.payTo && check.amount > 0" class="text-center" style="padding: 30px;">
@@ -478,40 +374,11 @@ const testTotals = ref({
   total: 378.00
 })
 
-// Bank and Vendor Data for Quick Check
+// Bank and Vendor Data for Quick Check (read-only)
 const bankAccounts = ref(JSON.parse(localStorage.getItem('bankAccounts') || '[]'))
 const selectedBankId = ref('')
 const vendors = ref(JSON.parse(localStorage.getItem('vendors') || '[]'))
 const selectedVendorId = ref('')
-
-// Bank Account Modal State
-const showAddBankModal = ref(false)
-const editingBank = ref(null)
-const bankForm = reactive({
-  id: '',
-  accountHolderName: '',
-  accountHolderAddress: '',
-  accountHolderCity: '',
-  accountHolderState: '',
-  accountHolderZip: '',
-  name: '',
-  accountNumber: '',
-  routingNumber: '',
-  accountType: 'Checking',
-  startingCheckNumber: 1001,
-  signature: ''
-})
-
-// Vendor Modal State
-const showAddVendorModal = ref(false)
-const editingVendor = ref(null)
-const vendorForm = reactive({
-  id: '',
-  name: '',
-  email: '',
-  phone: '',
-  address: ''
-})
 
 // Quick Check Modal
 const showQuickCheckModal = ref(false)
@@ -1086,87 +953,6 @@ function closeQuickCheckModal() {
         payTo: '',
         amount: '',
         memo: ''
-    })
-}
-
-// Bank Account Management Methods
-function saveBankAccount() {
-    if (editingBank.value) {
-        const index = bankAccounts.value.findIndex(b => b.id === editingBank.value.id)
-        if (index !== -1) {
-            bankAccounts.value[index] = { ...bankForm }
-        }
-    } else {
-        const newBank = {
-            ...bankForm,
-            id: Date.now().toString()
-        }
-        bankAccounts.value.push(newBank)
-        selectedBankId.value = newBank.id
-    }
-    
-    localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
-    cancelBankEdit()
-    
-    // Auto-load the new/edited bank if it was just selected
-    if (selectedBankId.value === bankForm.id || !editingBank.value) {
-        loadBankAccount()
-    }
-}
-
-function cancelBankEdit() {
-    showAddBankModal.value = false
-    editingBank.value = null
-    Object.assign(bankForm, {
-        id: '',
-        accountHolderName: '',
-        accountHolderAddress: '',
-        accountHolderCity: '',
-        accountHolderState: '',
-        accountHolderZip: '',
-        name: '',
-        accountNumber: '',
-        routingNumber: '',
-        accountType: 'Checking',
-        startingCheckNumber: 1001,
-        signature: ''
-    })
-}
-
-// Vendor Management Methods
-function saveVendor() {
-    if (editingVendor.value) {
-        const index = vendors.value.findIndex(v => v.id === editingVendor.value.id)
-        if (index !== -1) {
-            vendors.value[index] = { ...vendorForm }
-        }
-    } else {
-        const newVendor = {
-            ...vendorForm,
-            id: Date.now().toString()
-        }
-        vendors.value.push(newVendor)
-        selectedVendorId.value = newVendor.id
-    }
-    
-    localStorage.setItem('vendors', JSON.stringify(vendors.value))
-    cancelVendorEdit()
-    
-    // Auto-load the new/edited vendor if it was just selected
-    if (selectedVendorId.value === vendorForm.id || !editingVendor.value) {
-        loadVendor()
-    }
-}
-
-function cancelVendorEdit() {
-    showAddVendorModal.value = false
-    editingVendor.value = null
-    Object.assign(vendorForm, {
-        id: '',
-        name: '',
-        email: '',
-        phone: '',
-        address: ''
     })
 }
 
