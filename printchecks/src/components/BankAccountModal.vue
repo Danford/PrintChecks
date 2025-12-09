@@ -1,66 +1,78 @@
 <template>
-  <!-- Add/Edit Bank Modal -->
-  <div v-if="modelValue" class="modal-overlay">
-    <div class="modal-content">
-      <h5>{{ editingBank ? 'Edit Bank Account' : 'Add New Bank Account' }}</h5>
-      <form @submit.prevent="handleSave">
-        <div class="mb-3">
-          <label class="form-label">Account Holder Name</label>
-          <input type="text" class="form-control" v-model="formData.accountHolderName" required>
+  <div v-if="modelValue" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">🏦 {{ editingBank ? 'Edit Bank Account' : 'Add New Bank Account' }}</h5>
+          <button type="button" class="btn-close" @click="handleCancel"></button>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Address</label>
-          <input type="text" class="form-control" v-model="formData.accountHolderAddress" required>
+        <div class="modal-body">
+          <form @submit.prevent="handleSave">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Bank Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" v-model="formData.name" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Account Holder Name</label>
+                <input type="text" class="form-control" v-model="formData.accountHolderName">
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Account Holder Address</label>
+                <input type="text" class="form-control" v-model="formData.accountHolderAddress">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">City</label>
+                <input type="text" class="form-control" v-model="formData.accountHolderCity">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">State</label>
+                <input type="text" class="form-control" v-model="formData.accountHolderState" maxlength="2">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">ZIP Code</label>
+                <input type="text" class="form-control" v-model="formData.accountHolderZip">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Routing Number <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" v-model="formData.routingNumber" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Account Number <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" v-model="formData.accountNumber" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Account Type</label>
+                <select class="form-control" v-model="formData.accountType" required>
+                  <option value="Checking">Checking</option>
+                  <option value="Savings">Savings</option>
+                  <option value="Business">Business</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Starting Check Number</label>
+                <input type="number" class="form-control" v-model="formData.startingCheckNumber" placeholder="1001">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Bank Address</label>
+                <input type="text" class="form-control" v-model="formData.address">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Signature</label>
+                <input type="text" class="form-control" v-model="formData.signature">
+              </div>
+            </div>
+          </form>
         </div>
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label">City</label>
-            <input type="text" class="form-control" v-model="formData.accountHolderCity" required>
-          </div>
-          <div class="col-md-3 mb-3">
-            <label class="form-label">State</label>
-            <input type="text" class="form-control" v-model="formData.accountHolderState" maxlength="2" required>
-          </div>
-          <div class="col-md-3 mb-3">
-            <label class="form-label">ZIP</label>
-            <input type="text" class="form-control" v-model="formData.accountHolderZip" required>
-          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="handleCancel">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-primary" @click="handleSave">
+            💾 Save Bank Account
+          </button>
         </div>
-        <hr>
-        <div class="mb-3">
-          <label class="form-label">Bank Name</label>
-          <input type="text" class="form-control" v-model="formData.name" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Account Number</label>
-          <input type="text" class="form-control" v-model="formData.accountNumber" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Routing Number</label>
-          <input type="text" class="form-control" v-model="formData.routingNumber" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Account Type</label>
-          <select class="form-control" v-model="formData.accountType" required>
-            <option value="Checking">Checking</option>
-            <option value="Savings">Savings</option>
-            <option value="Business">Business</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Starting Check Number</label>
-          <input type="number" class="form-control" v-model="formData.startingCheckNumber" placeholder="1001">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Signature</label>
-          <input type="text" class="form-control" v-model="formData.signature" placeholder="Your signature">
-          <small class="text-muted">This signature will be used on all checks from this account</small>
-        </div>
-        <div class="btn-group w-100">
-          <button type="submit" class="btn btn-primary">Save</button>
-          <button type="button" class="btn btn-secondary" @click="handleCancel">Cancel</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 </template>
@@ -81,6 +93,7 @@ interface BankAccount {
   accountType: string
   startingCheckNumber: number
   signature: string
+  address?: string
   isDefault?: boolean
 }
 
@@ -111,6 +124,7 @@ const formData = ref<BankAccount>({
   accountType: 'Checking',
   startingCheckNumber: 1001,
   signature: '',
+  address: '',
   isDefault: false
 })
 
@@ -133,6 +147,7 @@ watch(() => props.editingBank, (newBank) => {
       accountType: 'Checking',
       startingCheckNumber: 1001,
       signature: '',
+      address: '',
       isDefault: false
     }
   }
@@ -149,27 +164,6 @@ function handleCancel() {
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
+/* No custom styles needed - using Bootstrap modal classes */
 </style>
 

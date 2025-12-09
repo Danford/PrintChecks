@@ -1,30 +1,40 @@
 <template>
-  <!-- Add/Edit Vendor Modal -->
-  <div v-if="modelValue" class="modal-overlay">
-    <div class="modal-content">
-      <h5>{{ editingVendor ? 'Edit Vendor' : 'Add New Vendor' }}</h5>
-      <form @submit.prevent="handleSave">
-        <div class="mb-3">
-          <label class="form-label">Vendor Name</label>
-          <input type="text" class="form-control" v-model="formData.name" required>
+  <div v-if="modelValue" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">👤 {{ editingVendor ? 'Edit Vendor' : 'Add New Vendor' }}</h5>
+          <button type="button" class="btn-close" @click="handleCancel"></button>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-control" v-model="formData.email">
+        <div class="modal-body">
+          <form @submit.prevent="handleSave">
+            <div class="mb-3">
+              <label class="form-label">Vendor Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" v-model="formData.name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" v-model="formData.email">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone</label>
+              <input type="text" class="form-control" v-model="formData.phone">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Address</label>
+              <textarea class="form-control" v-model="formData.address" rows="3"></textarea>
+            </div>
+          </form>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Phone</label>
-          <input type="text" class="form-control" v-model="formData.phone">
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="handleCancel">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-primary" @click="handleSave">
+            💾 Save Vendor
+          </button>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Address</label>
-          <textarea class="form-control" v-model="formData.address" rows="3"></textarea>
-        </div>
-        <div class="btn-group w-100">
-          <button type="submit" class="btn btn-primary">Save</button>
-          <button type="button" class="btn btn-secondary" @click="handleCancel">Cancel</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 </template>
@@ -89,27 +99,6 @@ function handleCancel() {
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
+/* No custom styles needed - using Bootstrap modal classes */
 </style>
 
