@@ -174,24 +174,26 @@
             <div v-if="check.payTo && check.amount > 0" class="text-center" style="padding: 30px;">
                 <!-- Saved Check Message -->
                 <div v-if="check.isSaved" class="alert alert-info mb-4" role="alert">
-                    <strong>💾 Check Saved!</strong> This check has been saved to history and is now read-only.
+                    <strong>💾 Check Saved!</strong> This check has been saved to history and is now read-only. You can reprint it below.
                 </div>
                 <!-- Unsaved Check Message -->
                 <div v-else class="alert alert-success mb-4" role="alert">
                     <strong>✅ Check Ready!</strong> Review the check preview below, then save or print.
                 </div>
                 
-                <!-- Buttons (only show if not saved) -->
-                <div v-if="!check.isSaved" class="d-flex gap-3 justify-content-center">
-                    <button type="button" class="btn btn-success btn-lg" @click="saveToHistory" style="padding: 15px 40px; font-size: 18px;">
+                <!-- Buttons -->
+                <div class="d-flex gap-3 justify-content-center">
+                    <!-- Save button - only show if not saved -->
+                    <button v-if="!check.isSaved" type="button" class="btn btn-success btn-lg" @click="saveToHistory" style="padding: 15px 40px; font-size: 18px;">
                         💾 Save Check
                     </button>
+                    <!-- Print button - always show when check has data -->
                     <button type="button" class="btn btn-primary btn-lg" @click="printCheck" style="padding: 15px 40px; font-size: 18px;">
-                        🖨️ Print Check (Ctrl + P)
+                        🖨️ {{ check.isSaved ? 'Reprint Check (Ctrl + P)' : 'Print Check (Ctrl + P)' }}
                     </button>
                 </div>
                 <div class="mt-3">
-                    <small class="text-muted">{{ check.isSaved ? 'Check is locked and cannot be modified' : 'Save to history or print (saves automatically)' }}</small>
+                    <small class="text-muted">{{ check.isSaved ? 'Check is locked and cannot be modified, but you can reprint it' : 'Save to history or print (saves automatically)' }}</small>
                 </div>
             </div>
             
