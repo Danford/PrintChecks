@@ -1060,6 +1060,8 @@ function saveToHistory () {
         isSaved: true,
         lineItems: currentLineItems.value // Include line items when saving
     }
+    console.log('Saving line items to history:', currentLineItems.value)
+    console.log('checkToSave:', checkToSave)
     
     checkList.push(checkToSave)
     localStorage.setItem('checkList', JSON.stringify(checkList))
@@ -1330,6 +1332,8 @@ onMounted(() => {
     historyStore.loadHistory()
     
     if (state.check) {
+        console.log('Loading check from history:', state.check)
+        console.log('Line items in loaded check:', state.check.lineItems)
         check.accountHolderName = state.check.accountHolderName
         check.accountHolderAddress = state.check.accountHolderAddress
         check.accountHolderCity = state.check.accountHolderCity
@@ -1348,6 +1352,10 @@ onMounted(() => {
         // Restore line items if they exist
         if (state.check.lineItems && Array.isArray(state.check.lineItems)) {
             currentLineItems.value = state.check.lineItems
+            console.log('Restoring line items:', state.check.lineItems)
+            console.log('currentLineItems after restore:', currentLineItems.value)
+        } else {
+            console.warn('No line items found in loaded check or lineItems is not an array')
         }
     }
     state.check = null
