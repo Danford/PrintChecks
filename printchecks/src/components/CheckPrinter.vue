@@ -1201,6 +1201,8 @@ onMounted(() => {
         check.signature = state.check.signature
         check.routingNumber = state.check.routingNumber
         check.bankAccountNumber = state.check.bankAccountNumber
+        check.isSaved = state.check.isSaved || false  // Preserve saved status
+        check.isPrinted = state.check.isPrinted || false  // Preserve printed status
         
         // Restore line items if they exist
         if (state.check.lineItems && Array.isArray(state.check.lineItems)) {
