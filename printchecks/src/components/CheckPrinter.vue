@@ -413,10 +413,18 @@ const customizationStore = useCustomizationStore()
 const receiptStore = useReceiptStore()
 const historyStore = useHistoryStore()
 
-// Debug mode flag - can be toggled via console: window.enablePrintChecksDebug()
-const DEBUG_MODE = ref(false)
+// Debug mode flag - ONLY enabled when npm run dev:clear is used
+// Check for VITE_DEBUG_MODE environment variable set by clear-history.js script
+const DEBUG_MODE = ref(import.meta.env.VITE_DEBUG_MODE === 'true')
 
-// Expose debug toggle function to window for console access
+// Log debug mode status on startup
+if (DEBUG_MODE.value) {
+    console.log('%c🐛 PrintChecks Debug Mode ACTIVE', 'color: red; font-weight: bold; font-size: 16px;')
+    console.log('%cStarted with: npm run dev:clear', 'color: orange; font-size: 12px;')
+    console.log('%cTo disable: restart with npm run dev (without :clear)', 'color: gray; font-size: 12px;')
+}
+
+// Expose debug toggle function to window for console access (for manual testing)
 if (typeof window !== 'undefined') {
     (window as any).enablePrintChecksDebug = () => {
         DEBUG_MODE.value = true

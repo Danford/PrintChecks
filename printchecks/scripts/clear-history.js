@@ -5,7 +5,7 @@
  * Run with: npm run dev:clear
  * 
  * This will inject a script into index.html that clears localStorage on load,
- * then starts the dev server.
+ * then starts the dev server with the VITE_DEBUG_MODE environment variable set.
  */
 
 const fs = require('fs');
@@ -25,8 +25,10 @@ const clearStorageScript = `
 (function() {
   console.log('%c🗑️ DEBUG MODE: Clearing check history...', 'color: red; font-weight: bold; font-size: 14px;');
   localStorage.removeItem('checkList');
+  localStorage.removeItem('printchecks_receipts');
+  localStorage.removeItem('printchecks_payments');
   console.log('%c✅ Check history cleared!', 'color: green; font-weight: bold; font-size: 14px;');
-  console.log('%c⚠️ Remove scripts/clear-history.js injection to disable this.', 'color: orange; font-size: 12px;');
+  console.log('%c⚠️ This is debug mode - started with npm run dev:clear', 'color: orange; font-size: 12px;');
 })();
 `;
 
@@ -56,13 +58,14 @@ if (!indexContent.includes('clear-storage.js')) {
 }
 
 console.log('\n📝 localStorage will be cleared when you open the app');
-console.log('🚀 Starting dev server...\n');
-console.log('⚠️  Remember to run "npm run dev" (without :clear) after debugging!\n');
+console.log('🚀 Starting dev server in DEBUG MODE...\n');
+console.log('⚠️  Remember to run "npm run dev" (without :clear) for normal mode!\n');
 
-// Start the vite dev server
-const vite = spawn('npm', ['run', 'dev'], { 
+// Start the vite dev server with DEBUG MODE environment variable
+const vite = spawn('vite', [], { 
   stdio: 'inherit',
-  shell: true 
+  shell: true,
+  env: { ...process.env, VITE_DEBUG_MODE: 'true' }
 });
 
 // Cleanup on exit
@@ -85,4 +88,3 @@ process.on('SIGINT', () => {
   console.log('✅ Cleanup complete');
   process.exit(0);
 });
-
