@@ -419,6 +419,18 @@
                                 <input type="text" class="form-control" v-model="bankAccountForm.accountNumber" required>
                             </div>
                             <div class="col-md-6">
+                                <label class="form-label">Account Type</label>
+                                <select class="form-control" v-model="bankAccountForm.accountType" required>
+                                    <option value="Checking">Checking</option>
+                                    <option value="Savings">Savings</option>
+                                    <option value="Business">Business</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Starting Check Number</label>
+                                <input type="number" class="form-control" v-model="bankAccountForm.startingCheckNumber" placeholder="1001">
+                            </div>
+                            <div class="col-md-6">
                                 <label class="form-label">Bank Address</label>
                                 <input type="text" class="form-control" v-model="bankAccountForm.address">
                             </div>
@@ -451,36 +463,24 @@
                 </div>
                 <div class="modal-body">
                     <form @submit.prevent="saveVendor">
-                        <div class="row g-3">
-                            <div class="col-md-12">
-                                <label class="form-label">Vendor Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" v-model="vendorForm.name" required>
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label">Address</label>
-                                <input type="text" class="form-control" v-model="vendorForm.address">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">City</label>
-                                <input type="text" class="form-control" v-model="vendorForm.city">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">State</label>
-                                <input type="text" class="form-control" v-model="vendorForm.state" maxlength="2">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">ZIP Code</label>
-                                <input type="text" class="form-control" v-model="vendorForm.zip">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Phone</label>
-                                <input type="tel" class="form-control" v-model="vendorForm.phone">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" v-model="vendorForm.email">
-                            </div>
+                    <form @submit.prevent="saveVendor">
+                        <div class="mb-3">
+                            <label class="form-label">Vendor Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" v-model="vendorForm.name" required>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" v-model="vendorForm.email">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" v-model="vendorForm.phone">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-control" v-model="vendorForm.address" rows="3"></textarea>
+                        </div>
+                    </form>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -573,29 +573,31 @@ const quickCheckForm = reactive({
 // Bank Account Modal
 const showBankAccountModal = ref(false)
 const bankAccountForm = reactive({
-    name: '',
+    id: '',
     accountHolderName: '',
     accountHolderAddress: '',
     accountHolderCity: '',
     accountHolderState: '',
     accountHolderZip: '',
-    routingNumber: '',
+    name: '',
     accountNumber: '',
+    routingNumber: '',
+    accountType: 'Checking',
+    startingCheckNumber: 1001,
     signature: '',
-    address: ''
+    isDefault: false
 })
 
 // Vendor Modal
 const showVendorModal = ref(false)
 const vendorForm = reactive({
+    id: '',
     name: '',
-    address: '',
-    city: '',
-    state: '',
-    zip: '',
+    email: '',
     phone: '',
-    email: ''
+    address: ''
 })
+
 
 // Line Items Management
 const showLineItemForm = ref(false)
@@ -1227,37 +1229,41 @@ function closeQuickCheckModal() {
 }
 
 function openNewBankAccountModal() {
-    // Reset form
+    // Reset form to match BankAccountsView.vue structure
     Object.assign(bankAccountForm, {
-        name: '',
+        id: '',
         accountHolderName: '',
         accountHolderAddress: '',
         accountHolderCity: '',
         accountHolderState: '',
         accountHolderZip: '',
-        routingNumber: '',
+        name: '',
         accountNumber: '',
+        routingNumber: '',
+        accountType: 'Checking',
+        startingCheckNumber: 1001,
         signature: '',
-        address: ''
+        isDefault: false
     })
     showBankAccountModal.value = true
 }
+
 
 function closeBankAccountModal() {
     showBankAccountModal.value = false
 }
 
 function saveBankAccount() {
-    // Validate required fields
+    // Validate required fields (matching BankAccountsView.vue)
     if (!bankAccountForm.name || !bankAccountForm.accountNumber || !bankAccountForm.routingNumber) {
         alert('Please fill in Bank Name, Account Number, and Routing Number.')
         return
     }
     
-    // Generate unique ID
+    // Generate unique ID with 'bank-' prefix to match BankAccountsView.vue
     const newBank = {
-        id: Date.now().toString(),
-        ...bankAccountForm
+        ...bankAccountForm,
+        id: 'bank-' + Date.now()
     }
     
     // Add to bank accounts
@@ -1275,15 +1281,13 @@ function saveBankAccount() {
 }
 
 function openNewVendorModal() {
-    // Reset form
+    // Reset form to match VendorsView.vue structure
     Object.assign(vendorForm, {
+        id: '',
         name: '',
-        address: '',
-        city: '',
-        state: '',
-        zip: '',
+        email: '',
         phone: '',
-        email: ''
+        address: ''
     })
     showVendorModal.value = true
 }
@@ -1293,16 +1297,16 @@ function closeVendorModal() {
 }
 
 function saveVendor() {
-    // Validate required fields
+    // Validate required fields (matching VendorsView.vue)
     if (!vendorForm.name) {
         alert('Please enter a vendor name.')
         return
     }
     
-    // Generate unique ID
+    // Generate unique ID with 'vendor-' prefix to match VendorsView.vue
     const newVendor = {
-        id: Date.now().toString(),
-        ...vendorForm
+        ...vendorForm,
+        id: 'vendor-' + Date.now()
     }
     
     // Add to vendors
@@ -1318,6 +1322,7 @@ function saveVendor() {
     // Close modal
     closeVendorModal()
 }
+
 
 onMounted(() => {
     // Initialize stores
