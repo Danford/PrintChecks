@@ -1,150 +1,5 @@
 <template>
-            <!-- MAIN PRINT CONTAINER - All 3 sections in one div -->
-    <div class="print-container" id="print-container">
-        <!-- SECTION 1: Check (Top Third) -->
-        <div class="check-section">
-            <div class="check-box" id="check-box">
-            <div style="position: relative;" id="check-box-print">
-                <div class="account-holder-name" :style="{ ...checkStyles.accountHolderName, position: 'absolute', ...dynamicTextPositions.accountHolderName }">{{check.accountHolderName}}</div>
-                <div class="account-holder-address" :style="{ ...checkStyles.accountHolderName, position: 'absolute', ...dynamicTextPositions.accountHolderAddress }">
-                    {{check.accountHolderAddress}}<br>
-                    {{check.accountHolderCity}}, {{check.accountHolderState}} {{check.accountHolderZip}}
-                </div>
-                <div class="check-number-human" :style="{ ...checkStyles.checkNumber, position: 'absolute', ...dynamicTextPositions.checkNumber }">{{check.checkNumber}}</div>
-                <div class="bank-name-top" :style="{ ...checkStyles.bankName, position: 'absolute', top: '50px', left: '0px', width: '100%', textAlign: 'center' }">{{check.bankName}}</div>
-                <div class="bank-address-top" :style="{ ...checkStyles.bankName, position: 'absolute', top: '70px', left: '0px', width: '100%', textAlign: 'center' }">
-                    {{check.bankAddress || ''}}
-                </div>
-                <div class="date-data" :style="{ ...checkStyles.date, position: 'absolute', ...dynamicTextPositions.date }">{{check.date}}</div>
-                <div class="date" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '90px', left: '780px' }">Date: _____________________ </div>
-                <div class="amount-box-border" style="position: absolute; top: 175px; left: 950px; width: 225px; height: 40px; border: 1px solid #c7c7c7; background-color: white;">
-                </div>
-                <div class="amount-dollar-sign" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '181px', left: '935px' }">$</div>
-                <div class="amount-data" :style="{ ...checkStyles.amount, position: 'absolute', ...dynamicTextPositions.amount }">{{formatMoney(check.amount)}}</div>
-                <div class="pay-to-data" :style="{ ...checkStyles.payTo, position: 'absolute', ...dynamicTextPositions.payTo }">{{check.payTo}}</div>
-                <div class="pay-to" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '170px', left: '60px' }">
-                    Pay to the <br>Order of: <span class="payto-line"></span>
-                </div>
-                <div class="amount-line-data" ref="line" :style="{ ...checkStyles.amountWords, position: 'absolute', ...dynamicTextPositions.amountWords }">
-                    ***
-                    {{toWords(check.amount)}} 
-                    ***
-                </div>
-                <div class="amount-line" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '250px', left: '60px' }">
-                    <span class="dollar-line" :style="{ width: check.lineLength ? `${840 - check.lineLength}px` : '840px' }"></span>
-                </div>
-                <div class="memo-data" :style="{ ...checkStyles.memo, position: 'absolute', ...dynamicTextPositions.memo }">{{check.memo}}</div>
-                <div class="memo" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '60px' }">
-                    Memo: ____________________________________
-                </div>
-                <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">{{check.signature}}</div>
-                <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '750px' }">
-                    _______________________________
-                </div>
-                <div class="signature-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '405px', left: '780px', width: '300px', textAlign: 'center' }">
-                    Authorized Signature
-                </div>
-                <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo, width: '100%', textAlign: 'center' }">
-                    <div class="routing" style="display: inline;">
-                        a{{check.routingNumber}}a
-                    </div>
-                    <div class="bank-account" style="display: inline;">{{check.bankAccountNumber}}c</div>
-                    <div class="check-number" style="display: inline; margin-left:20px">{{check.checkNumber}}</div>
-                </div>
-
-                <!-- Logo Section -->
-                <div v-if="hasCustomLogo && logoImageSrc" 
-                     class="logo-container" 
-                     :class="`logo-${currentSettings?.logo?.position || 'top-left'}`"
-                     :style="{ 
-                       width: `${currentSettings?.logo?.size?.width || 100}px`,
-                       height: `${currentSettings?.logo?.size?.height || 50}px`,
-                       opacity: currentSettings?.logo?.opacity || 1,
-                       marginTop: `${currentSettings?.logo?.margin?.top || 0}px`,
-                       marginRight: `${currentSettings?.logo?.margin?.right || 0}px`,
-                       marginBottom: `${currentSettings?.logo?.margin?.bottom || 0}px`,
-                       marginLeft: `${currentSettings?.logo?.margin?.left || 0}px`
-                     }">
-                    <img :src="logoImageSrc" 
-                         alt="Logo"
-                         :style="{
-                           width: '100%',
-                           height: '100%',
-                           objectFit: currentSettings?.logo?.objectFit || 'contain',
-                           objectPosition: currentSettings?.logo?.objectPosition || 'center'
-                         }"
-                         @error="handleLogoError"
-                         @load="handleLogoLoad" />
-                </div>
-                
-
-            </div>
-            </div>
-        </div>
-
-        <!-- SECTION 2: Payment Details (Middle Third) -->
-        <div class="payment-details-section">
-            <h3 style="margin-bottom: 20px; color: #333; text-align: center;">📋 Payment Details</h3>
-            <div class="line-items-table" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; max-width: 800px; margin: 0 auto;">
-                <table style="width: 100%; font-size: 14px;">
-                    <thead>
-                        <tr style="border-bottom: 2px solid #333;">
-                            <th style="text-align: left; padding: 12px;">Description</th>
-                            <th style="text-align: center; padding: 12px;">Qty</th>
-                            <th style="text-align: right; padding: 12px;">Rate</th>
-                            <th style="text-align: right; padding: 12px;">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="item in currentLineItems" :key="item.id" style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 10px 12px;">{{ item.description }}</td>
-                            <td style="text-align: center; padding: 10px 12px;">{{ item.quantity }}</td>
-                            <td style="text-align: right; padding: 10px 12px;">${{ item.rate.toFixed(2) }}</td>
-                            <td style="text-align: right; padding: 10px 12px;">${{ (item.quantity * item.rate).toFixed(2) }}</td>
-                        </tr>
-                        <tr v-if="currentLineItems.length === 0">
-                            <td colspan="4" style="text-align: center; padding: 20px; color: #6c757d;">
-                                No line items added. Add service details in the form below.
-                            </td>
-                        </tr>
-                    </tbody>
-                    <tfoot v-if="currentLineItems.length > 0">
-                        <tr style="border-top: 2px solid #333; font-weight: bold; font-size: 18px; background: #f0f0f0;">
-                            <td colspan="3" style="text-align: right; padding: 15px 12px;">Total:</td>
-                            <td style="text-align: right; padding: 15px 12px;">${{ lineItemsTotal.toFixed(2) }}</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-
-        <!-- SECTION 3: Payment Summary (Bottom Third) -->
-        <div class="payment-summary-section" style="margin-top: 50px; padding: 30px; border-top: 2px solid #ddd;">
-            <h3 style="margin-bottom: 20px; color: #333; text-align: center;">💰 Payment Summary</h3>
-            <div class="stats-card" style="background: #e3f2fd; padding: 25px; border-radius: 12px; border-left: 6px solid #2196f3; max-width: 600px; margin: 0 auto;">
-                <div style="font-size: 16px; line-height: 1.6;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #bbdefb;">
-                        <span style="font-weight: 500;">This Year ({{ new Date().getFullYear() }}):</span>
-                        <strong style="color: #1976d2; font-size: 18px;">${{ paymentStats.thisYear.toFixed(2) }}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #bbdefb;">
-                        <span style="font-weight: 500;">All Time Total:</span>
-                        <strong style="color: #1976d2; font-size: 18px;">${{ paymentStats.allTime.toFixed(2) }}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #bbdefb;">
-                        <span style="font-weight: 500;">Payments This Year:</span>
-                        <strong style="color: #1976d2; font-size: 18px;">{{ paymentStats.thisYearCount }}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 10px 0;">
-                        <span style="font-weight: 500;">Total Payments:</span>
-                        <strong style="color: #1976d2; font-size: 18px;">{{ paymentStats.count }}</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- FORM SECTION - Outside print container -->
+    <!-- FORM SECTION - Now at the top -->
     <div class="form-container">
         <!-- LINE ITEMS SECTION -->
         <div class="line-items-section" style="background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dee2e6;">
@@ -314,7 +169,7 @@
                 </div>
                 <!-- Unsaved Check Message -->
                 <div v-else class="alert alert-success mb-4" role="alert">
-                    <strong>✅ Check Ready!</strong> Review the check preview above, then save or print.
+                    <strong>✅ Check Ready!</strong> Review the check preview below, then save or print.
                 </div>
                 
                 <!-- Buttons (only show if not saved) -->
@@ -328,6 +183,154 @@
                 </div>
                 <div class="mt-3">
                     <small class="text-muted">{{ check.isSaved ? 'Check is locked and cannot be modified' : 'Save to history or print (saves automatically)' }}</small>
+                </div>
+            </div>
+            
+            <!-- CHECK PREVIEW - Shown when check is created -->
+            <div v-if="check.payTo && check.amount > 0">
+                <!-- MAIN PRINT CONTAINER - All 3 sections in one div -->
+                <div class="print-container" id="print-container">
+                    <!-- SECTION 1: Check (Top Third) -->
+                    <div class="check-section">
+                        <div class="check-box" id="check-box">
+                        <div style="position: relative;" id="check-box-print">
+                            <div class="account-holder-name" :style="{ ...checkStyles.accountHolderName, position: 'absolute', ...dynamicTextPositions.accountHolderName }">{{check.accountHolderName}}</div>
+                            <div class="account-holder-address" :style="{ ...checkStyles.accountHolderName, position: 'absolute', ...dynamicTextPositions.accountHolderAddress }">
+                                {{check.accountHolderAddress}}<br>
+                                {{check.accountHolderCity}}, {{check.accountHolderState}} {{check.accountHolderZip}}
+                            </div>
+                            <div class="check-number-human" :style="{ ...checkStyles.checkNumber, position: 'absolute', ...dynamicTextPositions.checkNumber }">{{check.checkNumber}}</div>
+                            <div class="bank-name-top" :style="{ ...checkStyles.bankName, position: 'absolute', top: '50px', left: '0px', width: '100%', textAlign: 'center' }">{{check.bankName}}</div>
+                            <div class="bank-address-top" :style="{ ...checkStyles.bankName, position: 'absolute', top: '70px', left: '0px', width: '100%', textAlign: 'center' }">
+                                {{check.bankAddress || ''}}
+                            </div>
+                            <div class="date-data" :style="{ ...checkStyles.date, position: 'absolute', ...dynamicTextPositions.date }">{{check.date}}</div>
+                            <div class="date" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '90px', left: '780px' }">Date: _____________________ </div>
+                            <div class="amount-box-border" style="position: absolute; top: 175px; left: 950px; width: 225px; height: 40px; border: 1px solid #c7c7c7; background-color: white;">
+                            </div>
+                            <div class="amount-dollar-sign" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '181px', left: '935px' }">$</div>
+                            <div class="amount-data" :style="{ ...checkStyles.amount, position: 'absolute', ...dynamicTextPositions.amount }">{{formatMoney(check.amount)}}</div>
+                            <div class="pay-to-data" :style="{ ...checkStyles.payTo, position: 'absolute', ...dynamicTextPositions.payTo }">{{check.payTo}}</div>
+                            <div class="pay-to" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '170px', left: '60px' }">
+                                Pay to the <br>Order of: <span class="payto-line"></span>
+                            </div>
+                            <div class="amount-line-data" ref="line" :style="{ ...checkStyles.amountWords, position: 'absolute', ...dynamicTextPositions.amountWords }">
+                                ***
+                                {{toWords(check.amount)}} 
+                                ***
+                            </div>
+                            <div class="amount-line" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '250px', left: '60px' }">
+                                <span class="dollar-line" :style="{ width: check.lineLength ? `${840 - check.lineLength}px` : '840px' }"></span>
+                            </div>
+                            <div class="memo-data" :style="{ ...checkStyles.memo, position: 'absolute', ...dynamicTextPositions.memo }">{{check.memo}}</div>
+                            <div class="memo" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '60px' }">
+                                Memo: ____________________________________
+                            </div>
+                            <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">{{check.signature}}</div>
+                            <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '750px' }">
+                                _______________________________
+                            </div>
+                            <div class="signature-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '405px', left: '780px', width: '300px', textAlign: 'center' }">
+                                Authorized Signature
+                            </div>
+                            <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo, width: '100%', textAlign: 'center' }">
+                                <div class="routing" style="display: inline;">
+                                    a{{check.routingNumber}}a
+                                </div>
+                                <div class="bank-account" style="display: inline;">{{check.bankAccountNumber}}c</div>
+                                <div class="check-number" style="display: inline; margin-left:20px">{{check.checkNumber}}</div>
+                            </div>
+
+                            <!-- Logo Section -->
+                            <div v-if="hasCustomLogo && logoImageSrc" 
+                                 class="logo-container" 
+                                 :class="`logo-${currentSettings?.logo?.position || 'top-left'}`"
+                                 :style="{ 
+                                   width: `${currentSettings?.logo?.size?.width || 100}px`,
+                                   height: `${currentSettings?.logo?.size?.height || 50}px`,
+                                   opacity: currentSettings?.logo?.opacity || 1,
+                                   marginTop: `${currentSettings?.logo?.margin?.top || 0}px`,
+                                   marginRight: `${currentSettings?.logo?.margin?.right || 0}px`,
+                                   marginBottom: `${currentSettings?.logo?.margin?.bottom || 0}px`,
+                                   marginLeft: `${currentSettings?.logo?.margin?.left || 0}px`
+                                 }">
+                                <img :src="logoImageSrc" 
+                                     alt="Logo"
+                                     :style="{
+                                       width: '100%',
+                                       height: '100%',
+                                       objectFit: currentSettings?.logo?.objectFit || 'contain',
+                                       objectPosition: currentSettings?.logo?.objectPosition || 'center'
+                                     }"
+                                     @error="handleLogoError"
+                                     @load="handleLogoLoad" />
+                            </div>
+                            
+
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: Payment Details (Middle Third) -->
+                    <div class="payment-details-section">
+                        <h3 style="margin-bottom: 20px; color: #333; text-align: center;">📋 Payment Details</h3>
+                        <div class="line-items-table" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; max-width: 800px; margin: 0 auto;">
+                            <table style="width: 100%; font-size: 14px;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid #333;">
+                                        <th style="text-align: left; padding: 12px;">Description</th>
+                                        <th style="text-align: center; padding: 12px;">Qty</th>
+                                        <th style="text-align: right; padding: 12px;">Rate</th>
+                                        <th style="text-align: right; padding: 12px;">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item in currentLineItems" :key="item.id" style="border-bottom: 1px solid #eee;">
+                                        <td style="padding: 10px 12px;">{{ item.description }}</td>
+                                        <td style="text-align: center; padding: 10px 12px;">{{ item.quantity }}</td>
+                                        <td style="text-align: right; padding: 10px 12px;">${{ item.rate.toFixed(2) }}</td>
+                                        <td style="text-align: right; padding: 10px 12px;">${{ (item.quantity * item.rate).toFixed(2) }}</td>
+                                    </tr>
+                                    <tr v-if="currentLineItems.length === 0">
+                                        <td colspan="4" style="text-align: center; padding: 20px; color: #6c757d;">
+                                            No line items added. Add service details in the form above.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot v-if="currentLineItems.length > 0">
+                                    <tr style="border-top: 2px solid #333; font-weight: bold; font-size: 18px; background: #f0f0f0;">
+                                        <td colspan="3" style="text-align: right; padding: 15px 12px;">Total:</td>
+                                        <td style="text-align: right; padding: 15px 12px;">${{ lineItemsTotal.toFixed(2) }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 3: Payment Summary (Bottom Third) -->
+                    <div class="payment-summary-section" style="margin-top: 50px; padding: 30px; border-top: 2px solid #ddd;">
+                        <h3 style="margin-bottom: 20px; color: #333; text-align: center;">💰 Payment Summary</h3>
+                        <div class="stats-card" style="background: #e3f2fd; padding: 25px; border-radius: 12px; border-left: 6px solid #2196f3; max-width: 600px; margin: 0 auto;">
+                            <div style="font-size: 16px; line-height: 1.6;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #bbdefb;">
+                                    <span style="font-weight: 500;">This Year ({{ new Date().getFullYear() }}):</span>
+                                    <strong style="color: #1976d2; font-size: 18px;">${{ paymentStats.thisYear.toFixed(2) }}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #bbdefb;">
+                                    <span style="font-weight: 500;">All Time Total:</span>
+                                    <strong style="color: #1976d2; font-size: 18px;">${{ paymentStats.allTime.toFixed(2) }}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px 0; border-bottom: 1px solid #bbdefb;">
+                                    <span style="font-weight: 500;">Payments This Year:</span>
+                                    <strong style="color: #1976d2; font-size: 18px;">{{ paymentStats.thisYearCount }}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                                    <span style="font-weight: 500;">Total Payments:</span>
+                                    <strong style="color: #1976d2; font-size: 18px;">{{ paymentStats.count }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
