@@ -186,10 +186,13 @@
                 </div>
             </div>
             
-            <!-- CHECK PREVIEW - Shown when check is created -->
-            <div v-if="check.payTo && check.amount > 0">
-                <!-- MAIN PRINT CONTAINER - All 3 sections in one div -->
-                <div class="print-container" id="print-container">
+        </div>
+    </div>
+    
+    <!-- CHECK PREVIEW - Shown when check is created (outside form-container for printing) -->
+    <div v-if="check.payTo && check.amount > 0">
+        <!-- MAIN PRINT CONTAINER - All 3 sections in one div -->
+        <div class="print-container" id="print-container">
                     <!-- SECTION 1: Check (Top Third) -->
                     <div class="check-section">
                         <div class="check-box" id="check-box">
@@ -332,13 +335,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Show Info when no check is created -->
-            <div v-else class="alert alert-info" role="alert">
-                <strong>ℹ️ Info:</strong> Use the "Write New Check" button above to create checks. The check preview will display here. Background does not print.
-            </div>
         </div>
+    </div>
+    
+    <!-- Show Info when no check is created -->
+    <div v-else class="alert alert-info" role="alert" style="margin: 20px;">
+        <strong>ℹ️ Info:</strong> Use the "Write New Check" button above to create checks. The check preview will display here. Background does not print.
     </div>
     
     <!-- Unsaved Changes Modal -->
