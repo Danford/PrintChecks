@@ -42,50 +42,23 @@
     </div>
 
     <!-- Add/Edit Vendor Modal -->
-    <div v-if="showAddVendorModal || editingVendor" class="modal-overlay">
-      <div class="modal-content">
-        <h5>{{ editingVendor ? 'Edit Vendor' : 'Add New Vendor' }}</h5>
-        <form @submit.prevent="saveVendor">
-          <div class="mb-3">
-            <label class="form-label">Vendor Name</label>
-            <input type="text" class="form-control" v-model="vendorForm.name" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-control" v-model="vendorForm.email">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Phone</label>
-            <input type="text" class="form-control" v-model="vendorForm.phone">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Address</label>
-            <textarea class="form-control" v-model="vendorForm.address" rows="3"></textarea>
-          </div>
-          <div class="btn-group w-100">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-secondary" @click="cancelVendorEdit">Cancel</button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <VendorModal 
+      v-model="showAddVendorModal" 
+      :editing-vendor="editingVendor"
+      @save="saveVendor"
+      @cancel="cancelVendorEdit"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, computed } from 'vue'
+import VendorModal from '../components/VendorModal.vue'
 
 // Vendor Management
 const vendors = ref(JSON.parse(localStorage.getItem('vendors') || '[]'))
 const showAddVendorModal = ref(false)
 const editingVendor = ref(null)
-const vendorForm = reactive({
-  id: '',
-  name: '',
-  email: '',
-  phone: '',
-  address: ''
-})
 
 // Payment history for statistics
 const paymentHistory = computed(() => JSON.parse(localStorage.getItem('checkList') || '[]'))
@@ -111,17 +84,17 @@ const vendorsWithStats = computed(() => {
   })
 })
 
-function saveVendor() {
+function saveVendor(vendorData) {
   if (editingVendor.value) {
     // Update existing vendor
     const index = vendors.value.findIndex(v => v.id === editingVendor.value.id)
     if (index !== -1) {
-      vendors.value[index] = { ...vendorForm }
+      vendors.value[index] = { ...vendorData }
     }
   } else {
     // Add new vendor
     const newVendor = {
-      ...vendorForm,
+      ...vendorData,
       id: 'vendor-' + Date.now()
     }
     vendors.value.push(newVendor)
@@ -133,7 +106,6 @@ function saveVendor() {
 
 function editVendor(vendor) {
   editingVendor.value = vendor
-  Object.assign(vendorForm, vendor)
   showAddVendorModal.value = true
 }
 
@@ -147,42 +119,10 @@ function deleteVendor(vendorId) {
 function cancelVendorEdit() {
   showAddVendorModal.value = false
   editingVendor.value = null
-  Object.assign(vendorForm, {
-    id: '',
-    name: '',
-    email: '',
-    phone: '',
-    address: ''
-  })
 }
 </script>
 
 <style scoped>
-/* Modal styling */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  max-width: 500px;
-  width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
 /* Vendor table styling */
 .table-responsive {
   border-radius: 8px;
@@ -202,4 +142,3 @@ function cancelVendorEdit() {
   font-size: 0.875rem;
 }
 </style>
-
