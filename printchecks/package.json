@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "dev:clear": "node scripts/clear-history.js && vite",
+    "dev:clear": "node scripts/clear-history.js",
+    "cleanup": "node scripts/cleanup-debug.js",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",

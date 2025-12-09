@@ -417,11 +417,15 @@ const historyStore = useHistoryStore()
 // Check for VITE_DEBUG_MODE environment variable set by clear-history.js script
 const DEBUG_MODE = ref(import.meta.env.VITE_DEBUG_MODE === 'true')
 
-// Log debug mode status on startup
+// If debug mode is active, clear all localStorage on startup
 if (DEBUG_MODE.value) {
-    console.log('%c🐛 PrintChecks Debug Mode ACTIVE', 'color: red; font-weight: bold; font-size: 16px;')
-    console.log('%cStarted with: npm run dev:clear', 'color: orange; font-size: 12px;')
-    console.log('%cTo disable: restart with npm run dev (without :clear)', 'color: gray; font-size: 12px;')
+    console.log('%c🗑️ DEBUG MODE: Clearing check history...', 'color: red; font-weight: bold; font-size: 14px;')
+    localStorage.removeItem('checkList')
+    localStorage.removeItem('printchecks_receipts')
+    localStorage.removeItem('printchecks_payments')
+    console.log('%c✅ Check history cleared!', 'color: green; font-weight: bold; font-size: 14px;')
+    console.log('%c⚠️ Debug mode active - started with npm run dev:clear', 'color: orange; font-size: 12px;')
+    console.log('%cTo disable: Stop server and run "npm run dev" (without :clear)', 'color: gray; font-size: 12px;')
 }
 
 // Expose debug toggle function to window for console access (for manual testing)
