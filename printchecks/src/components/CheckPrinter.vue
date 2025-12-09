@@ -1,94 +1,14 @@
 <template>
     <!-- FORM SECTION - Now at the top -->
     <div class="form-container">
-        <!-- LINE ITEMS SECTION -->
-        <div class="line-items-section" style="background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dee2e6;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h5 style="margin: 0; color: #495057;">📋 Service Line Items</h5>
-                <button type="button" class="btn btn-sm btn-outline-primary" @click="showLineItemForm = !showLineItemForm" :disabled="check.isSaved">
-                    {{ showLineItemForm ? '➖ Hide Form' : '➕ Add Line Item' }}
-                </button>
-            </div>
-            <div v-if="check.isSaved" class="alert alert-info mb-3" style="font-size: 0.9rem;">
-                <strong>🔒 Read-Only:</strong> This check has been saved and line items cannot be modified.
-            </div>
-            
-            <!-- Add Line Item Form -->
-            <div v-if="showLineItemForm" class="line-item-form" style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
-                <div class="row g-3">
-                    <div class="col-md-5">
-                        <label class="form-label">Service Description</label>
-                        <input type="text" class="form-control" v-model="newLineItem.description" placeholder="e.g., Consulting Services">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Quantity</label>
-                        <input type="number" class="form-control" v-model.number="newLineItem.quantity" min="0" step="0.01">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Rate ($)</label>
-                        <input type="number" class="form-control" v-model.number="newLineItem.rate" min="0" step="0.01">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Amount</label>
-                        <input type="text" class="form-control" :value="'$' + (newLineItem.quantity * newLineItem.rate).toFixed(2)" readonly style="background: #e9ecef;">
-                    </div>
-                    <div class="col-md-1 d-flex align-items-end">
-                        <button type="button" class="btn btn-primary w-100" @click="addLineItem" :disabled="!newLineItem.description || newLineItem.quantity <= 0 || newLineItem.rate <= 0">
-                            ✓
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Line Items Table -->
-            <div v-if="currentLineItems.length > 0" class="line-items-table-editor">
-                <table class="table table-sm table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Description</th>
-                            <th class="text-center">Qty</th>
-                            <th class="text-end">Rate</th>
-                            <th class="text-end">Amount</th>
-                            <th class="text-center" style="width: 80px;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, index) in currentLineItems" :key="item.id">
-                            <td>{{ item.description }}</td>
-                            <td class="text-center">{{ item.quantity }}</td>
-                            <td class="text-end">${{ item.rate.toFixed(2) }}</td>
-                            <td class="text-end">${{ (item.quantity * item.rate).toFixed(2) }}</td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-outline-danger" @click="removeLineItem(index)" title="Remove" :disabled="check.isSaved">
-                                    🗑️
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                    <tfoot class="table-light">
-                        <tr>
-                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                            <td class="text-end"><strong>${{ lineItemsTotal.toFixed(2) }}</strong></td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-
-            <!-- Empty State -->
-            <div v-else class="alert alert-info mb-0">
-                <strong>ℹ️ No line items added yet.</strong> Click "Add Line Item" to add service details.
-            </div>
-        </div>
-
         <!-- QUICK CHECK CREATION -->
         <div class="enhanced-check-creation" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <h5 style="margin-bottom: 15px; color: #495057;">✏️ Quick Check Creation</h5>
             <div class="alert alert-warning" role="alert" style="margin-bottom: 15px;">
                 <strong>⚠️ Important:</strong> Once a check is written and printed, it cannot be deleted. Checks can only be voided in the history.
             </div>
-            <div class="row g-3">
-                <div class="col-md-4">
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
                     <label for="bankSelect" class="form-label">Select Bank Account</label>
                     <select class="form-control" id="bankSelect" v-model="selectedBankId" @change="loadBankAccount">
                         <option value="">Choose Bank Account...</option>
@@ -97,7 +17,7 @@
                         </option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <label for="vendorSelect" class="form-label">Select Vendor</label>
                     <select class="form-control" id="vendorSelect" v-model="selectedVendorId" @change="loadVendor">
                         <option value="">Choose Vendor...</option>
@@ -106,13 +26,95 @@
                         </option>
                     </select>
                 </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button type="button" class="btn btn-success btn-lg w-100" @click="openQuickCheckModal" :disabled="!selectedBankId || check.isSaved">
-                        ➕ Write New Check
+            </div>
+
+            <!-- LINE ITEMS SECTION (nested inside) -->
+            <div class="line-items-section" style="background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dee2e6;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h5 style="margin: 0; color: #495057;">📋 Service Line Items</h5>
+                    <button type="button" class="btn btn-sm btn-outline-primary" @click="showLineItemForm = !showLineItemForm" :disabled="check.isSaved">
+                        {{ showLineItemForm ? '➖ Hide Form' : '➕ Add Line Item' }}
                     </button>
-                    <small v-if="check.isSaved" class="text-muted mt-1 w-100 text-center">
-                        Check is saved and locked
-                    </small>
+                </div>
+                <div v-if="check.isSaved" class="alert alert-info mb-3" style="font-size: 0.9rem;">
+                    <strong>🔒 Read-Only:</strong> This check has been saved and line items cannot be modified.
+                </div>
+                
+                <!-- Add Line Item Form -->
+                <div v-if="showLineItemForm" class="line-item-form" style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label class="form-label">Service Description</label>
+                            <input type="text" class="form-control" v-model="newLineItem.description" placeholder="e.g., Consulting Services">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" class="form-control" v-model.number="newLineItem.quantity" min="0" step="0.01">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Rate ($)</label>
+                            <input type="number" class="form-control" v-model.number="newLineItem.rate" min="0" step="0.01">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Amount</label>
+                            <input type="text" class="form-control" :value="'$' + (newLineItem.quantity * newLineItem.rate).toFixed(2)" readonly style="background: #e9ecef;">
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end">
+                            <button type="button" class="btn btn-primary w-100" @click="addLineItem" :disabled="!newLineItem.description || newLineItem.quantity <= 0 || newLineItem.rate <= 0">
+                                ✓
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Line Items Table -->
+                <div v-if="currentLineItems.length > 0" class="line-items-table-editor">
+                    <table class="table table-sm table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Description</th>
+                                <th class="text-center">Qty</th>
+                                <th class="text-end">Rate</th>
+                                <th class="text-end">Amount</th>
+                                <th class="text-center" style="width: 80px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, index) in currentLineItems" :key="item.id">
+                                <td>{{ item.description }}</td>
+                                <td class="text-center">{{ item.quantity }}</td>
+                                <td class="text-end">${{ item.rate.toFixed(2) }}</td>
+                                <td class="text-end">${{ (item.quantity * item.rate).toFixed(2) }}</td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" @click="removeLineItem(index)" title="Remove" :disabled="check.isSaved">
+                                        🗑️
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                <td class="text-end"><strong>${{ lineItemsTotal.toFixed(2) }}</strong></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <div v-else class="alert alert-info mb-0">
+                    <strong>ℹ️ No line items added yet.</strong> Click "Add Line Item" to add service details.
+                </div>
+            </div>
+
+            <!-- Write New Check Button -->
+            <div class="text-center">
+                <button type="button" class="btn btn-success btn-lg" @click="openQuickCheckModal" :disabled="!selectedBankId || check.isSaved" style="padding: 15px 40px;">
+                    ➕ Write New Check
+                </button>
+                <div v-if="check.isSaved" class="text-muted mt-2">
+                    Check is saved and locked
                 </div>
             </div>
         </div>
