@@ -336,7 +336,6 @@
                     </div>
                 </div>
         </div>
-    </div>
     
     <!-- Show Info when no check is created -->
     <div v-else class="alert alert-info" role="alert" style="margin: 20px;">
