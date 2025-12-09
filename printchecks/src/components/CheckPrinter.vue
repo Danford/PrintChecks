@@ -845,7 +845,8 @@ function saveToHistory () {
         createdAt: new Date().toISOString(),
         printedAt: new Date().toISOString(),
         isVoid: false,
-        isPrinted: true
+        isPrinted: true,
+        lineItems: currentLineItems.value // Include line items when saving
     }
     
     checkList.push(checkToSave)
@@ -999,6 +1000,11 @@ onMounted(() => {
         check.signature = state.check.signature
         check.routingNumber = state.check.routingNumber
         check.bankAccountNumber = state.check.bankAccountNumber
+        
+        // Restore line items if they exist
+        if (state.check.lineItems && Array.isArray(state.check.lineItems)) {
+            currentLineItems.value = state.check.lineItems
+        }
     }
     state.check = null
 
