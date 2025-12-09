@@ -404,7 +404,7 @@ import { useAppStore } from '../stores/app.ts'
 import { useCustomizationStore } from '../stores/customization.ts'
 import { useReceiptStore } from '../stores/receipt.ts'
 import { useHistoryStore } from '../stores/history.ts'
-import { onBeforeRouteLeave } from 'vue-router'
+import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import BankAccountModal from './BankAccountModal.vue'
 import VendorModal from './VendorModal.vue'
 
@@ -974,6 +974,7 @@ const check = reactive({
 const line = ref(null)
 
 // Navigation guard state
+const router = useRouter()
 const showUnsavedModal = ref(false)
 let pendingNavigation: (() => void) | null = null
 
@@ -984,7 +985,17 @@ onBeforeRouteLeave((to, from, next) => {
     if (hasCheckData && !check.isSaved) {
         // Show modal instead of navigating
         showUnsavedModal.value = true
-        pendingNavigation = () => next()
+        // Store the navigation callback with the destination
+        pendingNavigation = () => {
+            // Clear check data before navigating
+            check.payTo = ''
+            check.amount = 0
+            check.memo = ''
+            check.date = ''
+            check.checkNumber = null
+            currentLineItems.value = []
+            next() // Now allow navigation
+        }
         next(false) // Prevent navigation for now
     } else {
         next() // Allow navigation
