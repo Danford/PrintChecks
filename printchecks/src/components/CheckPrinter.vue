@@ -241,14 +241,14 @@
                                  class="amount-handdrawn-line" 
                                  :style="{ 
                                      position: 'absolute', 
-                                     top: '262px', 
-                                     left: `${check.lineLength + 60}px`,
-                                     width: `${840 - check.lineLength}px`,
+                                     top: '247px', 
+                                     left: `${check.lineLength + 60 + 35}px`,
+                                     width: `${840 - check.lineLength - 35}px`,
                                      height: '6px'
                                  }"
-                                 :viewBox="`0 0 ${840 - check.lineLength} 6`"
+                                 :viewBox="`0 0 ${840 - check.lineLength - 35} 6`"
                                  preserveAspectRatio="none">
-                                <path :d="`M 0 3 Q ${(840 - check.lineLength) * 0.1} 2, ${(840 - check.lineLength) * 0.2} 3.5 T ${(840 - check.lineLength) * 0.4} 2.8 T ${(840 - check.lineLength) * 0.6} 3.3 T ${(840 - check.lineLength) * 0.8} 2.5 T ${840 - check.lineLength} 3`"
+                                <path :d="`M 0 3 Q ${(840 - check.lineLength - 35) * 0.1} 2, ${(840 - check.lineLength - 35) * 0.2} 3.5 T ${(840 - check.lineLength - 35) * 0.4} 2.8 T ${(840 - check.lineLength - 35) * 0.6} 3.3 T ${(840 - check.lineLength - 35) * 0.8} 2.5 T ${840 - check.lineLength - 35} 3`"
                                       stroke="#2b2b2b" 
                                       stroke-width="1.8" 
                                       stroke-linecap="round"
