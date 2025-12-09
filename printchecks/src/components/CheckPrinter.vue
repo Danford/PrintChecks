@@ -680,8 +680,11 @@ function printCheck () {
         return
     }
     
-    // Save to history before printing
-    saveToHistory()
+    // Only save to history on first print
+    if (!check.isPrinted) {
+        saveToHistory()
+        check.isPrinted = true
+    }
     
     const style = document.createElement('style');
     style.textContent = `
@@ -840,7 +843,9 @@ function saveToHistory () {
         ...check,
         id: Date.now().toString(),
         createdAt: new Date().toISOString(),
-        isVoid: false
+        printedAt: new Date().toISOString(),
+        isVoid: false,
+        isPrinted: true
     }
     
     checkList.push(checkToSave)
@@ -864,7 +869,8 @@ const check = reactive({
     signature: '',
     routingNumber: '',
     bankAccountNumber: '',
-    lineLength: 0
+    lineLength: 0,
+    isPrinted: false
 })
 
 const line = ref(null)
@@ -957,6 +963,9 @@ function createQuickCheck() {
     check.payTo = quickCheckForm.payTo
     check.amount = quickCheckForm.amount
     check.memo = quickCheckForm.memo
+    
+    // Reset print status for new check
+    check.isPrinted = false
     
     closeQuickCheckModal()
 }
