@@ -374,6 +374,126 @@
             </div>
         </div>
     </div>
+
+    <!-- Add Bank Account Modal -->
+    <div v-if="showBankAccountModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">🏦 Add New Bank Account</h5>
+                    <button type="button" class="btn-close" @click="closeBankAccountModal"></button>
+                </div>
+                <div class="modal-body">
+                    <form @submit.prevent="saveBankAccount">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Bank Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" v-model="bankAccountForm.name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Account Holder Name</label>
+                                <input type="text" class="form-control" v-model="bankAccountForm.accountHolderName">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Account Holder Address</label>
+                                <input type="text" class="form-control" v-model="bankAccountForm.accountHolderAddress">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" v-model="bankAccountForm.accountHolderCity">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">State</label>
+                                <input type="text" class="form-control" v-model="bankAccountForm.accountHolderState" maxlength="2">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">ZIP Code</label>
+                                <input type="text" class="form-control" v-model="bankAccountForm.accountHolderZip">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Routing Number <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" v-model="bankAccountForm.routingNumber" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Account Number <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" v-model="bankAccountForm.accountNumber" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Bank Address</label>
+                                <input type="text" class="form-control" v-model="bankAccountForm.address">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Signature</label>
+                                <input type="text" class="form-control" v-model="bankAccountForm.signature">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="closeBankAccountModal">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" @click="saveBankAccount">
+                        💾 Save Bank Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Vendor Modal -->
+    <div v-if="showVendorModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">👤 Add New Vendor</h5>
+                    <button type="button" class="btn-close" @click="closeVendorModal"></button>
+                </div>
+                <div class="modal-body">
+                    <form @submit.prevent="saveVendor">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Vendor Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" v-model="vendorForm.name" required>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-control" v-model="vendorForm.address">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" v-model="vendorForm.city">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">State</label>
+                                <input type="text" class="form-control" v-model="vendorForm.state" maxlength="2">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">ZIP Code</label>
+                                <input type="text" class="form-control" v-model="vendorForm.zip">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" class="form-control" v-model="vendorForm.phone">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" v-model="vendorForm.email">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="closeVendorModal">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" @click="saveVendor">
+                        💾 Save Vendor
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -448,6 +568,33 @@ const quickCheckForm = reactive({
     payTo: '',
     amount: '',
     memo: ''
+})
+
+// Bank Account Modal
+const showBankAccountModal = ref(false)
+const bankAccountForm = reactive({
+    name: '',
+    accountHolderName: '',
+    accountHolderAddress: '',
+    accountHolderCity: '',
+    accountHolderState: '',
+    accountHolderZip: '',
+    routingNumber: '',
+    accountNumber: '',
+    signature: '',
+    address: ''
+})
+
+// Vendor Modal
+const showVendorModal = ref(false)
+const vendorForm = reactive({
+    name: '',
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
+    phone: '',
+    email: ''
 })
 
 // Line Items Management
@@ -1080,13 +1227,96 @@ function closeQuickCheckModal() {
 }
 
 function openNewBankAccountModal() {
-    // TODO: Implement bank account creation modal
-    alert('Bank account creation modal coming soon! For now, please use the Settings page to add bank accounts.')
+    // Reset form
+    Object.assign(bankAccountForm, {
+        name: '',
+        accountHolderName: '',
+        accountHolderAddress: '',
+        accountHolderCity: '',
+        accountHolderState: '',
+        accountHolderZip: '',
+        routingNumber: '',
+        accountNumber: '',
+        signature: '',
+        address: ''
+    })
+    showBankAccountModal.value = true
+}
+
+function closeBankAccountModal() {
+    showBankAccountModal.value = false
+}
+
+function saveBankAccount() {
+    // Validate required fields
+    if (!bankAccountForm.name || !bankAccountForm.accountNumber || !bankAccountForm.routingNumber) {
+        alert('Please fill in Bank Name, Account Number, and Routing Number.')
+        return
+    }
+    
+    // Generate unique ID
+    const newBank = {
+        id: Date.now().toString(),
+        ...bankAccountForm
+    }
+    
+    // Add to bank accounts
+    bankAccounts.value.push(newBank)
+    
+    // Save to localStorage
+    localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
+    
+    // Auto-select the new bank
+    selectedBankId.value = newBank.id
+    loadBankAccount()
+    
+    // Close modal
+    closeBankAccountModal()
 }
 
 function openNewVendorModal() {
-    // TODO: Implement vendor creation modal
-    alert('Vendor creation modal coming soon! For now, please use the Settings page to add vendors.')
+    // Reset form
+    Object.assign(vendorForm, {
+        name: '',
+        address: '',
+        city: '',
+        state: '',
+        zip: '',
+        phone: '',
+        email: ''
+    })
+    showVendorModal.value = true
+}
+
+function closeVendorModal() {
+    showVendorModal.value = false
+}
+
+function saveVendor() {
+    // Validate required fields
+    if (!vendorForm.name) {
+        alert('Please enter a vendor name.')
+        return
+    }
+    
+    // Generate unique ID
+    const newVendor = {
+        id: Date.now().toString(),
+        ...vendorForm
+    }
+    
+    // Add to vendors
+    vendors.value.push(newVendor)
+    
+    // Save to localStorage
+    localStorage.setItem('vendors', JSON.stringify(vendors.value))
+    
+    // Auto-select the new vendor
+    selectedVendorId.value = newVendor.id
+    loadVendor()
+    
+    // Close modal
+    closeVendorModal()
 }
 
 onMounted(() => {
