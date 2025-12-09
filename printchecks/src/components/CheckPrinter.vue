@@ -413,6 +413,22 @@ const customizationStore = useCustomizationStore()
 const receiptStore = useReceiptStore()
 const historyStore = useHistoryStore()
 
+// Debug mode flag - can be toggled via console: window.enablePrintChecksDebug()
+const DEBUG_MODE = ref(false)
+
+// Expose debug toggle function to window for console access
+if (typeof window !== 'undefined') {
+    (window as any).enablePrintChecksDebug = () => {
+        DEBUG_MODE.value = true
+        console.log('%c🐛 PrintChecks Debug Mode ENABLED', 'color: green; font-weight: bold; font-size: 14px;')
+        console.log('%cTo disable: window.disablePrintChecksDebug()', 'color: gray; font-size: 12px;')
+    };
+    (window as any).disablePrintChecksDebug = () => {
+        DEBUG_MODE.value = false
+        console.log('%c🐛 PrintChecks Debug Mode DISABLED', 'color: red; font-weight: bold; font-size: 14px;')
+    }
+}
+
 const toWordsTool = new ToWords({
   localeCode: 'en-US',
   converterOptions: {
@@ -916,13 +932,13 @@ function printCheck () {
 function saveToHistory () {
     // Only save checks that have been properly filled out
     if (!check.payTo || !check.amount || check.amount <= 0) {
-        console.warn('Cannot save empty check to history')
+        if (DEBUG_MODE.value) console.warn('Cannot save empty check to history')
         return
     }
     
     // Don't save if already saved
     if (check.isSaved) {
-        console.warn('Check has already been saved')
+        if (DEBUG_MODE.value) console.warn('Check has already been saved')
         return
     }
     
@@ -939,8 +955,10 @@ function saveToHistory () {
         isSaved: true,
         lineItems: currentLineItems.value // Include line items when saving
     }
-    console.log('Saving line items to history:', currentLineItems.value)
-    console.log('checkToSave:', checkToSave)
+    if (DEBUG_MODE.value) {
+        console.log('Saving line items to history:', currentLineItems.value)
+        console.log('checkToSave:', checkToSave)
+    }
     
     checkList.push(checkToSave)
     localStorage.setItem('checkList', JSON.stringify(checkList))
@@ -1037,12 +1055,12 @@ function handlePrintShortcut(event: KeyboardEvent) {
 
 // Logo error handling functions
 function handleLogoError(event: Event) {
-    console.warn('Logo failed to load:', event)
+    if (DEBUG_MODE.value) console.warn('Logo failed to load:', event)
     // Could add user notification here if needed
 }
 
 function handleLogoLoad(event: Event) {
-    console.log('Logo loaded successfully:', event)
+    if (DEBUG_MODE.value) console.log('Logo loaded successfully:', event)
 }
 
 // Bank Management Methods
@@ -1207,8 +1225,10 @@ onMounted(() => {
     }
     
     if (state.check) {
-        console.log('Loading check from history:', state.check)
-        console.log('Line items in loaded check:', state.check.lineItems)
+        if (DEBUG_MODE.value) {
+            console.log('Loading check from history:', state.check)
+            console.log('Line items in loaded check:', state.check.lineItems)
+        }
         check.accountHolderName = state.check.accountHolderName
         check.accountHolderAddress = state.check.accountHolderAddress
         check.accountHolderCity = state.check.accountHolderCity
@@ -1229,10 +1249,12 @@ onMounted(() => {
         // Restore line items if they exist
         if (state.check.lineItems && Array.isArray(state.check.lineItems)) {
             currentLineItems.value = state.check.lineItems
-            console.log('Restoring line items:', state.check.lineItems)
-            console.log('currentLineItems after restore:', currentLineItems.value)
+            if (DEBUG_MODE.value) {
+                console.log('Restoring line items:', state.check.lineItems)
+                console.log('currentLineItems after restore:', currentLineItems.value)
+            }
         } else {
-            console.warn('No line items found in loaded check or lineItems is not an array')
+            if (DEBUG_MODE.value) console.warn('No line items found in loaded check or lineItems is not an array')
         }
     }
     state.check = null
