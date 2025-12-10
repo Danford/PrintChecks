@@ -341,71 +341,72 @@
                     </div>
 
                     <!-- SECTION 3: Enhanced Payment Summary (Bottom Third) -->
-                    <div class="payment-summary-section" style="margin-top: 50px; padding: 30px; border-top: 2px solid #ddd;">
+                    <div class="payment-summary-section" style="margin-top: 30px; padding: 20px; border-top: 2px solid #ddd;">
                         
                         <!-- Two-Column Layout -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 1200px; margin: 0 auto;">
                             <!-- Payment Totals Card -->
-                            <div style="background: #e8f5e8; padding: 25px; border-radius: 12px; border-left: 6px solid #4caf50;">
-                                <h5 style="color: #388e3c; margin-bottom: 20px;">💰 Payment Totals</h5>
-                                <div style="font-size: 15px; line-height: 1.6;">
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
+                            <div style="background: #e8f5e8; padding: 18px; border-radius: 10px; border-left: 6px solid #4caf50;">
+                                <h5 style="color: #388e3c; margin-bottom: 12px; font-size: 16px;">💰 Payment Totals</h5>
+                                <div style="font-size: 14px; line-height: 1.4;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
                                         <span style="font-weight: 500;">This Month:</span>
-                                        <strong style="color: #2e7d32; font-size: 16px;">${{ enhancedPaymentStats.thisMonth.toFixed(2) }}</strong>
+                                        <strong style="color: #2e7d32; font-size: 15px;">${{ enhancedPaymentStats.thisMonth.toFixed(2) }}</strong>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
                                         <span style="font-weight: 500;">Last Month:</span>
-                                        <strong style="color: #2e7d32; font-size: 16px;">${{ enhancedPaymentStats.lastMonth.toFixed(2) }}</strong>
+                                        <strong style="color: #2e7d32; font-size: 15px;">${{ enhancedPaymentStats.lastMonth.toFixed(2) }}</strong>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
                                         <span style="font-weight: 500;">This Year:</span>
-                                        <strong style="color: #2e7d32; font-size: 16px;">${{ paymentStats.thisYear.toFixed(2) }}</strong>
+                                        <strong style="color: #2e7d32; font-size: 15px;">${{ paymentStats.thisYear.toFixed(2) }}</strong>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
                                         <span style="font-weight: 500;">This Quarter:</span>
-                                        <strong style="color: #2e7d32; font-size: 16px;">${{ enhancedPaymentStats.thisQuarter.toFixed(2) }}</strong>
+                                        <strong style="color: #2e7d32; font-size: 15px;">${{ enhancedPaymentStats.thisQuarter.toFixed(2) }}</strong>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                                    <div style="display: flex; justify-content: space-between; padding: 6px 0;">
                                         <span style="font-weight: 500;">Last Year:</span>
-                                        <strong style="color: #2e7d32; font-size: 16px;">${{ enhancedPaymentStats.lastYear.toFixed(2) }}</strong>
+                                        <strong style="color: #2e7d32; font-size: 15px;">${{ enhancedPaymentStats.lastYear.toFixed(2) }}</strong>
                                     </div>
                                 </div>
                             </div>
                             
                             <!-- Payment Statistics Card -->
-                            <div style="background: #fff3e0; padding: 25px; border-radius: 12px; border-left: 6px solid #ff9800;">
-                                <h5 style="color: #f57c00; margin-bottom: 20px;">📈 Payment Statistics</h5>
-                                <div style="font-size: 15px; line-height: 1.6;">
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
+                            <div style="background: #fff3e0; padding: 18px; border-radius: 10px; border-left: 6px solid #ff9800;">
+                                <h5 style="color: #f57c00; margin-bottom: 12px; font-size: 16px;">📈 Payment Statistics</h5>
+                                <div style="font-size: 14px; line-height: 1.4;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
                                         <span style="font-weight: 500;">Average Payment:</span>
-                                        <strong style="color: #e65100; font-size: 16px;">${{ enhancedPaymentStats.averagePayment.toFixed(2) }}</strong>
+                                        <strong style="color: #e65100; font-size: 15px;">${{ enhancedPaymentStats.averagePayment.toFixed(2) }}</strong>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
                                         <span style="font-weight: 500;">Monthly Average:</span>
-                                        <strong style="color: #e65100; font-size: 16px;">${{ enhancedPaymentStats.monthlyAverage.toFixed(2) }}</strong>
+                                        <strong style="color: #e65100; font-size: 15px;">${{ enhancedPaymentStats.monthlyAverage.toFixed(2) }}</strong>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
                                         <span style="font-weight: 500;">Largest Payment:</span>
-                                        <strong style="color: #e65100; font-size: 16px;">${{ enhancedPaymentStats.largestPayment.toFixed(2) }}</strong>
+                                        <strong style="color: #e65100; font-size: 15px;">${{ enhancedPaymentStats.largestPayment.toFixed(2) }}</strong>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
                                         <span style="font-weight: 500;">Smallest Payment:</span>
-                                        <strong style="color: #e65100; font-size: 16px;">${{ enhancedPaymentStats.smallestPayment.toFixed(2) }}</strong>
+                                        <strong style="color: #e65100; font-size: 15px;">${{ enhancedPaymentStats.smallestPayment.toFixed(2) }}</strong>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                                    <div style="display: flex; justify-content: space-between; padding: 6px 0;">
                                         <span style="font-weight: 500;">Total Payments:</span>
-                                        <strong style="color: #e65100; font-size: 16px;">{{ paymentStats.count }}</strong>
+                                        <strong style="color: #e65100; font-size: 15px;">{{ paymentStats.count }}</strong>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- All Time Total - Highlighted Banner -->
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 12px; max-width: 1200px; margin: 20px auto 0; text-align: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-                            <div style="color: rgba(255, 255, 255, 0.9); font-size: 14px; margin-bottom: 5px; font-weight: 500;">All Time Total</div>
-                            <div style="color: white; font-size: 32px; font-weight: bold;">${{ paymentStats.allTime.toFixed(2) }}</div>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 10px; max-width: 1200px; margin: 15px auto 0; text-align: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+                            <div style="color: rgba(255, 255, 255, 0.9); font-size: 13px; margin-bottom: 4px; font-weight: 500;">All Time Total</div>
+                            <div style="color: white; font-size: 28px; font-weight: bold;">${{ paymentStats.allTime.toFixed(2) }}</div>
                         </div>
                     </div>
+
 
 
                 </div>
