@@ -152,30 +152,21 @@
                 </div>
                 
                 <!-- Color Icon -->
-                <div class="icon-control" :class="{ active: expandedControls[fontKey] === 'color' }">
-                  <button 
+                <div class="icon-control color-control-wrapper">
+                  <input 
+                    type="color" 
+                    :value="currentSettings?.fonts[fontKey]?.color || '#000000'"
+                    @input="updateFont(fontKey, 'color', $event.target.value)"
+                    class="hidden-color-input"
+                    :id="`color-input-${fontKey}`"
+                  />
+                  <label 
+                    :for="`color-input-${fontKey}`"
                     class="icon-btn color-btn"
-                    @click="openColorPicker(fontKey)"
                     :style="{ backgroundColor: currentSettings?.fonts[fontKey]?.color || '#000000' }"
                     :title="'Color: ' + (currentSettings?.fonts[fontKey]?.color || '#000000')"
                   >
-                  </button>
-                  <div v-if="expandedControls[fontKey] === 'color'" class="control-dropdown color-dropdown">
-                    <input 
-                      type="color" 
-                      :value="currentSettings?.fonts[fontKey]?.color || '#000000'"
-                      @input="updateFont(fontKey, 'color', $event.target.value)"
-                      class="compact-color"
-                      :ref="el => setColorInputRef(fontKey, el)"
-                    />
-                    <input 
-                      type="text" 
-                      :value="currentSettings?.fonts[fontKey]?.color || '#000000'"
-                      @input="updateFont(fontKey, 'color', $event.target.value)"
-                      class="compact-text-input"
-                      placeholder="#000000"
-                    />
-                  </div>
+                  </label>
                 </div>
                 
                 <!-- Position Icon -->
@@ -442,7 +433,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, reactive, nextTick } from 'vue'
+import { computed, onMounted, ref, reactive } from 'vue'
 import { useCustomizationStore } from '@/stores/customization'
 import type { CustomizationPreset, FontSettings, CustomizationSettings } from '@/types'
 import CheckTemplatePreview from './CheckTemplatePreview.vue'
@@ -464,9 +455,6 @@ const sectionsExpanded = reactive({
 
 // Track which control is expanded for each font element
 const expandedControls = reactive<Record<string, string | null>>({})
-
-// Track color input refs for auto-clicking
-const colorInputRefs = reactive<Record<string, HTMLInputElement | null>>({})
 
 // Track if we've already created a custom template from the current built-in
 const hasCreatedCustomTemplate = ref(false)
@@ -602,12 +590,17 @@ function updateFont(element: keyof typeof currentSettings.value.fonts, property:
     // Create a new custom template based on the built-in one (only once)
     hasCreatedCustomTemplate.value = true
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
-    customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
+    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
     
-    // Apply the font update to the new template
-    setTimeout(() => {
-      customizationStore.updateFont(element, { [property]: value })
-    }, 50)
+    // Apply the new preset and then the font update
+    if (newPreset) {
+      setTimeout(() => {
+        customizationStore.applyPreset(newPreset)
+        setTimeout(() => {
+          customizationStore.updateFont(element, { [property]: value })
+        }, 50)
+      }, 50)
+    }
   } else {
     customizationStore.updateFont(element, { [property]: value })
   }
@@ -743,25 +736,7 @@ function toggleControl(fontKey: string, controlType: string) {
   }
 }
 
-// Set color input ref
-function setColorInputRef(fontKey: string, el: any) {
-  if (el) {
-    colorInputRefs[fontKey] = el as HTMLInputElement
-  }
-}
 
-// Open color picker and auto-click the native color input
-function openColorPicker(fontKey: string) {
-  toggleControl(fontKey, 'color')
-  
-  // Wait for the dropdown to render, then auto-click the color input
-  nextTick(() => {
-    const colorInput = colorInputRefs[fontKey]
-    if (colorInput) {
-      colorInput.click()
-    }
-  })
-}
 
 // Get short font name for display
 function getShortFontName(fontKey: keyof CustomizationSettings['fonts']): string {
@@ -819,12 +794,17 @@ function updateAdjustmentValue(fontKey: keyof CustomizationSettings['fonts'], ax
     // Create a new custom template based on the built-in one (only once)
     hasCreatedCustomTemplate.value = true
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
-    customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
+    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
     
-    // Apply the adjustment update to the new template
-    setTimeout(() => {
-      customizationStore.updateAdjustment(fontKey, { [axis]: value })
-    }, 50)
+    // Apply the new preset and then the adjustment update
+    if (newPreset) {
+      setTimeout(() => {
+        customizationStore.applyPreset(newPreset)
+        setTimeout(() => {
+          customizationStore.updateAdjustment(fontKey, { [axis]: value })
+        }, 50)
+      }, 50)
+    }
   } else {
     customizationStore.updateAdjustment(fontKey, { [axis]: value })
   }
@@ -1696,17 +1676,32 @@ onMounted(() => {
   color: #333;
 }
 
+.color-control-wrapper {
+  position: relative;
+}
+
+.hidden-color-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .color-btn {
+  display: block;
   border: 2px solid #dee2e6;
   width: 36px;
   height: 36px;
   border-radius: 6px;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
 .color-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-color: #007bff;
 }
 
 .control-dropdown {
