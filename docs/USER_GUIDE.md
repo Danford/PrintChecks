@@ -2,6 +2,8 @@
 
 Welcome to **PrintChecks**! This comprehensive guide will help you get the most out of the application.
 
+> 💡 **Tip**: For visual examples of the interface, check out the [screenshots in the main README](../README.md#-screenshots).
+
 ---
 
 ## 📚 Table of Contents
