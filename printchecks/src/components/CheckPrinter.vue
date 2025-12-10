@@ -1027,7 +1027,7 @@ function printCheck () {
         
         /* Section 1: Check (Top Third) */
         .check-section {
-          height: 33.33vh !important;
+          height: calc((100vh - 12mm) / 3) !important;
           width: 100% !important;
           margin: 0 !important;
           padding: 0 !important;
@@ -1054,7 +1054,7 @@ function printCheck () {
         
         /* Section 2: Payment Details (Middle Third) */
         .payment-details-section {
-          height: 33.33vh !important;
+          height: calc((100vh - 12mm) / 3) !important;
           width: 100% !important;
           margin: 0 !important;
           padding: 20px !important;
@@ -1081,7 +1081,7 @@ function printCheck () {
         
         /* Section 3: Payment Summary (Bottom Third) */
         .payment-summary-section {
-          height: 33.33vh !important;
+          height: calc((100vh - 12mm) / 3) !important;
           width: 100% !important;
           margin: 0 !important;
           padding: 20px !important;
