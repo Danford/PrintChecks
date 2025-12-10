@@ -1058,7 +1058,6 @@ function printCheck () {
           width: 100% !important;
           margin: 0 !important;
           padding: 20px !important;
-          border-top: 2px solid #000 !important;
           background: white !important;
           position: relative !important;
         }
@@ -1085,7 +1084,6 @@ function printCheck () {
           width: 100% !important;
           margin: 0 !important;
           padding: 20px !important;
-          border-top: 2px solid #000 !important;
           background: white !important;
           position: relative !important;
         }
