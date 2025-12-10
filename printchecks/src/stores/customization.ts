@@ -536,6 +536,22 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     savePresets()
   }
   
+  function renamePreset(presetId: string, newName: string, newDescription: string) {
+    // Only rename if not built-in
+    const presetToRename = presets.value.find(p => p.id === presetId)
+    if (presetToRename && presetToRename.isBuiltIn) {
+      console.warn('Cannot rename built-in preset')
+      return
+    }
+    
+    if (presetToRename) {
+      presetToRename.name = newName
+      presetToRename.description = newDescription
+      presetToRename.updatedAt = new Date()
+      savePresets()
+    }
+  }
+  
   function loadAvailableFonts() {
     // Load comprehensive font collection with ALL available fonts
     availableFonts.value = [
@@ -1307,6 +1323,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     saveAsPreset,
     loadPresets,
     deletePreset,
+    renamePreset,
     loadAvailableFonts,
     loadGoogleFonts,
     loadColorPalettes

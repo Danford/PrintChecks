@@ -37,14 +37,22 @@
               <h5>{{ preset.name }}</h5>
               <p>{{ preset.description }}</p>
             </div>
-            <button 
-              v-if="!preset.isBuiltIn" 
-              class="delete-preset-btn" 
-              @click.stop="confirmDeletePreset(preset)"
-              title="Delete Template"
-            >
-              🗑️
-            </button>
+            <div v-if="!preset.isBuiltIn" class="preset-actions">
+              <button 
+                class="action-btn rename-btn" 
+                @click.stop="openRenameDialog(preset)"
+                title="Rename Template"
+              >
+                ✏️
+              </button>
+              <button 
+                class="action-btn delete-btn" 
+                @click.stop="confirmDeletePreset(preset)"
+                title="Delete Template"
+              >
+                🗑️
+              </button>
+            </div>
           </div>
         </div>
         </div>
@@ -71,31 +79,26 @@
               </div>
               <div class="icon-controls">
                 <!-- Font Family Icon -->
-                <div class="icon-control" :class="{ active: expandedControls[fontKey] === 'family' }">
-                  <button 
-                    class="icon-btn"
-                    @click="toggleControl(fontKey, 'family')"
+                <div class="icon-control font-control">
+                  <select 
+                    :value="currentSettings?.fonts[fontKey]?.family || ''"
+                    @change="updateFont(fontKey, 'family', $event.target.value)"
+                    class="font-select"
                     :title="'Font: ' + getShortFontName(fontKey)"
                   >
+                    <optgroup v-for="category in fontCategories" :key="category" :label="getCategoryLabel(category)">
+                      <option 
+                        v-for="font in getFontsByCategory(category)" 
+                        :key="font.name" 
+                        :value="font.name"
+                        :style="{ fontFamily: font.name }"
+                      >
+                        {{ font.displayName }}
+                      </option>
+                    </optgroup>
+                  </select>
+                  <div class="font-icon-overlay" :style="{ pointerEvents: 'none' }">
                     <span class="icon-letter" :style="{ fontFamily: currentSettings?.fonts[fontKey]?.family }">A</span>
-                  </button>
-                  <div v-if="expandedControls[fontKey] === 'family'" class="control-dropdown">
-                    <select 
-                      :value="currentSettings?.fonts[fontKey]?.family || ''"
-                      @change="updateFont(fontKey, 'family', $event.target.value)"
-                      class="compact-select"
-                    >
-                      <optgroup v-for="category in fontCategories" :key="category" :label="getCategoryLabel(category)">
-                        <option 
-                          v-for="font in getFontsByCategory(category)" 
-                          :key="font.name" 
-                          :value="font.name"
-                          :style="{ fontFamily: font.name }"
-                        >
-                          {{ font.displayName }}
-                        </option>
-                      </optgroup>
-                    </select>
                   </div>
                 </div>
                 
@@ -429,6 +432,43 @@
         </button>
       </div>
     </div>
+    
+    <!-- Rename Dialog -->
+    <div v-if="renameDialogPreset" class="modal-overlay" @click="closeRenameDialog">
+      <div class="modal-dialog" @click.stop>
+        <div class="modal-header">
+          <h3>✏️ Rename Template</h3>
+          <button class="modal-close" @click="closeRenameDialog">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="rename-name">Template Name</label>
+            <input 
+              id="rename-name"
+              v-model="renameName" 
+              type="text" 
+              class="form-input"
+              placeholder="Enter template name"
+              @keyup.enter="saveRename"
+            />
+          </div>
+          <div class="form-group">
+            <label for="rename-description">Description (optional)</label>
+            <textarea 
+              id="rename-description"
+              v-model="renameDescription" 
+              class="form-textarea"
+              placeholder="Enter description"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button @click="closeRenameDialog" class="btn btn-secondary">Cancel</button>
+          <button @click="saveRename" class="btn btn-primary" :disabled="!renameName.trim()">Save</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -458,6 +498,11 @@ const expandedControls = reactive<Record<string, string | null>>({})
 
 // Track if we've already created a custom template from the current built-in
 const hasCreatedCustomTemplate = ref(false)
+
+// Rename dialog state
+const renameDialogPreset = ref<CustomizationPreset | null>(null)
+const renameName = ref('')
+const renameDescription = ref('')
 
 // Computed properties
 const currentSettings = computed(() => customizationStore.currentSettings)
@@ -781,6 +826,29 @@ function confirmDeletePreset(preset: CustomizationPreset) {
   if (confirm(`Are you sure you want to delete the template "${preset.name}"?`)) {
     customizationStore.deletePreset(preset.id!)
   }
+}
+
+function openRenameDialog(preset: CustomizationPreset) {
+  renameDialogPreset.value = preset
+  renameName.value = preset.name
+  renameDescription.value = preset.description || ''
+}
+
+function closeRenameDialog() {
+  renameDialogPreset.value = null
+  renameName.value = ''
+  renameDescription.value = ''
+}
+
+function saveRename() {
+  if (!renameDialogPreset.value || !renameName.value.trim()) return
+  
+  customizationStore.renamePreset(
+    renameDialogPreset.value.id!,
+    renameName.value.trim(),
+    renameDescription.value.trim()
+  )
+  closeRenameDialog()
 }
 
 // Position adjustment functions
@@ -1481,37 +1549,12 @@ onMounted(() => {
   border-color: #007bff;
 }
 
-/* Delete Template Button */
-.delete-preset-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(220, 53, 69, 0.9);
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  z-index: 10;
-}
-
 .preset-card {
   position: relative;
 }
 
-.preset-card:hover .delete-preset-btn {
+.preset-card:hover .preset-actions {
   opacity: 1;
-}
-
-.delete-preset-btn:hover {
-  background: rgba(220, 53, 69, 1);
-  transform: scale(1.1);
 }
 
 /* Adjustment Controls Styles */
@@ -1856,5 +1899,151 @@ onMounted(() => {
 
 .compact-reset-btn:active {
   transform: scale(0.98);
+}
+
+/* Preset Actions */
+.preset-actions {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rename-btn {
+  background: #007bff;
+}
+
+.rename-btn:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+}
+
+.delete-btn {
+  background: #dc3545;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+  transform: scale(1.05);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-dialog {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6c757d;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.modal-close:hover {
+  background: #f8f9fa;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid #dee2e6;
 }
 </style>
