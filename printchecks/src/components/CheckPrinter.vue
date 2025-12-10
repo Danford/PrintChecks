@@ -230,7 +230,7 @@
                             </div>
                             <div class="amount-line-data" ref="line" :style="{ ...checkStyles.amountWords, position: 'absolute', ...dynamicTextPositions.amountWords }">
                                 ***
-                                {{toWords(check.amount)}} 
+                                <span v-html="toWords(check.amount)"></span>
                                 ***
                             </div>
                             <div class="amount-line" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '250px', left: '60px' }">
@@ -479,8 +479,9 @@ const toWords: (denom: number | string) => string = (denom) => {
         // Get the word representation of the dollar amount (without "Dollars")
         const dollarWords = toWordsTool.convert(dollars, { currency: false });
         
-        // Format as "Word Amount and XX/100"
-        return `${dollarWords} and ${cents.toString().padStart(2, '0')}/100`;
+        // Format as "Word Amount and XX/100" with proper stacked fraction
+        const centsStr = cents.toString().padStart(2, '0');
+        return `${dollarWords} and <sup style="font-size: 0.7em;">${centsStr}</sup>&frasl;<sub style="font-size: 0.7em;">100</sub>`;
     } catch (e) {
         return `${e}`;
     }
