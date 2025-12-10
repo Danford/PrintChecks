@@ -8,7 +8,7 @@
 
 PrintChecks is a fork of PrintMeChecks that dramatically expands its capabilities to offer enhanced customization, richer output, and business-ready payment documentation. What started as a simple check-printing tool has evolved into a comprehensive, privacy-focused financial documentation system.
 
-![PrintChecks Screenshot](https://drx-danwins.us-east-1.linodeobjects.com/drx-danwins/screencapture-printmechecks-tiiny-site-2024-07-04-07_13_31_(1)_e9e4be02.png)
+> 📸 **Note**: Application screenshots will be added soon to showcase the current interface and features.
 
 ---
 
