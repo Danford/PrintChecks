@@ -637,10 +637,10 @@ Total:          ~230 KB (gzipped)
 - Custom layouts
 - Template marketplace
 
-#### 5. **Encryption**
+#### 5. **Encryption** (Planned)
 - Optional client-side encryption
 - Password-protected data
-- Encrypted exports
+- Secure data storage options
 
 #### 6. **Cloud Sync (Optional)**
 - End-to-end encrypted sync
@@ -732,4 +732,3 @@ Total:          ~230 KB (gzipped)
 ---
 
 *Last updated: December 2024*
-

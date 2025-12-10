@@ -35,21 +35,18 @@ PrintChecks is a fork of PrintMeChecks that dramatically expands its capabilitie
 ### 📋 Receipt & Invoice Management
 - Create itemized receipts with line items
 - Automatic calculations (subtotal, tax, totals)
-- Additional charges (shipping, handling, etc.)
 - Professional formatting for business use
 
 ### 🎨 Customization Engine
 - **Font customization** for every check element
 - **Color schemes** and styling presets
 - **Logo upload** with positioning controls
-- **Layout adjustments** and spacing controls
 - **Preset system** for quick style switching
 
 ### 👥 Vendor Management
 - Store vendor information (name, address, email, phone)
 - Quick-fill vendor details on checks
 - Track payment history per vendor
-- Export vendor data
 
 ### 📊 Payment Analytics
 - Payment volume tracking over time
@@ -59,11 +56,10 @@ PrintChecks is a fork of PrintMeChecks that dramatically expands its capabilitie
 - Comprehensive payment history
 
 ### 📚 History & Documentation
-- Searchable payment history
-- Filter by vendor, date range, amount
+- Complete payment history tracking
 - Combined view of checks and receipts
-- Export historical data
-- Pagination and sorting
+- Immutable payment records
+- **Coming Soon**: Search, filters, pagination, sorting, and data export
 
 ### 🔒 Privacy & Security
 - **100% Local**: All processing happens in your browser
@@ -275,7 +271,7 @@ We welcome contributions! Here's how you can help:
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-**Copyright © 2025 Dan Safee**
+**Copyright © 2025 Joshua Danford**
 
 ---
 
@@ -309,4 +305,3 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ---
 
 **PrintChecks: Take control of your payment documentation. Private, professional, and completely free.** 🏦✨
-

@@ -224,10 +224,8 @@ PrintChecks can generate professional itemized receipts.
    - Enter unit price (e.g., 75.00)
    - Subtotal calculates automatically
 
-4. **Configure Tax and Fees:**
+4. **Configure Tax:**
    - Set tax rate (percentage)
-   - Add shipping charges
-   - Add handling fees
    - Total calculates automatically
 
 5. Click **"Generate Receipt"**
@@ -303,11 +301,7 @@ Change colors for:
 
 ### Layout Controls
 
-Adjust spacing and positioning:
-- Check element vertical positions
-- Horizontal alignments
-- Margin sizes
-- Line spacing
+⚠️ **Coming Soon**: Advanced layout controls for spacing and positioning will be added in a future update.
 
 ### Saving Style Presets
 
@@ -348,48 +342,37 @@ The History page shows:
 - Dates and payees
 - Memos and notes
 
-### Searching History
+⚠️ **Coming Soon**: The following features are currently in development and will be available in future updates:
 
-Use the search bar to find specific payments:
+### Planned Features
+
+**Advanced Search**
 - Search by payee name
 - Search by memo text
 - Search by amount
 - Search by date
 
-### Filtering History
+**Filtering**
+- Date range filtering
+- Amount range filtering
+- Filter by specific vendors
+- Filter by payment type
 
-Filter payments by:
-- **Date Range**: Specific time periods
-- **Amount Range**: Min and max amounts
-- **Vendor**: Specific payees
-- **Payment Type**: Checks, receipts, or both
+**Sorting & Organization**
+- Sort by date, amount, payee, or check number
+- Ascending and descending order
+- Custom column sorting
 
-### Sorting History
+**Pagination**
+- Navigate through pages
+- Adjustable items per page
+- Quick page jumping
 
-Click column headers to sort by:
-- Date (newest or oldest first)
-- Amount (high to low or low to high)
-- Payee (alphabetical)
-- Check number
-
-### Pagination
-
-- Navigate through pages with Previous/Next buttons
-- Adjust items per page (10, 25, 50, 100)
-- Jump to specific page numbers
-
-### Exporting History
-
-1. Apply desired filters
-2. Click **"Export"**
-3. Choose format (CSV, PDF)
-4. Download your payment history
-
-**Export Uses:**
-- Accounting records
-- Tax preparation
-- Backup purposes
-- Financial analysis
+**Data Export**
+- Export to CSV format
+- Export to PDF format
+- Filtered export options
+- Full backup capabilities
 
 ---
 
@@ -484,11 +467,10 @@ Filter analytics by:
 
 ### Data Management
 
-1. **Regular Backups**
-   - Export your history monthly
-   - Save vendor lists
-   - Backup style presets
-   - Store in secure location
+1. **Regular Backups** (Coming Soon)
+   - Data export feature will be available soon
+   - Manual browser localStorage backup as interim solution
+   - Store backups in secure location
 
 2. **Browser Considerations**
    - Don't use incognito/private mode (data won't persist)
@@ -498,14 +480,14 @@ Filter analytics by:
 3. **Security**
    - Run PrintChecks locally (don't host publicly)
    - Don't share your computer with untrusted users
-   - Consider encrypting exported data files
+   - **Coming Soon**: Built-in encryption options for enhanced security
 
 ### Performance Optimization
 
-1. **Limit History Size**
-   - Export and archive old payments
-   - Keep recent history for quick access
-   - Clear very old entries if app becomes slow
+1. **History Management**
+   - The immutable history log tracks all payments
+   - Current performance is optimized for typical usage
+   - Export and archive features coming soon
 
 2. **Logo Optimization**
    - Use compressed images
@@ -514,10 +496,10 @@ Filter analytics by:
 
 ### Accounting Integration
 
-1. **Export Regularly**
-   - Export history for QuickBooks, Xero, etc.
-   - Use CSV format for spreadsheet compatibility
-   - Maintain consistent export schedules
+1. **Export Feature** (Coming Soon)
+   - Data export for QuickBooks, Xero, etc. will be available soon
+   - CSV format for spreadsheet compatibility
+   - Full history export capabilities
 
 2. **Memo Field Usage**
    - Use consistent memo formats
@@ -625,4 +607,3 @@ We hope this guide helps you make the most of the application. Happy printing!
 ---
 
 *Last updated: December 2024*
-

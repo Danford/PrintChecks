@@ -98,14 +98,13 @@ src/
 - **Font Controls**: Customize fonts for all check elements (payee, amount, memo, etc.)
 - **Color Schemes**: Full color customization with preset themes
 - **Logo Management**: Upload, position, and resize logos
-- **Layout Controls**: Adjust spacing, positioning, and alignment
 - **Preset System**: Save and load custom style presets for quick switching
 - **Real-time Preview**: See changes instantly before printing
+- **Coming Soon**: Advanced layout controls for spacing and positioning
 
 ### 📋 Receipt Management
 - **Line Items**: Create itemized receipts with descriptions, quantities, and prices
 - **Automatic Calculations**: Subtotal, tax, and total calculations
-- **Additional Charges**: Add shipping, handling, or other fees
 - **Professional Output**: Business-ready receipt formatting
 - **Print Integration**: Seamless printing with check printing workflow
 
@@ -113,8 +112,7 @@ src/
 - **Contact Information**: Store name, address, email, and phone for each vendor
 - **Quick Fill**: Auto-populate check fields from vendor data
 - **Payment History**: Track all payments made to each vendor
-- **Search & Filter**: Find vendors quickly by name or other attributes
-- **Export Capability**: Export vendor list for backups or external use
+- **Coming Soon**: Advanced search, filtering, and data export capabilities
 
 ### 📊 Analytics & Insights
 - **Payment Trends**: Visualize payment volume over time
@@ -124,11 +122,9 @@ src/
 - **Historical Summaries**: Comprehensive payment summaries with detailed breakdowns
 
 ### 📚 History System
-- **Enhanced Search**: Filter by vendor, date range, amount, or memo
-- **Combined View**: Unified history of checks, receipts, and payments
-- **Pagination**: Navigate large payment histories efficiently
-- **Sorting Options**: Sort by date, amount, vendor, or other fields
+- **Complete History**: Unified view of all checks, receipts, and payments
 - **Immutable Log**: Payment records are unalterable for accuracy
+- **Coming Soon**: Enhanced search, filtering, pagination, sorting, and data export
 
 ### 🔒 Privacy & Security
 
@@ -378,4 +374,3 @@ This project is licensed under the **MIT License** - see the [LICENSE](../LICENS
 ---
 
 **PrintChecks Application: Professional check printing and payment documentation, privately and securely in your browser.** 🏦✨
-
