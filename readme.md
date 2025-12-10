@@ -1,59 +1,145 @@
-![PMV](https://drx-danwins.us-east-1.linodeobjects.com/drx-danwins/pmc_51525a39.png) 
+# PrintChecks 🏦✅
 
-# What is this?
-Print Me Checks is an open source check printing tool that runs on the web. 
+**PrintChecks** is a comprehensive, open-source check printing and payment documentation system that runs locally in your browser. Built as an enhanced fork of PrintMeChecks, it transforms a simple check printer into a full-featured business payment solution.
 
-# Goal
-The purpose of this project is to provide a free, locally run alternative to check printing tools that exist on the internet. Some of these tools charge $1.25 or more to print a check and you must provide your banking details to a third party. This is silly! This project was literally completed in one day and gets the same job done. 
+## 🎯 What is PrintChecks?
 
-I buy blank check stock from (insert store here) and then use this tool to print checks for all my businesses with
-multiple bank accounts. Works like a charm!
+PrintChecks is a **privacy-focused, locally-run alternative** to expensive online check printing services. While other tools charge $1.25+ per check and require sharing sensitive banking information with third parties, PrintChecks runs entirely in your browser with **zero data transmission**.
 
-## Screenshot
-![PMV](https://drx-danwins.us-east-1.linodeobjects.com/drx-danwins/screencapture-printmechecks-tiiny-site-2024-07-04-07_13_31_(1)_e9e4be02.png)
+## ✨ Key Features
 
-Simple Vue App for printing checks on 8.5x11 paper.
+### 🏦 **Enhanced Check Printing**
+- Print professional checks on standard 8.5x11 paper
+- Official E13B font for routing and account numbers
+- Automatic currency-to-words conversion
+- Multiple bank account support
+- Signature font options
 
-## Features
-* Printing from the Browser
-* Fancy signature font (optional)
-* Routing and Account number uses official E13B Font
-* Run locally to avoid sharing your account number over the internet
-* Automatically converts amount of money to english words
+### 🎨 **Advanced Customization**
+- **Font Control**: Customize fonts, sizes, weights, and colors for each check element
+- **Color Schemes**: Professional color palettes with custom options  
+- **Logo Support**: Upload and position custom logos with size controls
+- **Layout Options**: Adjust positioning, spacing, and alignment
+- **Preset System**: Built-in professional presets + save custom configurations
 
+### 📋 **Receipt & Payment Documentation**
+- **Line Item Management**: Add, edit, and remove itemized charges
+- **Automatic Calculations**: Real-time subtotal, tax, shipping, and grand total calculations
+- **Payment Documentation**: Complete receipt generation with billing details
+- **Professional Output**: Business-ready payment documentation
 
-# Demo
-If you don't want to run the project locally, you can try out the demo version for free. Hosting is not guaranteed to be
-up and running in the future though, but I'll keep it up as long as I can. 
+### 🔒 **Privacy & Security**
+- **100% Local**: No data ever leaves your computer
+- **No Registration**: No accounts, no sign-ups, no tracking
+- **Offline Capable**: Works without internet connection
+- **Your Data**: All information stored locally in your browser
 
-[Demo](https://printmechecks.tiiny.site/)
+## 🚀 Perfect For
 
-## Requirements
-***Must Have Node installed***
+- **Small Business Owners** requiring professional check printing with custom branding
+- **Contractors & Freelancers** needing itemized payment documentation  
+- **Accounting Professionals** wanting comprehensive payment records
+- **Anyone** seeking privacy-focused, customizable check printing solutions
 
-## Usage
+## 📸 Screenshots
 
-Clone the repository
+![PrintChecks Interface](https://drx-danwins.us-east-1.linodeobjects.com/drx-danwins/screencapture-printmechecks-tiiny-site-2024-07-04-07_13_31_(1)_e9e4be02.png)
 
-```sh
-git clone https://github.com/sktzofrenic/printmechecks.git
+*Enhanced interface with customization and receipt management capabilities*
+
+## 🛠️ Installation & Usage
+
+### Requirements
+- **Node.js** (Latest LTS version recommended)
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+
+### Quick Start
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/Danford/PrintChecks.git
 ```
-Enter the project directory
 
-```sh
-cd printmechecks
+2. **Enter the project directory**
+```bash
+cd PrintChecks/printchecks
 ```
-Install JS dependencies
 
-```sh
+3. **Install dependencies**
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
-
-```sh
+4. **Start development server**
+```bash
 npm run dev
 ```
 
-Then go to http://localhost:5173/ in your browser to start printing
+5. **Open in browser**
+Navigate to `http://localhost:5173/` to start using PrintChecks
 
+### Production Build
+```bash
+npm run build
+```
+
+## 🎪 Navigation & Features
+
+PrintChecks features an intuitive tabbed interface:
+
+- **✅ Check** - Enhanced check printing with all original functionality
+- **🎨 Customization** - Font, color, logo, and layout customization
+- **📋 Receipt** - Line item management and payment documentation
+- **📚 History** - Enhanced history with search and filtering
+
+## 🔄 Migration from PrintMeChecks
+
+PrintChecks is **100% backward compatible** with PrintMeChecks:
+- Existing check data automatically migrated
+- All original features preserved and enhanced
+- No data loss during upgrade
+- Gradual feature adoption
+
+## 🏗️ Technical Architecture
+
+### Built With
+- **Vue.js 3** with Composition API
+- **TypeScript** for type safety
+- **Pinia** for state management
+- **Vite** for build tooling
+
+### Enhanced Features
+- **Comprehensive Type System**: Full TypeScript coverage
+- **Modular Architecture**: Clean, reusable components
+- **Specialized Stores**: Dedicated state management for each feature
+- **Composables**: Reusable utility functions
+
+## 🤝 Contributing
+
+We welcome contributions! PrintChecks is open source and community-driven.
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Original PrintMeChecks** by [sktzofrenic](https://github.com/sktzofrenic) - The foundation that made this possible
+- **Vue.js Community** - For the excellent framework and ecosystem
+- **Open Source Community** - For inspiration and contributions
+
+## 🔗 Links
+
+- **Original PrintMeChecks**: [https://github.com/sktzofrenic/printmechecks](https://github.com/sktzofrenic/printmechecks)
+- **Issues & Support**: [GitHub Issues](https://github.com/Danford/PrintChecks/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Danford/PrintChecks/discussions)
+
+---
+
+**PrintChecks: Professional check printing and payment documentation, privately and securely in your browser.** 🏦✨
