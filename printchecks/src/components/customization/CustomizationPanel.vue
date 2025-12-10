@@ -6,33 +6,51 @@
     </div>
     
     <div class="panel-content">
-      <!-- Preset Selection -->
-      <div class="section">
-        <h4>Quick Presets</h4>
+      <!-- Template Selection -->
+      <div class="section collapsible-section" :class="{ collapsed: !sectionsExpanded.templates }">
+        <div class="section-header" @click="toggleSection('templates')">
+          <h4>
+            <span class="collapse-icon">{{ sectionsExpanded.templates ? '▼' : '▶' }}</span>
+            📋 Check Templates
+          </h4>
+        </div>
+        <div v-show="sectionsExpanded.templates" class="section-content">
         <div class="preset-grid">
           <div 
             v-for="preset in presets" 
             :key="preset.id"
             class="preset-card"
             :class="{ active: currentPreset?.id === preset.id }"
-            @click="applyPreset(preset)"
           >
-            <div class="preset-preview">
-              <div class="preview-text" :style="getPresetPreviewStyle(preset)">
-                Sample Check
-              </div>
+            <div class="preset-preview-container" @click="applyPreset(preset)">
+              <CheckTemplatePreview :settings="preset.settings" :scale="0.15" />
             </div>
             <div class="preset-info">
               <h5>{{ preset.name }}</h5>
               <p>{{ preset.description }}</p>
             </div>
+            <button 
+              v-if="!preset.isBuiltIn" 
+              class="delete-preset-btn" 
+              @click.stop="confirmDeletePreset(preset)"
+              title="Delete Template"
+            >
+              🗑️
+            </button>
           </div>
+        </div>
         </div>
       </div>
       
       <!-- Font Customization -->
-      <div class="section">
-        <h4>🔤 Font Customization</h4>
+      <div class="section collapsible-section" :class="{ collapsed: !sectionsExpanded.fonts }">
+        <div class="section-header" @click="toggleSection('fonts')">
+          <h4>
+            <span class="collapse-icon">{{ sectionsExpanded.fonts ? '▼' : '▶' }}</span>
+            🔤 Font Customization
+          </h4>
+        </div>
+        <div v-show="sectionsExpanded.fonts" class="section-content">
         <div class="font-controls">
           <div class="font-element" v-for="(fontKey, index) in fontElements" :key="fontKey">
             <div class="font-element-header">
@@ -122,14 +140,55 @@
                   <span class="color-value">{{ currentSettings?.fonts[fontKey]?.color || '#000000' }}</span>
                 </div>
               </div>
+              
+              <!-- Position Adjustments -->
+              <div class="font-control-group adjustment-controls">
+                <label class="control-label">Position Fine-tuning</label>
+                <div class="adjustment-inputs">
+                  <div class="adjustment-input">
+                    <label>X Offset (px)</label>
+                    <input 
+                      type="number" 
+                      :value="getAdjustment(fontKey, 'x')"
+                      @input="updateAdjustmentValue(fontKey, 'x', parseInt($event.target.value) || 0)"
+                      class="adjustment-number-input"
+                      step="1"
+                    />
+                  </div>
+                  <div class="adjustment-input">
+                    <label>Y Offset (px)</label>
+                    <input 
+                      type="number" 
+                      :value="getAdjustment(fontKey, 'y')"
+                      @input="updateAdjustmentValue(fontKey, 'y', parseInt($event.target.value) || 0)"
+                      class="adjustment-number-input"
+                      step="1"
+                    />
+                  </div>
+                  <button 
+                    @click="resetAdjustment(fontKey)" 
+                    class="btn-reset-adjustment"
+                    title="Reset to default position"
+                  >
+                    ↺ Reset
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
       
       <!-- Logo Settings -->
-      <div class="section">
-        <h4>Logo</h4>
+      <div class="section collapsible-section" :class="{ collapsed: !sectionsExpanded.logo }">
+        <div class="section-header" @click="toggleSection('logo')">
+          <h4>
+            <span class="collapse-icon">{{ sectionsExpanded.logo ? '▼' : '▶' }}</span>
+            🖼️ Logo
+          </h4>
+        </div>
+        <div v-show="sectionsExpanded.logo" class="section-content">
         <div class="logo-controls">
           <div class="checkbox-row">
             <input 
@@ -325,6 +384,7 @@
             </div>
           </div>
         </div>
+        </div>
       </div>
       
       <!-- Actions -->
@@ -341,15 +401,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, reactive } from 'vue'
 import { useCustomizationStore } from '@/stores/customization'
-import type { CustomizationPreset, FontSettings } from '@/types'
+import type { CustomizationPreset, FontSettings, CustomizationSettings } from '@/types'
+import CheckTemplatePreview from './CheckTemplatePreview.vue'
 
 const customizationStore = useCustomizationStore()
 
 // Reactive variables
 const maintainAspectRatio = ref(false)
 const originalImageDimensions = ref<{ width: number; height: number } | null>(null)
+
+// Section expansion states
+const sectionsExpanded = reactive({
+  templates: true,
+  fonts: false,
+  logo: false,
+  colors: false,
+  layout: false
+})
 
 // Computed properties
 const currentSettings = computed(() => customizationStore.currentSettings)
@@ -592,6 +662,31 @@ function saveAsPreset() {
   if (name) {
     customizationStore.saveAsPreset(name, 'Custom preset')
   }
+}
+
+// Section toggle function
+function toggleSection(sectionName: keyof typeof sectionsExpanded) {
+  sectionsExpanded[sectionName] = !sectionsExpanded[sectionName]
+}
+
+// Template deletion with confirmation
+function confirmDeletePreset(preset: CustomizationPreset) {
+  if (confirm(`Are you sure you want to delete the template "${preset.name}"?`)) {
+    customizationStore.deletePreset(preset.id!)
+  }
+}
+
+// Position adjustment functions
+function getAdjustment(fontKey: keyof CustomizationSettings['fonts'], axis: 'x' | 'y'): number {
+  return currentSettings.value?.adjustments?.[fontKey]?.[axis] || 0
+}
+
+function updateAdjustmentValue(fontKey: keyof CustomizationSettings['fonts'], axis: 'x' | 'y', value: number) {
+  customizationStore.updateAdjustment(fontKey, { [axis]: value })
+}
+
+function resetAdjustment(fontKey: keyof CustomizationSettings['fonts']) {
+  customizationStore.updateAdjustment(fontKey, { x: 0, y: 0 })
 }
 
 // Initialize on mount
@@ -1151,5 +1246,168 @@ onMounted(() => {
   border-radius: 4px;
   background: white;
   font-size: 13px;
+}
+
+/* Collapsible Section Styles */
+.collapsible-section {
+  transition: all 0.3s ease;
+}
+
+.section-header {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.section-header:hover {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.section-header h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 15px 0;
+}
+
+.collapsible-section.collapsed .section-header h4 {
+  margin-bottom: 0;
+}
+
+.collapse-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  font-size: 0.8em;
+}
+
+.section-content {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 5000px;
+  }
+}
+
+/* Template Preview Container */
+.preset-preview-container {
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 4px;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 10px;
+}
+
+.preset-preview-container:hover {
+  border-color: #007bff;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+/* Delete Template Button */
+.delete-preset-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(220, 53, 69, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  z-index: 10;
+}
+
+.preset-card {
+  position: relative;
+}
+
+.preset-card:hover .delete-preset-btn {
+  opacity: 1;
+}
+
+.delete-preset-btn:hover {
+  background: rgba(220, 53, 69, 1);
+  transform: scale(1.1);
+}
+
+/* Adjustment Controls Styles */
+.adjustment-controls {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px dashed #dee2e6;
+}
+
+.adjustment-inputs {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.adjustment-input {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 100px;
+}
+
+.adjustment-input label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+}
+
+.adjustment-number-input {
+  padding: 6px 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 13px;
+  width: 100%;
+}
+
+.adjustment-number-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+.btn-reset-adjustment {
+  padding: 6px 12px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  height: 32px;
+}
+
+.btn-reset-adjustment:hover {
+  background: #5a6268;
+}
+
+.btn-reset-adjustment:active {
+  transform: scale(0.98);
 }
 </style>
