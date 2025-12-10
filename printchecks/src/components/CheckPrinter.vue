@@ -819,6 +819,15 @@ const paymentStats = computed(() => {
     const thisYearTotal = thisYearPayments.reduce((sum, payment) => sum + payment.amount, 0)
     const allTimeTotal = allPayments.reduce((sum, payment) => sum + payment.amount, 0)
     
+    
+    return {
+        thisYear: thisYearTotal,
+        allTime: allTimeTotal,
+        count: allPayments.length,
+        thisYearCount: thisYearPayments.length
+    }
+})
+
 
 // Enhanced payment statistics with comprehensive metrics
 const enhancedPaymentStats = computed(() => {
