@@ -592,7 +592,7 @@ const dynamicTextPositions = computed(() => {
     return {
       accountHolderName: { top: '40px', left: '60px' },
       accountHolderAddress: { top: '70px', left: '60px' },
-      checkNumber: { top: '40px', left: '1060px' },
+      checkNumber: { top: '40px', right: '50px' },
       date: { top: '90px', left: '850px' },
       payTo: { top: '200px', left: '180px' },
       amount: { top: '202px', left: '970px' },
@@ -655,7 +655,7 @@ const dynamicTextPositions = computed(() => {
   let positions = {
     accountHolderName: { top: '40px', left: '60px' },
     accountHolderAddress: { top: '70px', left: '60px' },
-    checkNumber: { top: '40px', left: '1060px' },
+    checkNumber: { top: '40px', right: '50px' },
     date: { top: '90px', left: '850px' },
     payTo: { top: '200px', left: '180px' },
     amount: { top: '202px', left: '970px' },
