@@ -36,12 +36,33 @@
     <div class="pay-to" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '170px', left: '60px' }">
       Pay to the <br>Order of: <span class="payto-line"></span>
     </div>
-    <div class="amount-line-data" :style="{ ...checkStyles.amountWords, position: 'absolute', ...dynamicTextPositions.amountWords }">
-      {{ checkData.amountWords }}
+    <div class="amount-line-data" ref="line" :style="{ ...checkStyles.amountWords, position: 'absolute', ...dynamicTextPositions.amountWords }">
+      ***
+      <span v-html="checkData.amountWords"></span>
+      ***
     </div>
     <div class="amount-line" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '250px', left: '60px' }">
       <span class="dollar-line"></span>
     </div>
+    <!-- Hand-drawn line after amount words -->
+    <svg v-if="checkData.lineLength" 
+         class="amount-handdrawn-line" 
+         :style="{ 
+             position: 'absolute', 
+             top: '252px', 
+             left: `${checkData.lineLength + 60 + 45}px`,
+             width: `${840 - checkData.lineLength - 45}px`,
+             height: '6px'
+         }"
+         :viewBox="`0 0 ${840 - checkData.lineLength - 45} 6`"
+         preserveAspectRatio="none">
+      <path :d="`M 0 3 Q ${(840 - checkData.lineLength - 45) * 0.1} 2, ${(840 - checkData.lineLength - 45) * 0.2} 3.5 T ${(840 - checkData.lineLength - 45) * 0.4} 2.8 T ${(840 - checkData.lineLength - 45) * 0.6} 3.3 T ${(840 - checkData.lineLength - 45) * 0.8} 2.5 T ${840 - checkData.lineLength - 45} 3`"
+            stroke="#2b2b2b" 
+            stroke-width="1.8" 
+            stroke-linecap="round"
+            fill="none"
+            opacity="0.85"/>
+    </svg>
     <div class="memo-data" :style="{ ...checkStyles.memo, position: 'absolute', ...dynamicTextPositions.memo }">
       {{ checkData.memo }}
     </div>
@@ -111,6 +132,7 @@ interface CheckData {
   signature: string
   routingNumber: string
   bankAccountNumber: string
+  lineLength?: number
 }
 
 interface Props {

@@ -37,11 +37,12 @@ const sampleCheckData = computed(() => ({
   date: '12/10/2025',
   amount: '100.00',
   payTo: 'Sample Payee',
-  amountWords: '*** One Hundred and 00/100 Dollars ***',
+  amountWords: 'One Hundred and <sup style="font-size: 0.7em;">00</sup>&frasl;<sub style="font-size: 0.7em;">100</sub>',
   memo: 'Sample memo',
   signature: 'John Doe',
   routingNumber: '123456789',
-  bankAccountNumber: '000111222333'
+  bankAccountNumber: '000111222333',
+  lineLength: 380  // Approximate length for "One Hundred and 00/100"
 }))
 </script>
 
