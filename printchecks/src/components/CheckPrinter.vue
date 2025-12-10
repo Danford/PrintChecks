@@ -343,6 +343,9 @@
                     <!-- SECTION 3: Enhanced Payment Summary (Bottom Third) -->
                     <div class="payment-summary-section" style="margin-top: 30px; padding: 20px; border-top: 2px solid #ddd;">
                         
+                        <!-- Section Title -->
+                        <h3 style="text-align: center; color: #333; margin-bottom: 20px; font-size: 24px; font-weight: 600;">📊 Historical Payment Summary</h3>
+                        
                         <!-- Two-Column Layout -->
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 1200px; margin: 0 auto;">
                             <!-- Payment Totals Card -->
@@ -406,6 +409,7 @@
                             <div style="color: white; font-size: 28px; font-weight: bold;">${{ paymentStats.allTime.toFixed(2) }}</div>
                         </div>
                     </div>
+
 
 
 
