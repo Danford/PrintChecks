@@ -13,8 +13,8 @@ PrintChecks is a fork of PrintMeChecks that dramatically expands its capabilitie
 <table>
   <tr>
     <td width="50%">
-      <img src="docs/screenshots/print-checks-write-check.png" alt="Write Check Modal" />
-      <p align="center"><em>Write New Check Modal</em></p>
+      <img src="docs/screenshots/print-checks-new-check.png" alt="New Check Form" />
+      <p align="center"><em>New Check Creation</em></p>
     </td>
     <td width="50%">
       <img src="docs/screenshots/print-checks-preview.png" alt="Check Preview" />
@@ -23,8 +23,8 @@ PrintChecks is a fork of PrintMeChecks that dramatically expands its capabilitie
   </tr>
   <tr>
     <td width="50%">
-      <img src="docs/screenshots/print-checks-new-check.png" alt="New Check Form" />
-      <p align="center"><em>New Check Creation</em></p>
+      <img src="docs/screenshots/print-checks-write-check.png" alt="Write Check Modal" />
+      <p align="center"><em>Write New Check Modal</em></p>
     </td>
     <td width="50%">
       <img src="docs/screenshots/print-checks-history.png" alt="Payment History" />
