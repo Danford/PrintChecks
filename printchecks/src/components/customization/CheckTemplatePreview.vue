@@ -74,11 +74,10 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const containerStyle = computed(() => ({
-  width: `${100 / props.scale}%`,
-  height: `${100 / props.scale}%`,
-  transform: `scale(${props.scale})`,
-  transformOrigin: 'top left',
-  overflow: 'hidden'
+  width: `${800 * props.scale}px`,
+  height: `${350 * props.scale}px`,
+  display: 'inline-block',
+  position: 'relative'
 }))
 
 const checkStyle = computed(() => {
@@ -92,7 +91,9 @@ const checkStyle = computed(() => {
     border: layout?.showBorders ? `${layout.borderWidth}px ${layout.borderStyle} ${colors?.border || '#cccccc'}` : 'none',
     position: 'relative',
     padding: '20px',
-    fontFamily: 'Arial, sans-serif'
+    fontFamily: 'Arial, sans-serif',
+    transform: `scale(${props.scale})`,
+    transformOrigin: 'top left'
   }
 })
 
@@ -203,4 +204,3 @@ function getElementStyle(key: keyof CustomizationSettings['fonts']) {
   position: absolute;
 }
 </style>
-

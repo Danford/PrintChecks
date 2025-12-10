@@ -1539,10 +1539,11 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100px;
+  height: 80px;
   border: 1px solid #e0e0e0;
   margin-bottom: 10px;
   padding: 8px;
+  position: relative;
 }
 
 .preset-card:hover .preset-preview-container {
