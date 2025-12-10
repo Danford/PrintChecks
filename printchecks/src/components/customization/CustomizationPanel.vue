@@ -97,7 +97,7 @@
                       </option>
                     </optgroup>
                   </select>
-                  <div class="font-icon-overlay" :style="{ pointerEvents: 'none' }">
+                  <div class="font-icon-overlay">
                     <span class="icon-letter" :style="{ fontFamily: currentSettings?.fonts[fontKey]?.family }">A</span>
                   </div>
                 </div>
@@ -1943,6 +1943,45 @@ onMounted(() => {
   transform: scale(1.05);
 }
 
+/* Font Control Styles */
+.font-control {
+  position: relative;
+  width: 36px;
+  height: 36px;
+}
+
+.font-select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.font-icon-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  transition: all 0.2s;
+  z-index: 1;
+}
+
+.font-control:hover .font-icon-overlay {
+  border-color: #007bff;
+  background: #f8f9fa;
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
@@ -1954,7 +1993,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 10000;
 }
 
 .modal-dialog {
@@ -1963,6 +2002,8 @@ onMounted(() => {
   width: 90%;
   max-width: 500px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 10001;
 }
 
 .modal-header {
