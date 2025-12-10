@@ -155,7 +155,7 @@
                 <div class="icon-control" :class="{ active: expandedControls[fontKey] === 'color' }">
                   <button 
                     class="icon-btn color-btn"
-                    @click="toggleControl(fontKey, 'color')"
+                    @click="openColorPicker(fontKey)"
                     :style="{ backgroundColor: currentSettings?.fonts[fontKey]?.color || '#000000' }"
                     :title="'Color: ' + (currentSettings?.fonts[fontKey]?.color || '#000000')"
                   >
@@ -166,6 +166,7 @@
                       :value="currentSettings?.fonts[fontKey]?.color || '#000000'"
                       @input="updateFont(fontKey, 'color', $event.target.value)"
                       class="compact-color"
+                      :ref="el => setColorInputRef(fontKey, el)"
                     />
                     <input 
                       type="text" 
@@ -441,7 +442,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, reactive } from 'vue'
+import { computed, onMounted, ref, reactive, nextTick } from 'vue'
 import { useCustomizationStore } from '@/stores/customization'
 import type { CustomizationPreset, FontSettings, CustomizationSettings } from '@/types'
 import CheckTemplatePreview from './CheckTemplatePreview.vue'
@@ -463,6 +464,12 @@ const sectionsExpanded = reactive({
 
 // Track which control is expanded for each font element
 const expandedControls = reactive<Record<string, string | null>>({})
+
+// Track color input refs for auto-clicking
+const colorInputRefs = reactive<Record<string, HTMLInputElement | null>>({})
+
+// Track if we've already created a custom template from the current built-in
+const hasCreatedCustomTemplate = ref(false)
 
 // Computed properties
 const currentSettings = computed(() => customizationStore.currentSettings)
@@ -591,8 +598,9 @@ function getFontPreviewText(fontKey: string): string {
 
 function updateFont(element: keyof typeof currentSettings.value.fonts, property: keyof FontSettings, value: any) {
   // Check if we're editing a built-in template
-  if (currentPreset.value?.isBuiltIn) {
-    // Create a new custom template based on the built-in one
+  if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
+    // Create a new custom template based on the built-in one (only once)
+    hasCreatedCustomTemplate.value = true
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
     customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
     
@@ -704,6 +712,8 @@ function getPresetPreviewStyle(preset: CustomizationPreset) {
 
 function applyPreset(preset: CustomizationPreset) {
   customizationStore.applyPreset(preset)
+  // Reset the flag when switching presets
+  hasCreatedCustomTemplate.value = false
 }
 
 function resetToDefault() {
@@ -731,6 +741,26 @@ function toggleControl(fontKey: string, controlType: string) {
   } else {
     expandedControls[fontKey] = controlType
   }
+}
+
+// Set color input ref
+function setColorInputRef(fontKey: string, el: any) {
+  if (el) {
+    colorInputRefs[fontKey] = el as HTMLInputElement
+  }
+}
+
+// Open color picker and auto-click the native color input
+function openColorPicker(fontKey: string) {
+  toggleControl(fontKey, 'color')
+  
+  // Wait for the dropdown to render, then auto-click the color input
+  nextTick(() => {
+    const colorInput = colorInputRefs[fontKey]
+    if (colorInput) {
+      colorInput.click()
+    }
+  })
 }
 
 // Get short font name for display
@@ -785,8 +815,9 @@ function getAdjustment(fontKey: keyof CustomizationSettings['fonts'], axis: 'x' 
 
 function updateAdjustmentValue(fontKey: keyof CustomizationSettings['fonts'], axis: 'x' | 'y', value: number) {
   // Check if we're editing a built-in template
-  if (currentPreset.value?.isBuiltIn) {
-    // Create a new custom template based on the built-in one
+  if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
+    // Create a new custom template based on the built-in one (only once)
+    hasCreatedCustomTemplate.value = true
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
     customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
     
