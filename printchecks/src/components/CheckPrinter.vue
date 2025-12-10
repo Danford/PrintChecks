@@ -913,14 +913,6 @@ const enhancedPaymentStats = computed(() => {
     }
 })
 
-    return {
-        thisMonth,
-        thisMonthCount: thisMonthPayments.length,
-        averagePayment,
-        largestPayment,
-        totalVendors
-    }
-})
 
 
 // Dynamic styles based on customization
