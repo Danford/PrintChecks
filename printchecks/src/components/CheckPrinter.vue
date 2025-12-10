@@ -472,7 +472,15 @@ const toWordsTool = new ToWords({
 
 const toWords: (denom: number | string) => string = (denom) => {
     try {
-        return toWordsTool.convert(Number(denom), );
+        const amount = Number(denom);
+        const dollars = Math.floor(amount);
+        const cents = Math.round((amount - dollars) * 100);
+        
+        // Get the word representation of the dollar amount (without "Dollars")
+        const dollarWords = toWordsTool.convert(dollars, { currency: false });
+        
+        // Format as "Word Amount and XX/100"
+        return `${dollarWords} and ${cents.toString().padStart(2, '0')}/100`;
     } catch (e) {
         return `${e}`;
     }
