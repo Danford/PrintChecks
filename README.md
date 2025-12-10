@@ -10,28 +10,17 @@ PrintChecks is a fork of PrintMeChecks that dramatically expands its capabilitie
 
 ## 📸 Screenshots
 
-<table>
-  <tr>
-    <td width="50%">
-      <img src="docs/screenshots/print-checks-new-check.png" alt="New Check Form" />
-      <p align="center"><em>New Check Creation</em></p>
-    </td>
-    <td width="50%">
-      <img src="docs/screenshots/print-checks-preview.png" alt="Check Preview" />
-      <p align="center"><em>Check Preview with MICR Font</em></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <img src="docs/screenshots/print-checks-write-check.png" alt="Write Check Modal" />
-      <p align="center"><em>Write New Check Modal</em></p>
-    </td>
-    <td width="50%">
-      <img src="docs/screenshots/print-checks-history.png" alt="Payment History" />
-      <p align="center"><em>Payment History & Analytics</em></p>
-    </td>
-  </tr>
-</table>
+![Write New Check Modal](docs/screenshots/print-checks-write-check.png)
+*Write New Check Modal*
+
+![Check Preview with MICR Font](docs/screenshots/print-checks-preview.png)
+*Check Preview with MICR Font*
+
+![New Check Creation](docs/screenshots/print-checks-new-check.png)
+*New Check Creation*
+
+![Payment History & Analytics](docs/screenshots/print-checks-history.png)
+*Payment History & Analytics*
 
 ---
 
