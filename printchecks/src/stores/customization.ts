@@ -124,6 +124,19 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         color: '#000000'
       }
     },
+    adjustments: {
+      accountHolder: { x: 0, y: 0 },
+      payTo: { x: 0, y: 0 },
+      amount: { x: 0, y: 0 },
+      amountWords: { x: 0, y: 0 },
+      memo: { x: 0, y: 0 },
+      signature: { x: 0, y: 0 },
+      bankInfo: { x: 0, y: 0 },
+      checkNumber: { x: 0, y: 0 },
+      date: { x: 0, y: 0 },
+      fieldLabels: { x: 0, y: 0 },
+      bankName: { x: 0, y: 0 }
+    },
     colors: {
       primary: '#000000',
       secondary: '#666666',
@@ -307,6 +320,22 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     currentSettings.value.layout = {
       ...currentSettings.value.layout,
       ...layoutSettings
+    }
+    
+    validateSettings()
+    saveSettings()
+  }
+  
+  function updateAdjustment(element: keyof CustomizationSettings['fonts'], adjustment: { x?: number; y?: number }) {
+    if (!currentSettings.value) return
+    
+    if (!currentSettings.value.adjustments) {
+      currentSettings.value.adjustments = {}
+    }
+    
+    currentSettings.value.adjustments[element] = {
+      x: adjustment.x !== undefined ? adjustment.x : (currentSettings.value.adjustments[element]?.x || 0),
+      y: adjustment.y !== undefined ? adjustment.y : (currentSettings.value.adjustments[element]?.y || 0)
     }
     
     validateSettings()
@@ -1255,6 +1284,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     updateColors,
     updateLogo,
     updateLayout,
+    updateAdjustment,
     validateSettings,
     resetToDefault,
     applyPreset,
