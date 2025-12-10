@@ -237,6 +237,11 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     loadPresets()
     loadAvailableFonts()
     loadColorPalettes()
+    
+    // If no preset is selected, select the first one
+    if (!currentPreset.value && presets.value.length > 0) {
+      currentPreset.value = presets.value[0]
+    }
   }
   
   function loadSettings() {
