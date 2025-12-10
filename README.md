@@ -8,7 +8,30 @@
 
 PrintChecks is a fork of PrintMeChecks that dramatically expands its capabilities to offer enhanced customization, richer output, and business-ready payment documentation. What started as a simple check-printing tool has evolved into a comprehensive, privacy-focused financial documentation system.
 
-> 📸 **Note**: Application screenshots will be added soon to showcase the current interface and features.
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/screenshots/print-checks-write-check.png" alt="Write Check Interface" />
+      <p align="center"><em>Write Check - Main Interface</em></p>
+    </td>
+    <td width="50%">
+      <img src="docs/screenshots/print-checks-preview.png" alt="Check Preview" />
+      <p align="center"><em>Check Preview with MICR Font</em></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/screenshots/print-checks-new-check.png" alt="New Check Form" />
+      <p align="center"><em>New Check Creation</em></p>
+    </td>
+    <td width="50%">
+      <img src="docs/screenshots/print-checks-history.png" alt="Payment History" />
+      <p align="center"><em>Payment History & Analytics</em></p>
+    </td>
+  </tr>
+</table>
 
 ---
 
