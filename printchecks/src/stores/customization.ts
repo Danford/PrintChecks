@@ -446,20 +446,27 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     try {
       const saved = localStorage.getItem('printchecks_presets')
       if (saved) {
-        presets.value = JSON.parse(saved)
+        const parsed = JSON.parse(saved)
+        // Only load custom presets (not built-in)
+        presets.value = parsed.filter((p: CustomizationPreset) => !p.isBuiltIn)
+      } else {
+        presets.value = []
       }
       
-      // Add built-in presets if not already present
+      // Always add fresh built-in presets (ensures defaults are never modified)
       addBuiltInPresets()
     } catch (e) {
       console.warn('Failed to load presets:', e)
+      presets.value = []
       addBuiltInPresets()
     }
   }
   
   function savePresets() {
     try {
-      localStorage.setItem('printchecks_presets', JSON.stringify(presets.value))
+      // Only save custom presets (never save built-in presets)
+      const customPresets = presets.value.filter(p => !p.isBuiltIn)
+      localStorage.setItem('printchecks_presets', JSON.stringify(customPresets))
     } catch (e) {
       console.error('Failed to save presets:', e)
     }
@@ -512,11 +519,9 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       }
     ]
     
-    // Only add built-in presets that don't already exist
+    // Always add built-in presets fresh (ensures hardcoded defaults are never modified)
     builtInPresets.forEach(preset => {
-      if (!presets.value.find(p => p.id === preset.id)) {
-        presets.value.push(preset)
-      }
+      presets.value.push(preset)
     })
   }
   
