@@ -1,7 +1,6 @@
 {
-  "name": "printchecks",
-  "version": "1.0.0",
-  "description": "Professional check printing and payment documentation system that runs locally in your browser",
+  "name": "printmechecks",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "dev": "vite",
