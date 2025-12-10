@@ -139,9 +139,20 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     }
   }
   
+  // Checks cannot be deleted once created - they can only be voided
+  // This function is disabled to prevent accidental deletion
   function deleteCheck(checkId: string) {
-    checks.value = checks.value.filter(check => check.id !== checkId)
-    saveChecks()
+    console.warn('Checks cannot be deleted. Use voidCheck() instead.')
+    // checks.value = checks.value.filter(check => check.id !== checkId)
+    // saveChecks()
+  }
+  
+  function voidCheck(checkId: string) {
+    const check = checks.value.find(c => c.id === checkId)
+    if (check) {
+      check.isVoid = true
+      saveChecks()
+    }
   }
   
   function deleteReceipt(receiptId: string) {
@@ -234,7 +245,8 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     
     // Actions
     loadHistory,
-    deleteCheck,
+    deleteCheck, // Disabled - kept for backwards compatibility
+    voidCheck, // Use this instead of deleteCheck
     deleteReceipt,
     deletePaymentRecord,
     clearHistory,

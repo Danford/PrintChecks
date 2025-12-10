@@ -75,6 +75,7 @@ export interface CustomizationSettings extends BaseEntity {
     bankInfo: FontSettings
     checkNumber: FontSettings
     date: FontSettings
+    fieldLabels: FontSettings  // For "Pay to the order of", "Date:", "Memo:", etc.
   }
   
   // Color scheme
