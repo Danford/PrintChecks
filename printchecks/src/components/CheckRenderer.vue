@@ -133,19 +133,18 @@ const logoImageSrc = computed(() => {
 
 const containerStyle = computed(() => {
   const colors = props.settings.colors
-  const layout = props.settings.layout
   
   return {
     width: '1200px',
     height: '450px',
     backgroundColor: colors?.background || '#ffffff',
-    border: layout?.showBorders ? `${layout.borderWidth}px ${layout.borderStyle} ${colors?.border || '#cccccc'}` : 'none',
+    backgroundImage: 'url(/src/assets/checkbg.png)',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: '1200px 450px',
     position: 'relative',
     fontFamily: 'Arial, sans-serif',
     transform: `scale(${props.scale})`,
-    transformOrigin: 'top left',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-    borderRadius: '4px'
+    transformOrigin: 'top left'
   }
 })
 
@@ -340,4 +339,3 @@ const checkStyles = computed(() => {
   right: 20px;
 }
 </style>
-

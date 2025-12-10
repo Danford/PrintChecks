@@ -48,6 +48,9 @@ const sampleCheckData = computed(() => ({
 <style scoped>
 .check-template-preview {
   display: inline-block;
-  position: 'relative'
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
 }
 </style>
