@@ -1,12 +1,14 @@
 # PrintChecks Application
 
-This directory contains the main PrintChecks application - a comprehensive check printing and payment documentation system.
+This directory contains the main **PrintChecks** application—a comprehensive check printing and payment documentation system built with Vue.js 3, TypeScript, and modern web technologies.
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js (Latest LTS version recommended)
-- npm or yarn package manager
+- **Node.js** (v18+ LTS recommended)
+- **npm** or **yarn** package manager
 
 ### Installation
 
@@ -28,107 +30,352 @@ Navigate to `http://localhost:5173/` to start using PrintChecks
 npm run build
 ```
 
+The optimized production build will be output to the `dist/` directory.
+
+---
+
 ## 📁 Project Structure
 
 ```
 src/
-├── components/           # Vue components
-│   ├── customization/   # Customization-related components
-│   └── receipt/         # Receipt and line item components
-├── composables/         # Reusable composition functions
-├── stores/              # Pinia state management stores
-│   ├── app.ts          # Global application state
-│   ├── check.ts        # Check management
-│   ├── customization.ts # Styling and presets
-│   ├── receipt.ts      # Receipt functionality
-│   └── history.ts      # History management
-├── types/               # TypeScript type definitions
-│   ├── check.ts        # Check-related types
-│   ├── customization.ts # Customization types
-│   ├── receipt.ts      # Receipt and line item types
-│   ├── common.ts       # Shared types
-│   └── index.ts        # Type exports
-├── views/               # Vue router views
-├── assets/              # Static assets
-└── main.ts             # Application entry point
+├── components/              # Vue components
+│   ├── BankAccountModal.vue   # Bank account management modal
+│   ├── CheckPrinter.vue        # Main check printing component
+│   ├── VendorModal.vue         # Vendor management modal
+│   ├── customization/          # Customization-related components
+│   │   └── CustomizationPanel.vue
+│   └── receipt/                # Receipt and line item components
+│       └── LineItemManager.vue
+│
+├── composables/             # Reusable composition functions
+│   └── useFormatting.ts       # Currency and number formatting utilities
+│
+├── stores/                  # Pinia state management stores
+│   ├── app.ts                 # Global application state and config
+│   ├── check.ts               # Check creation and management
+│   ├── customization.ts       # Styling, fonts, colors, presets
+│   ├── receipt.ts             # Receipt functionality and line items
+│   └── history.ts             # Payment history tracking
+│
+├── types/                   # TypeScript type definitions
+│   ├── check.ts               # Check-related types
+│   ├── customization.ts       # Customization and styling types
+│   ├── receipt.ts             # Receipt and line item types
+│   ├── common.ts              # Shared/common types
+│   └── index.ts               # Centralized type exports
+│
+├── views/                   # Vue Router views (pages)
+│   ├── HomeView.vue           # Main check printing interface
+│   ├── BankAccountsView.vue   # Bank account management
+│   ├── VendorsView.vue        # Vendor management
+│   ├── ReceiptView.vue        # Receipt creation and printing
+│   ├── HistoryView.vue        # Payment history and search
+│   ├── AnalyticsView.vue      # Payment analytics and insights
+│   └── CustomizationView.vue  # Check customization settings
+│
+├── router/                  # Vue Router configuration
+│   └── index.ts               # Route definitions
+│
+├── assets/                  # Static assets (fonts, styles, images)
+│
+├── utilities.ts             # General utility functions
+└── main.ts                  # Application entry point and setup
 ```
 
-## 🎪 Features
+---
+
+## 🎯 Core Features
 
 ### ✅ Check Printing
-- Professional check printing on standard 8.5x11 paper
-- Official E13B font for banking information
-- Automatic currency-to-words conversion
-- Multiple bank account support
+- **Professional Layout**: Print on standard 8.5" x 11" paper with precise positioning
+- **E13B MICR Font**: Official banking font for routing and account numbers
+- **Currency Conversion**: Automatic amount-to-words conversion with proper formatting
+- **Multi-Account Support**: Manage multiple bank accounts with ease
+- **Custom Signatures**: Optional elegant signature fonts
+- **Logo Integration**: Upload and position company logos
 
-### 🎨 Customization
-- Font customization for all check elements
-- Color scheme management
-- Logo upload and positioning
-- Layout and spacing controls
-- Preset system for quick styling
+### 🎨 Customization System
+- **Font Controls**: Customize fonts for all check elements (payee, amount, memo, etc.)
+- **Color Schemes**: Full color customization with preset themes
+- **Logo Management**: Upload, position, and resize logos
+- **Layout Controls**: Adjust spacing, positioning, and alignment
+- **Preset System**: Save and load custom style presets for quick switching
+- **Real-time Preview**: See changes instantly before printing
 
 ### 📋 Receipt Management
-- Line item creation and editing
-- Automatic calculations (subtotal, tax, totals)
-- Additional charges (shipping, handling)
-- Professional receipt generation
+- **Line Items**: Create itemized receipts with descriptions, quantities, and prices
+- **Automatic Calculations**: Subtotal, tax, and total calculations
+- **Additional Charges**: Add shipping, handling, or other fees
+- **Professional Output**: Business-ready receipt formatting
+- **Print Integration**: Seamless printing with check printing workflow
 
-### 📚 History
-- Enhanced history with search and filtering
-- Combined view of checks, receipts, and payments
-- Pagination and sorting options
+### 👥 Vendor Management
+- **Contact Information**: Store name, address, email, and phone for each vendor
+- **Quick Fill**: Auto-populate check fields from vendor data
+- **Payment History**: Track all payments made to each vendor
+- **Search & Filter**: Find vendors quickly by name or other attributes
+- **Export Capability**: Export vendor list for backups or external use
+
+### 📊 Analytics & Insights
+- **Payment Trends**: Visualize payment volume over time
+- **Top Vendors**: Identify vendors by payment amount and frequency
+- **Monthly Breakdown**: Analyze spending patterns by month
+- **Check Statistics**: Track total checks written, average amounts, etc.
+- **Historical Summaries**: Comprehensive payment summaries with detailed breakdowns
+
+### 📚 History System
+- **Enhanced Search**: Filter by vendor, date range, amount, or memo
+- **Combined View**: Unified history of checks, receipts, and payments
+- **Pagination**: Navigate large payment histories efficiently
+- **Sorting Options**: Sort by date, amount, vendor, or other fields
+- **Immutable Log**: Payment records are unalterable for accuracy
+
+### 🔒 Privacy & Security
+
+PrintChecks operates with **privacy as the core principle**:
+
+- ✅ **100% Local**: All data processing happens in your browser
+- ✅ **No Network Requests**: Zero external server communication
+- ✅ **Local Storage**: All data stored locally in browser localStorage
+- ✅ **No Tracking**: No analytics, cookies, or user tracking
+- ✅ **No Server**: Runs entirely client-side—no backend required
+- ✅ **Open Source**: Fully auditable codebase
+
+**Your banking information never leaves your computer.**
+
+---
 
 ## 🛠️ Development
 
 ### Available Scripts
 
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run type-check` - Run TypeScript type checking
-- `npm run lint` - Run ESLint
-- `npm run format` - Format code with Prettier
+```bash
+# Development
+npm run dev              # Start dev server with hot reload at http://localhost:5173
+npm run dev:clear        # Start dev with cleared localStorage (for debugging)
+
+# Production
+npm run build            # Type-check and build for production
+npm run build-only       # Build without type checking (faster)
+npm run preview          # Preview production build locally
+
+# Code Quality
+npm run type-check       # Run TypeScript type checking
+npm run lint             # Lint and auto-fix code with ESLint
+npm run format           # Format code with Prettier
+
+# Maintenance
+npm run cleanup          # Clean up debug scripts from index.html (if needed)
+```
 
 ### Technology Stack
 
-- **Vue.js 3** - Progressive JavaScript framework
-- **TypeScript** - Type-safe JavaScript
-- **Pinia** - State management
-- **Vue Router** - Client-side routing
-- **Vite** - Build tool and dev server
-- **Bootstrap 5** - CSS framework
+- **[Vue.js 3](https://vuejs.org/)** (Composition API) - Progressive JavaScript framework
+- **[TypeScript](https://www.typescriptlang.org/)** (~5.0.4) - Type-safe JavaScript superset
+- **[Pinia](https://pinia.vuejs.org/)** (^2.1.3) - Intuitive state management for Vue
+- **[Vue Router](https://router.vuejs.org/)** (^4.2.2) - Official routing for Vue
+- **[Vite](https://vitejs.dev/)** (^4.3.9) - Next-generation build tool and dev server
+- **[Bootstrap 5](https://getbootstrap.com/)** - Responsive CSS framework
+- **[to-words](https://www.npmjs.com/package/to-words)** (^4.1.0) - Number to words conversion
+- **[print-js](https://printjs.crabbly.com/)** (^1.6.0) - Browser printing library
 
-### Code Style
+### Code Style & Quality
 
-This project uses:
-- **ESLint** for code linting
-- **Prettier** for code formatting
-- **TypeScript** for type safety
+This project enforces code quality through:
 
-## 🔒 Privacy & Security
+- **ESLint** - JavaScript/TypeScript linting with Vue-specific rules
+- **Prettier** - Consistent code formatting (`.prettierrc.json`)
+- **TypeScript** - Full type safety across the codebase
+- **Vue ESLint Config** - Official Vue.js linting standards
 
-PrintChecks operates with privacy as a core principle:
-
-- **100% Local**: All data processing happens in your browser
-- **No Network Requests**: No data is ever transmitted to external servers
-- **Local Storage**: All information stored locally in your browser
-- **No Tracking**: No analytics, cookies, or user tracking
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run tests and linting (`npm run lint && npm run type-check`)
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+Configuration files:
+- `.eslintrc.cjs` - ESLint rules and parser configuration
+- `.prettierrc.json` - Prettier formatting rules
+- `tsconfig.json` - TypeScript compiler options
 
 ---
 
-**PrintChecks: Professional check printing and payment documentation, privately and securely in your browser.** 🏦✨
+## 🏗️ Architecture Overview
+
+### State Management (Pinia Stores)
+
+The application uses **Pinia** for centralized state management:
+
+1. **`app.ts`** - Global application state
+   - Bank accounts management
+   - Vendors management
+   - Application settings
+
+2. **`check.ts`** - Check creation and printing
+   - Check form state
+   - Check printing logic
+   - Check validation
+
+3. **`customization.ts`** - Visual customization
+   - Font selections
+   - Color schemes
+   - Logo management
+   - Style presets
+
+4. **`receipt.ts`** - Receipt functionality
+   - Line item management
+   - Tax and fee calculations
+   - Receipt generation
+
+5. **`history.ts`** - Payment history
+   - Payment logging (immutable)
+   - Search and filtering
+   - History analytics
+
+### Composables
+
+Reusable composition functions for shared logic:
+
+- **`useFormatting.ts`** - Currency, number, and date formatting utilities
+
+### Component Organization
+
+- **`components/`** - Shared, reusable components
+  - Modals for data entry
+  - Core check printing component
+  - Specialized sub-components for customization and receipts
+
+- **`views/`** - Page-level components tied to routes
+  - Each view represents a major application feature
+  - Connected to router for navigation
+
+---
+
+## 🔧 Development Tips
+
+### Clearing History During Development
+
+When testing the history/logging system, use the special dev command:
+
+```bash
+npm run dev:clear
+```
+
+This automatically clears localStorage on startup. See `scripts/README.md` for details.
+
+### Working with Fonts
+
+The project includes an `expanded_fonts.js` file at the root that provides additional font options. Fonts are loaded dynamically based on user selections in the customization panel.
+
+### Local Storage Schema
+
+Data is stored in browser localStorage with these keys:
+
+- `checkList` - Immutable payment history
+- `bankAccounts` - Bank account information
+- `vendors` - Vendor contact information
+- `customization` - Style presets and settings
+- `receipts` - Receipt data and line items
+
+### Print Optimization
+
+Check and receipt printing uses `print-js` for consistent cross-browser output. Key considerations:
+
+- Print CSS is scoped to `.printable` classes
+- Page breaks are controlled via CSS
+- MICR fonts require proper embedding
+- Test in Chrome/Firefox for best results
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! To get started:
+
+1. **Fork the repository** on GitHub
+2. **Clone your fork** locally
+3. **Create a feature branch**: `git checkout -b feature/my-feature`
+4. **Make your changes** with proper TypeScript types
+5. **Run quality checks**: `npm run lint && npm run type-check`
+6. **Test thoroughly** in your browser
+7. **Commit your changes**: `git commit -m 'Add my feature'`
+8. **Push to your fork**: `git push origin feature/my-feature`
+9. **Open a Pull Request** on the main repository
+
+### Contribution Guidelines
+
+- Follow existing code style (enforced by ESLint/Prettier)
+- Write proper TypeScript with explicit types
+- Update tests if adding new features
+- Document complex logic with comments
+- Keep commits focused and atomic
+- Update relevant documentation
+
+---
+
+## 🐛 Troubleshooting
+
+### Issue: Dev server won't start
+
+**Solution:**
+```bash
+# Clear modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+npm run dev
+```
+
+### Issue: TypeScript errors
+
+**Solution:**
+```bash
+# Run type checking to see all errors
+npm run type-check
+
+# Ensure your IDE is using the workspace TypeScript version
+```
+
+### Issue: Fonts not displaying
+
+**Solution:**
+- Ensure `expanded_fonts.js` exists in the root directory
+- Check browser console for font loading errors
+- Clear browser cache and reload
+
+### Issue: Printing looks wrong
+
+**Solution:**
+- Enable "Background graphics" in browser print settings
+- Set margins to minimum or "None"
+- Use 100% scale (no fit-to-page)
+- Test in Chrome or Firefox
+
+### Issue: Data not persisting
+
+**Solution:**
+- Check that localStorage is enabled in your browser
+- Ensure you're not in private/incognito mode
+- Check browser console for quota exceeded errors
+- Export your data as backup before clearing localStorage
+
+---
+
+## 📚 Additional Resources
+
+### Debug Scripts
+
+See [`scripts/README.md`](scripts/README.md) for information about development utility scripts.
+
+### Type Definitions
+
+All TypeScript types are defined in `src/types/`. Import from `src/types/index.ts` for centralized access.
+
+### Routing
+
+Routes are defined in `src/router/index.ts`. All routes use lazy loading for optimal performance.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](../LICENSE) file for details.
+
+---
+
+**PrintChecks Application: Professional check printing and payment documentation, privately and securely in your browser.** 🏦✨
+
