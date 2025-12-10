@@ -1994,6 +1994,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   z-index: 10000;
+  pointer-events: auto;
 }
 
 .modal-dialog {
@@ -2004,6 +2005,7 @@ onMounted(() => {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   position: relative;
   z-index: 10001;
+  pointer-events: auto;
 }
 
 .modal-header {
