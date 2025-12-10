@@ -55,6 +55,14 @@
             </div>
           </div>
         </div>
+        
+        <!-- Larger Preview of Selected Template -->
+        <div v-if="currentPreset" class="selected-template-preview">
+          <h5>📋 {{ currentPreset.name }} Preview</h5>
+          <div class="large-preview-container">
+            <CheckTemplatePreview :settings="currentPreset.settings" :scale="0.5" />
+          </div>
+        </div>
         </div>
       </div>
       
@@ -1539,7 +1547,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80px;
+  height: 100px;
   border: 1px solid #e0e0e0;
   margin-bottom: 10px;
   padding: 8px;
@@ -1556,6 +1564,35 @@ onMounted(() => {
 
 .preset-card:hover .preset-actions {
   opacity: 1;
+}
+
+/* Selected Template Large Preview */
+.selected-template-preview {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #007bff;
+}
+
+.selected-template-preview h5 {
+  margin: 0 0 20px 0;
+  color: #495057;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.large-preview-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: 4px;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Adjustment Controls Styles */
