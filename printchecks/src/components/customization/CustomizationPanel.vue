@@ -51,127 +51,154 @@
           </h4>
         </div>
         <div v-show="sectionsExpanded.fonts" class="section-content">
-        <div class="font-controls">
-          <div class="font-element" v-for="(fontKey, index) in fontElements" :key="fontKey">
-            <div class="font-element-header">
-              <label class="font-element-label">{{ formatFontLabel(fontKey) }}</label>
-              <div class="font-preview" 
-                   :style="getFontPreviewStyle(fontKey)">
-                {{ getFontPreviewText(fontKey) }}
-              </div>
-            </div>
-            
-            <div class="font-controls-grid">
-              <!-- Font Family with Enhanced Dropdown -->
-              <div class="font-control-group">
-                <label class="control-label">Font Family</label>
-                <div class="font-family-dropdown">
-                  <select 
-                    :value="currentSettings?.fonts[fontKey]?.family || ''"
-                    @change="updateFont(fontKey, 'family', $event.target.value)"
-                    class="font-family-select enhanced"
-                  >
-                    <optgroup v-for="category in fontCategories" :key="category" :label="getCategoryLabel(category)">
-                      <option 
-                        v-for="font in getFontsByCategory(category)" 
-                        :key="font.name" 
-                        :value="font.name"
-                        :style="getDropdownOptionStyle(font.name)"
-                        :title="font.description"
-                      >
-                        {{ font.displayName }}
-                      </option>
-                    </optgroup>
-                  </select>
-                  <div class="font-description" v-if="getSelectedFontDescription(fontKey)">
-                    {{ getSelectedFontDescription(fontKey) }}
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Font Size -->
-              <div class="font-control-group">
-                <label class="control-label">Size (px)</label>
-                <div class="size-control">
-                  <input 
-                    type="range"
-                    :value="currentSettings?.fonts[fontKey]?.size || 16"
-                    @input="updateFont(fontKey, 'size', parseInt($event.target.value))"
-                    min="8" 
-                    max="72" 
-                    class="font-size-slider"
-                  />
-                  <input 
-                    type="number" 
-                    :value="currentSettings?.fonts[fontKey]?.size || 16"
-                    @input="updateFont(fontKey, 'size', parseInt($event.target.value))"
-                    min="8" 
-                    max="72" 
-                    class="font-size-input"
-                  />
-                </div>
-              </div>
-              
-              <!-- Font Weight -->
-              <div class="font-control-group">
-                <label class="control-label">Weight</label>
-                <select 
-                  :value="currentSettings?.fonts[fontKey]?.weight || 'normal'"
-                  @change="updateFont(fontKey, 'weight', $event.target.value)"
-                  class="font-weight-select"
-                >
-                  <option value="normal">Normal</option>
-                  <option value="bold">Bold</option>
-                  <option value="lighter">Light</option>
-                  <option value="bolder">Extra Bold</option>
-                </select>
-              </div>
-              
-              <!-- Font Color -->
-              <div class="font-control-group">
-                <label class="control-label">Color</label>
-                <div class="color-control">
-                  <input 
-                    type="color" 
-                    :value="currentSettings?.fonts[fontKey]?.color || '#000000'"
-                    @input="updateFont(fontKey, 'color', $event.target.value)"
-                    class="color-input enhanced"
-                  />
-                  <span class="color-value">{{ currentSettings?.fonts[fontKey]?.color || '#000000' }}</span>
-                </div>
-              </div>
-              
-              <!-- Position Adjustments -->
-              <div class="font-control-group adjustment-controls">
-                <label class="control-label">Position Fine-tuning</label>
-                <div class="adjustment-inputs">
-                  <div class="adjustment-input">
-                    <label>X Offset (px)</label>
-                    <input 
-                      type="number" 
-                      :value="getAdjustment(fontKey, 'x')"
-                      @input="updateAdjustmentValue(fontKey, 'x', parseInt($event.target.value) || 0)"
-                      class="adjustment-number-input"
-                      step="1"
-                    />
-                  </div>
-                  <div class="adjustment-input">
-                    <label>Y Offset (px)</label>
-                    <input 
-                      type="number" 
-                      :value="getAdjustment(fontKey, 'y')"
-                      @input="updateAdjustmentValue(fontKey, 'y', parseInt($event.target.value) || 0)"
-                      class="adjustment-number-input"
-                      step="1"
-                    />
-                  </div>
+        <div class="font-controls-modern">
+          <div class="font-element-compact" v-for="(fontKey, index) in fontElements" :key="fontKey">
+            <!-- Compact Header with Icons -->
+            <div class="compact-header">
+              <span class="element-name">{{ formatFontLabel(fontKey) }}</span>
+              <div class="icon-controls">
+                <!-- Font Family Icon -->
+                <div class="icon-control" :class="{ active: expandedControls[fontKey] === 'family' }">
                   <button 
-                    @click="resetAdjustment(fontKey)" 
-                    class="btn-reset-adjustment"
-                    title="Reset to default position"
+                    class="icon-btn"
+                    @click="toggleControl(fontKey, 'family')"
+                    :title="'Font: ' + getShortFontName(fontKey)"
                   >
-                    ↺ Reset
+                    <span class="icon-letter" :style="{ fontFamily: currentSettings?.fonts[fontKey]?.family }">A</span>
                   </button>
+                  <div v-if="expandedControls[fontKey] === 'family'" class="control-dropdown">
+                    <select 
+                      :value="currentSettings?.fonts[fontKey]?.family || ''"
+                      @change="updateFont(fontKey, 'family', $event.target.value)"
+                      class="compact-select"
+                    >
+                      <optgroup v-for="category in fontCategories" :key="category" :label="getCategoryLabel(category)">
+                        <option 
+                          v-for="font in getFontsByCategory(category)" 
+                          :key="font.name" 
+                          :value="font.name"
+                          :style="{ fontFamily: font.name }"
+                        >
+                          {{ font.displayName }}
+                        </option>
+                      </optgroup>
+                    </select>
+                  </div>
+                </div>
+                
+                <!-- Size Icon -->
+                <div class="icon-control" :class="{ active: expandedControls[fontKey] === 'size' }">
+                  <button 
+                    class="icon-btn"
+                    @click="toggleControl(fontKey, 'size')"
+                    :title="'Size: ' + (currentSettings?.fonts[fontKey]?.size || 16) + 'px'"
+                  >
+                    <span class="icon-text">{{ currentSettings?.fonts[fontKey]?.size || 16 }}</span>
+                  </button>
+                  <div v-if="expandedControls[fontKey] === 'size'" class="control-dropdown size-dropdown">
+                    <input 
+                      type="range"
+                      :value="currentSettings?.fonts[fontKey]?.size || 16"
+                      @input="updateFont(fontKey, 'size', parseInt($event.target.value))"
+                      min="8" 
+                      max="72" 
+                      class="compact-slider"
+                    />
+                    <input 
+                      type="number" 
+                      :value="currentSettings?.fonts[fontKey]?.size || 16"
+                      @input="updateFont(fontKey, 'size', parseInt($event.target.value))"
+                      min="8" 
+                      max="72" 
+                      class="compact-number"
+                    />
+                  </div>
+                </div>
+                
+                <!-- Weight Icon -->
+                <div class="icon-control" :class="{ active: expandedControls[fontKey] === 'weight' }">
+                  <button 
+                    class="icon-btn"
+                    @click="toggleControl(fontKey, 'weight')"
+                    :title="'Weight: ' + (currentSettings?.fonts[fontKey]?.weight || 'normal')"
+                  >
+                    <span class="icon-text" :style="{ fontWeight: currentSettings?.fonts[fontKey]?.weight || 'normal' }">B</span>
+                  </button>
+                  <div v-if="expandedControls[fontKey] === 'weight'" class="control-dropdown">
+                    <select 
+                      :value="currentSettings?.fonts[fontKey]?.weight || 'normal'"
+                      @change="updateFont(fontKey, 'weight', $event.target.value)"
+                      class="compact-select"
+                    >
+                      <option value="normal">Normal</option>
+                      <option value="bold">Bold</option>
+                      <option value="lighter">Light</option>
+                      <option value="bolder">Extra Bold</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <!-- Color Icon -->
+                <div class="icon-control" :class="{ active: expandedControls[fontKey] === 'color' }">
+                  <button 
+                    class="icon-btn color-btn"
+                    @click="toggleControl(fontKey, 'color')"
+                    :style="{ backgroundColor: currentSettings?.fonts[fontKey]?.color || '#000000' }"
+                    :title="'Color: ' + (currentSettings?.fonts[fontKey]?.color || '#000000')"
+                  >
+                  </button>
+                  <div v-if="expandedControls[fontKey] === 'color'" class="control-dropdown color-dropdown">
+                    <input 
+                      type="color" 
+                      :value="currentSettings?.fonts[fontKey]?.color || '#000000'"
+                      @input="updateFont(fontKey, 'color', $event.target.value)"
+                      class="compact-color"
+                    />
+                    <input 
+                      type="text" 
+                      :value="currentSettings?.fonts[fontKey]?.color || '#000000'"
+                      @input="updateFont(fontKey, 'color', $event.target.value)"
+                      class="compact-text-input"
+                      placeholder="#000000"
+                    />
+                  </div>
+                </div>
+                
+                <!-- Position Icon -->
+                <div class="icon-control" :class="{ active: expandedControls[fontKey] === 'position' }">
+                  <button 
+                    class="icon-btn"
+                    @click="toggleControl(fontKey, 'position')"
+                    title="Position adjustment"
+                  >
+                    <span class="icon-text">⊕</span>
+                  </button>
+                  <div v-if="expandedControls[fontKey] === 'position'" class="control-dropdown position-dropdown">
+                    <div class="position-grid">
+                      <label>X:</label>
+                      <input 
+                        type="number" 
+                        :value="getAdjustment(fontKey, 'x')"
+                        @input="updateAdjustmentValue(fontKey, 'x', parseInt($event.target.value) || 0)"
+                        class="compact-number"
+                        step="1"
+                      />
+                      <label>Y:</label>
+                      <input 
+                        type="number" 
+                        :value="getAdjustment(fontKey, 'y')"
+                        @input="updateAdjustmentValue(fontKey, 'y', parseInt($event.target.value) || 0)"
+                        class="compact-number"
+                        step="1"
+                      />
+                    </div>
+                    <button 
+                      @click="resetAdjustment(fontKey)" 
+                      class="compact-reset-btn"
+                    >
+                      Reset
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -421,6 +448,9 @@ const sectionsExpanded = reactive({
   layout: false
 })
 
+// Track which control is expanded for each font element
+const expandedControls = reactive<Record<string, string | null>>({})
+
 // Computed properties
 const currentSettings = computed(() => customizationStore.currentSettings)
 const presets = computed(() => customizationStore.presets)
@@ -667,6 +697,21 @@ function saveAsPreset() {
 // Section toggle function
 function toggleSection(sectionName: keyof typeof sectionsExpanded) {
   sectionsExpanded[sectionName] = !sectionsExpanded[sectionName]
+}
+
+// Toggle control dropdown for a font element
+function toggleControl(fontKey: string, controlType: string) {
+  if (expandedControls[fontKey] === controlType) {
+    expandedControls[fontKey] = null
+  } else {
+    expandedControls[fontKey] = controlType
+  }
+}
+
+// Get short font name for display
+function getShortFontName(fontKey: keyof CustomizationSettings['fonts']): string {
+  const family = currentSettings.value?.fonts[fontKey]?.family || ''
+  return family.split(',')[0].trim()
 }
 
 // Template deletion with confirmation
@@ -1408,6 +1453,254 @@ onMounted(() => {
 }
 
 .btn-reset-adjustment:active {
+  transform: scale(0.98);
+}
+
+/* Modern Compact Font Controls */
+.font-controls-modern {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.font-element-compact {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  transition: all 0.2s;
+}
+
+.font-element-compact:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.compact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.element-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  min-width: 120px;
+}
+
+.icon-controls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.icon-control {
+  position: relative;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 0;
+}
+
+.icon-btn:hover {
+  border-color: #007bff;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.icon-control.active .icon-btn {
+  border-color: #007bff;
+  background: #e7f3ff;
+}
+
+.icon-letter {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.icon-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.color-btn {
+  border: 2px solid #dee2e6;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.color-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.control-dropdown {
+  position: absolute;
+  top: 42px;
+  right: 0;
+  background: white;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  min-width: 200px;
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.compact-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 13px;
+  background: white;
+}
+
+.compact-select:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.size-dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.compact-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e0e0e0;
+  outline: none;
+}
+
+.compact-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+}
+
+.compact-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  border: none;
+}
+
+.compact-number {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.compact-number:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.color-dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 150px;
+}
+
+.compact-color {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.compact-text-input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.compact-text-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.position-dropdown {
+  min-width: 160px;
+}
+
+.position-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.position-grid label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+.compact-reset-btn {
+  width: 100%;
+  padding: 6px 12px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.compact-reset-btn:hover {
+  background: #5a6268;
+}
+
+.compact-reset-btn:active {
   transform: scale(0.98);
 }
 </style>

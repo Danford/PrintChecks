@@ -516,7 +516,13 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
   }
   
   function deletePreset(presetId: string) {
-    presets.value = presets.value.filter(p => p.id !== presetId && !p.isBuiltIn)
+    // Only delete if not built-in, and filter out the specific preset
+    const presetToDelete = presets.value.find(p => p.id === presetId)
+    if (presetToDelete && presetToDelete.isBuiltIn) {
+      console.warn('Cannot delete built-in preset')
+      return
+    }
+    presets.value = presets.value.filter(p => p.id !== presetId)
     savePresets()
   }
   
