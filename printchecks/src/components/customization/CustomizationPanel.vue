@@ -20,10 +20,18 @@
             v-for="preset in presets" 
             :key="preset.id"
             class="preset-card"
-            :class="{ active: currentPreset?.id === preset.id }"
+            :class="{ 
+              active: currentPreset?.id === preset.id,
+              'is-builtin': preset.isBuiltIn,
+              'is-editing': !preset.isBuiltIn && currentPreset?.id === preset.id
+            }"
+            @click="applyPreset(preset)"
           >
-            <div class="preset-preview-container" @click="applyPreset(preset)">
-              <CheckTemplatePreview :settings="preset.settings" :scale="0.15" />
+            <div class="preset-status-badge" v-if="currentPreset?.id === preset.id">
+              <span class="badge-text">{{ preset.isBuiltIn ? '✓ Active (Read-Only)' : '✓ Editing' }}</span>
+            </div>
+            <div class="preset-preview-container">
+              <CheckTemplatePreview :settings="preset.settings" :scale="0.2" />
             </div>
             <div class="preset-info">
               <h5>{{ preset.name }}</h5>
@@ -55,7 +63,12 @@
           <div class="font-element-compact" v-for="(fontKey, index) in fontElements" :key="fontKey">
             <!-- Compact Header with Icons -->
             <div class="compact-header">
-              <span class="element-name">{{ formatFontLabel(fontKey) }}</span>
+              <div class="element-info">
+                <span class="element-name">{{ formatFontLabel(fontKey) }}</span>
+                <div class="element-preview" :style="getElementPreviewStyle(fontKey)">
+                  {{ getElementPreviewText(fontKey) }}
+                </div>
+              </div>
               <div class="icon-controls">
                 <!-- Font Family Icon -->
                 <div class="icon-control" :class="{ active: expandedControls[fontKey] === 'family' }">
@@ -577,7 +590,19 @@ function getFontPreviewText(fontKey: string): string {
 }
 
 function updateFont(element: keyof typeof currentSettings.value.fonts, property: keyof FontSettings, value: any) {
-  customizationStore.updateFont(element, { [property]: value })
+  // Check if we're editing a built-in template
+  if (currentPreset.value?.isBuiltIn) {
+    // Create a new custom template based on the built-in one
+    const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
+    customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
+    
+    // Apply the font update to the new template
+    setTimeout(() => {
+      customizationStore.updateFont(element, { [property]: value })
+    }, 50)
+  } else {
+    customizationStore.updateFont(element, { [property]: value })
+  }
 }
 
 function updateLogo(property: string, value: any) {
@@ -714,6 +739,38 @@ function getShortFontName(fontKey: keyof CustomizationSettings['fonts']): string
   return family.split(',')[0].trim()
 }
 
+// Get element preview style
+function getElementPreviewStyle(fontKey: keyof CustomizationSettings['fonts']) {
+  const font = currentSettings.value?.fonts[fontKey]
+  if (!font) return {}
+  
+  return {
+    fontFamily: font.family || 'Arial, sans-serif',
+    fontSize: `${Math.min(font.size || 16, 24)}px`,
+    fontWeight: font.weight || 'normal',
+    fontStyle: font.style || 'normal',
+    color: font.color || '#000000'
+  }
+}
+
+// Get element preview text
+function getElementPreviewText(fontKey: keyof CustomizationSettings['fonts']): string {
+  const previewTexts: Record<string, string> = {
+    accountHolder: 'John Doe',
+    payTo: 'Sample Payee',
+    amount: '$100.00',
+    amountWords: 'One Hundred Dollars',
+    memo: 'Sample memo',
+    signature: 'Signature',
+    bankInfo: '⑈123456789⑈',
+    bankName: 'Sample Bank',
+    checkNumber: '#1001',
+    date: '12/10/2025',
+    fieldLabels: 'Label:'
+  }
+  return previewTexts[fontKey] || 'Preview'
+}
+
 // Template deletion with confirmation
 function confirmDeletePreset(preset: CustomizationPreset) {
   if (confirm(`Are you sure you want to delete the template "${preset.name}"?`)) {
@@ -727,7 +784,19 @@ function getAdjustment(fontKey: keyof CustomizationSettings['fonts'], axis: 'x' 
 }
 
 function updateAdjustmentValue(fontKey: keyof CustomizationSettings['fonts'], axis: 'x' | 'y', value: number) {
-  customizationStore.updateAdjustment(fontKey, { [axis]: value })
+  // Check if we're editing a built-in template
+  if (currentPreset.value?.isBuiltIn) {
+    // Create a new custom template based on the built-in one
+    const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
+    customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
+    
+    // Apply the adjustment update to the new template
+    setTimeout(() => {
+      customizationStore.updateAdjustment(fontKey, { [axis]: value })
+    }, 50)
+  } else {
+    customizationStore.updateAdjustment(fontKey, { [axis]: value })
+  }
 }
 
 function resetAdjustment(fontKey: keyof CustomizationSettings['fonts']) {
@@ -784,6 +853,7 @@ onMounted(() => {
 }
 
 .preset-card {
+  position: relative;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   padding: 15px;
@@ -801,6 +871,47 @@ onMounted(() => {
 .preset-card.active {
   border-color: #007bff;
   background: #f0f8ff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+
+.preset-card.is-editing {
+  border-color: #28a745;
+  background: #f0fff4;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+.preset-card.is-builtin.active {
+  border-color: #6c757d;
+  background: #f8f9fa;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2);
+}
+
+.preset-status-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  background: rgba(0, 123, 255, 0.9);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.preset-card.is-editing .preset-status-badge {
+  background: rgba(40, 167, 69, 0.9);
+}
+
+.preset-card.is-builtin.active .preset-status-badge {
+  background: rgba(108, 117, 125, 0.9);
+}
+
+.badge-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .preset-preview {
@@ -1343,21 +1454,20 @@ onMounted(() => {
 
 /* Template Preview Container */
 .preset-preview-container {
-  cursor: pointer;
   overflow: hidden;
   border-radius: 4px;
   background: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80px;
+  height: 100px;
   border: 1px solid #e0e0e0;
   margin-bottom: 10px;
+  padding: 8px;
 }
 
-.preset-preview-container:hover {
+.preset-card:hover .preset-preview-container {
   border-color: #007bff;
-  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
 }
 
 /* Delete Template Button */
@@ -1482,11 +1592,29 @@ onMounted(() => {
   gap: 12px;
 }
 
+.element-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
 .element-name {
   font-weight: 600;
-  font-size: 14px;
-  color: #333;
-  min-width: 120px;
+  font-size: 13px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.element-preview {
+  font-size: 16px;
+  color: #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 4px 0;
 }
 
 .icon-controls {
