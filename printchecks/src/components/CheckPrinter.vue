@@ -342,7 +342,6 @@
 
                     <!-- SECTION 3: Enhanced Payment Summary (Bottom Third) -->
                     <div class="payment-summary-section" style="margin-top: 50px; padding: 30px; border-top: 2px solid #ddd;">
-                        <h3 style="margin-bottom: 25px; color: #333; text-align: center;">📊 Enhanced Payment Analytics</h3>
                         
                         <!-- Two-Column Layout -->
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto;">
@@ -355,38 +354,46 @@
                                         <strong style="color: #2e7d32; font-size: 16px;">${{ enhancedPaymentStats.thisMonth.toFixed(2) }}</strong>
                                     </div>
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
+                                        <span style="font-weight: 500;">Last Month:</span>
+                                        <strong style="color: #2e7d32; font-size: 16px;">${{ enhancedPaymentStats.lastMonth.toFixed(2) }}</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
                                         <span style="font-weight: 500;">This Year:</span>
                                         <strong style="color: #2e7d32; font-size: 16px;">${{ paymentStats.thisYear.toFixed(2) }}</strong>
                                     </div>
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
-                                        <span style="font-weight: 500;">Average Payment:</span>
-                                        <strong style="color: #2e7d32; font-size: 16px;">${{ enhancedPaymentStats.averagePayment.toFixed(2) }}</strong>
+                                        <span style="font-weight: 500;">This Quarter:</span>
+                                        <strong style="color: #2e7d32; font-size: 16px;">${{ enhancedPaymentStats.thisQuarter.toFixed(2) }}</strong>
                                     </div>
                                     <div style="display: flex; justify-content: space-between; padding: 8px 0;">
-                                        <span style="font-weight: 500;">Largest Payment:</span>
-                                        <strong style="color: #2e7d32; font-size: 16px;">${{ enhancedPaymentStats.largestPayment.toFixed(2) }}</strong>
+                                        <span style="font-weight: 500;">Last Year:</span>
+                                        <strong style="color: #2e7d32; font-size: 16px;">${{ enhancedPaymentStats.lastYear.toFixed(2) }}</strong>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Vendor Insights Card -->
+                            <!-- Payment Statistics Card -->
                             <div style="background: #fff3e0; padding: 25px; border-radius: 12px; border-left: 6px solid #ff9800;">
-                                <h5 style="color: #f57c00; margin-bottom: 20px;">📈 Vendor Insights</h5>
+                                <h5 style="color: #f57c00; margin-bottom: 20px;">📈 Payment Statistics</h5>
                                 <div style="font-size: 15px; line-height: 1.6;">
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
-                                        <span style="font-weight: 500;">Total Vendors:</span>
-                                        <strong style="color: #e65100; font-size: 16px;">{{ enhancedPaymentStats.totalVendors }}</strong>
+                                        <span style="font-weight: 500;">Average Payment:</span>
+                                        <strong style="color: #e65100; font-size: 16px;">${{ enhancedPaymentStats.averagePayment.toFixed(2) }}</strong>
                                     </div>
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
-                                        <span style="font-weight: 500;">Payments This Month:</span>
-                                        <strong style="color: #e65100; font-size: 16px;">{{ enhancedPaymentStats.thisMonthCount }}</strong>
+                                        <span style="font-weight: 500;">Monthly Average:</span>
+                                        <strong style="color: #e65100; font-size: 16px;">${{ enhancedPaymentStats.monthlyAverage.toFixed(2) }}</strong>
                                     </div>
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
-                                        <span style="font-weight: 500;">Payments This Year:</span>
-                                        <strong style="color: #e65100; font-size: 16px;">{{ paymentStats.thisYearCount }}</strong>
+                                        <span style="font-weight: 500;">Largest Payment:</span>
+                                        <strong style="color: #e65100; font-size: 16px;">${{ enhancedPaymentStats.largestPayment.toFixed(2) }}</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
+                                        <span style="font-weight: 500;">Smallest Payment:</span>
+                                        <strong style="color: #e65100; font-size: 16px;">${{ enhancedPaymentStats.smallestPayment.toFixed(2) }}</strong>
                                     </div>
                                     <div style="display: flex; justify-content: space-between; padding: 8px 0;">
-                                        <span style="font-weight: 500;">All Time Payments:</span>
+                                        <span style="font-weight: 500;">Total Payments:</span>
                                         <strong style="color: #e65100; font-size: 16px;">{{ paymentStats.count }}</strong>
                                     </div>
                                 </div>
@@ -399,6 +406,7 @@
                             <div style="color: white; font-size: 32px; font-weight: bold;">${{ paymentStats.allTime.toFixed(2) }}</div>
                         </div>
                     </div>
+
 
                 </div>
         </div>
@@ -811,15 +819,8 @@ const paymentStats = computed(() => {
     const thisYearTotal = thisYearPayments.reduce((sum, payment) => sum + payment.amount, 0)
     const allTimeTotal = allPayments.reduce((sum, payment) => sum + payment.amount, 0)
     
-    return {
-        thisYear: thisYearTotal,
-        allTime: allTimeTotal,
-        count: allPayments.length,
-        thisYearCount: thisYearPayments.length
-    }
-})
 
-// Enhanced payment statistics (similar to AnalyticsView)
+// Enhanced payment statistics with comprehensive metrics
 const enhancedPaymentStats = computed(() => {
     const now = new Date()
     const currentMonth = now.getMonth()
@@ -838,22 +839,71 @@ const enhancedPaymentStats = computed(() => {
         }))
     ]
     
+    // Filter payments by time period
     const thisMonthPayments = allPayments.filter(payment => {
         const paymentDate = payment.date
         return paymentDate.getMonth() === currentMonth && paymentDate.getFullYear() === currentYear
     })
     
+    const lastMonthPayments = allPayments.filter(payment => {
+        const paymentDate = payment.date
+        const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1
+        const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear
+        return paymentDate.getMonth() === lastMonth && paymentDate.getFullYear() === lastMonthYear
+    })
+    
+    const thisYearPayments = allPayments.filter(payment => 
+        payment.date.getFullYear() === currentYear
+    )
+    
+    const lastYearPayments = allPayments.filter(payment => 
+        payment.date.getFullYear() === currentYear - 1
+    )
+    
+    // Calculate current quarter
+    const currentQuarter = Math.floor(currentMonth / 3)
+    const thisQuarterPayments = allPayments.filter(payment => {
+        const paymentDate = payment.date
+        const paymentQuarter = Math.floor(paymentDate.getMonth() / 3)
+        return paymentQuarter === currentQuarter && paymentDate.getFullYear() === currentYear
+    })
+    
+    // Calculate totals
     const thisMonth = thisMonthPayments.reduce((sum, payment) => sum + payment.amount, 0)
+    const lastMonth = lastMonthPayments.reduce((sum, payment) => sum + payment.amount, 0)
+    const thisQuarter = thisQuarterPayments.reduce((sum, payment) => sum + payment.amount, 0)
+    const lastYear = lastYearPayments.reduce((sum, payment) => sum + payment.amount, 0)
     const total = allPayments.reduce((sum, payment) => sum + payment.amount, 0)
+    
+    // Calculate statistics
     const averagePayment = allPayments.length > 0 ? total / allPayments.length : 0
     const largestPayment = allPayments.length > 0 
         ? Math.max(...allPayments.map(p => p.amount))
         : 0
+    const smallestPayment = allPayments.length > 0 
+        ? Math.min(...allPayments.map(p => p.amount).filter(a => a > 0))
+        : 0
     
-    // Vendor statistics from localStorage
-    const vendors = JSON.parse(localStorage.getItem('vendors') || '[]')
-    const totalVendors = vendors.length
+    // Calculate monthly average (total / number of months with data)
+    const monthsWithData = new Set(allPayments.map(p => {
+        const d = p.date
+        return `${d.getFullYear()}-${d.getMonth()}`
+    })).size
+    const monthlyAverage = monthsWithData > 0 ? total / monthsWithData : 0
     
+    return {
+        thisMonth,
+        lastMonth,
+        thisQuarter,
+        lastYear,
+        thisMonthCount: thisMonthPayments.length,
+        averagePayment,
+        monthlyAverage,
+        largestPayment,
+        smallestPayment
+    }
+})
+
     return {
         thisMonth,
         thisMonthCount: thisMonthPayments.length,
