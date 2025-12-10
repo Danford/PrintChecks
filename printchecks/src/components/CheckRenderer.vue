@@ -1,0 +1,343 @@
+<template>
+  <div class="check-renderer" :style="containerStyle">
+    <div class="account-holder-name" :style="{ ...checkStyles.accountHolderName, position: 'absolute', ...dynamicTextPositions.accountHolderName }">
+      {{ checkData.accountHolderName }}
+    </div>
+    <div class="account-holder-address" :style="{ ...checkStyles.accountHolderName, position: 'absolute', ...dynamicTextPositions.accountHolderAddress }">
+      {{ checkData.accountHolderAddress }}<br>
+      {{ checkData.accountHolderCity }}, {{ checkData.accountHolderState }} {{ checkData.accountHolderZip }}
+    </div>
+    <div class="check-number-human" :style="{ ...checkStyles.checkNumber, position: 'absolute', ...dynamicTextPositions.checkNumber }">
+      {{ checkData.checkNumber }}
+    </div>
+    <div class="bank-name-top" :style="{ ...checkStyles.bankName, position: 'absolute', top: '50px', left: '0px', width: '100%', textAlign: 'center' }">
+      {{ checkData.bankName }}
+    </div>
+    <div class="bank-address-top" :style="{ ...checkStyles.bankName, position: 'absolute', top: '70px', left: '0px', width: '100%', textAlign: 'center' }">
+      {{ checkData.bankAddress || '' }}
+    </div>
+    <div class="date-data" :style="{ ...checkStyles.date, position: 'absolute', ...dynamicTextPositions.date }">
+      {{ checkData.date }}
+    </div>
+    <div class="date" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '90px', left: '780px' }">
+      Date: _____________________
+    </div>
+    <div class="amount-box-border" style="position: absolute; top: 195px; left: 950px; width: 225px; height: 40px; border: 1px solid #c7c7c7; background-color: white;">
+    </div>
+    <div class="amount-dollar-sign" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '201px', left: '935px' }">
+      $
+    </div>
+    <div class="amount-data" :style="{ ...checkStyles.amount, position: 'absolute', ...dynamicTextPositions.amount }">
+      {{ checkData.amount }}
+    </div>
+    <div class="pay-to-data" :style="{ ...checkStyles.payTo, position: 'absolute', ...dynamicTextPositions.payTo }">
+      {{ checkData.payTo }}
+    </div>
+    <div class="pay-to" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '170px', left: '60px' }">
+      Pay to the <br>Order of: <span class="payto-line"></span>
+    </div>
+    <div class="amount-line-data" :style="{ ...checkStyles.amountWords, position: 'absolute', ...dynamicTextPositions.amountWords }">
+      {{ checkData.amountWords }}
+    </div>
+    <div class="amount-line" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '250px', left: '60px' }">
+      <span class="dollar-line"></span>
+    </div>
+    <div class="memo-data" :style="{ ...checkStyles.memo, position: 'absolute', ...dynamicTextPositions.memo }">
+      {{ checkData.memo }}
+    </div>
+    <div class="memo" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '60px' }">
+      Memo: ____________________________________
+    </div>
+    <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">
+      {{ checkData.signature }}
+    </div>
+    <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '750px' }">
+      _______________________________
+    </div>
+    <div class="signature-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '410px', left: '780px', width: '300px', textAlign: 'center' }">
+      Authorized Signature
+    </div>
+    <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo, width: '100%', textAlign: 'center' }">
+      <div class="routing" style="display: inline;">
+        a{{ checkData.routingNumber }}a
+      </div>
+      <div class="bank-account" style="display: inline;">{{ checkData.bankAccountNumber }}c</div>
+      <div class="check-number" style="display: inline; margin-left:20px">{{ checkData.checkNumber }}</div>
+    </div>
+
+    <!-- Logo Section -->
+    <div v-if="hasCustomLogo && logoImageSrc" 
+         class="logo-container" 
+         :class="`logo-${settings?.logo?.position || 'top-left'}`"
+         :style="{ 
+           width: `${settings?.logo?.size?.width || 100}px`,
+           height: `${settings?.logo?.size?.height || 50}px`,
+           opacity: settings?.logo?.opacity || 1,
+           marginTop: `${settings?.logo?.margin?.top || 0}px`,
+           marginRight: `${settings?.logo?.margin?.right || 0}px`,
+           marginBottom: `${settings?.logo?.margin?.bottom || 0}px`,
+           marginLeft: `${settings?.logo?.margin?.left || 0}px`
+         }">
+      <img :src="logoImageSrc" 
+           alt="Logo"
+           :style="{
+             width: '100%',
+             height: '100%',
+             objectFit: settings?.logo?.objectFit || 'contain',
+             objectPosition: settings?.logo?.objectPosition || 'center'
+           }" />
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import type { CustomizationSettings } from '@/types'
+
+interface CheckData {
+  accountHolderName: string
+  accountHolderAddress: string
+  accountHolderCity: string
+  accountHolderState: string
+  accountHolderZip: string
+  checkNumber: string
+  bankName: string
+  bankAddress?: string
+  date: string
+  amount: string
+  payTo: string
+  amountWords: string
+  memo: string
+  signature: string
+  routingNumber: string
+  bankAccountNumber: string
+}
+
+interface Props {
+  settings: CustomizationSettings
+  checkData: CheckData
+  scale?: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  scale: 1
+})
+
+const hasCustomLogo = computed(() => {
+  return props.settings?.logo?.enabled && props.settings?.logo?.imageData
+})
+
+const logoImageSrc = computed(() => {
+  return props.settings?.logo?.imageData || ''
+})
+
+const containerStyle = computed(() => {
+  const colors = props.settings.colors
+  const layout = props.settings.layout
+  
+  return {
+    width: '1200px',
+    height: '450px',
+    backgroundColor: colors?.background || '#ffffff',
+    border: layout?.showBorders ? `${layout.borderWidth}px ${layout.borderStyle} ${colors?.border || '#cccccc'}` : 'none',
+    position: 'relative',
+    fontFamily: 'Arial, sans-serif',
+    transform: `scale(${props.scale})`,
+    transformOrigin: 'top left',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '4px'
+  }
+})
+
+const dynamicTextPositions = computed(() => {
+  const logo = props.settings?.logo
+  if (!hasCustomLogo.value || !logo) {
+    // Return default positions when no logo
+    return {
+      accountHolderName: { top: '40px', left: '60px' },
+      accountHolderAddress: { top: '70px', left: '60px' },
+      checkNumber: { top: '40px', right: '50px' },
+      date: { top: '90px', left: '850px' },
+      payTo: { top: '200px', left: '180px' },
+      amount: { top: '202px', left: '970px' },
+      amountWords: { top: '240px', left: '100px' },
+      bankName: { top: '300px', left: '60px' },
+      memo: { top: '390px', left: '130px' },
+      signature: { top: '366px', left: '770px' },
+      bankInfo: { top: '435px', left: '0px' }
+    }
+  }
+
+  const logoWidth = logo.size?.width || 100
+  const logoHeight = logo.size?.height || 50
+  const logoPosition = logo.position || 'top-left'
+  const margin = logo.margin || { top: 10, right: 10, bottom: 10, left: 10 }
+  
+  // Calculate logo boundaries including margins
+  const logoBounds = {
+    'top-left': { 
+      left: 20 + margin.left, 
+      right: 20 + margin.left + logoWidth, 
+      top: 20 + margin.top, 
+      bottom: 20 + margin.top + logoHeight 
+    },
+    'top-center': { 
+      left: (1200 - logoWidth) / 2 + margin.left, 
+      right: (1200 + logoWidth) / 2 + margin.right, 
+      top: 20 + margin.top, 
+      bottom: 20 + margin.top + logoHeight 
+    },
+    'top-right': { 
+      left: 1200 - 20 - logoWidth - margin.right, 
+      right: 1200 - 20 - margin.right, 
+      top: 20 + margin.top, 
+      bottom: 20 + margin.top + logoHeight 
+    },
+    'bottom-left': { 
+      left: 20 + margin.left, 
+      right: 20 + margin.left + logoWidth, 
+      top: 450 - logoHeight - 20 - margin.bottom, 
+      bottom: 450 - 20 - margin.bottom 
+    },
+    'bottom-center': { 
+      left: (1200 - logoWidth) / 2 + margin.left, 
+      right: (1200 + logoWidth) / 2 + margin.right, 
+      top: 450 - logoHeight - 20 - margin.bottom, 
+      bottom: 450 - 20 - margin.bottom 
+    },
+    'bottom-right': { 
+      left: 1200 - 20 - logoWidth - margin.right, 
+      right: 1200 - 20 - margin.right, 
+      top: 450 - logoHeight - 20 - margin.bottom, 
+      bottom: 450 - 20 - margin.bottom 
+    }
+  }
+
+  const bounds = logoBounds[logoPosition]
+  
+  // Default positions
+  let positions = {
+    accountHolderName: { top: '40px', left: '60px' },
+    accountHolderAddress: { top: '70px', left: '60px' },
+    checkNumber: { top: '40px', right: '50px' },
+    date: { top: '90px', left: '850px' },
+    payTo: { top: '200px', left: '180px' },
+    amount: { top: '202px', left: '970px' },
+    amountWords: { top: '240px', left: '100px' },
+    bankName: { top: '300px', left: '60px' },
+    memo: { top: '390px', left: '130px' },
+    signature: { top: '366px', left: '770px' },
+    bankInfo: { top: '435px', left: '0px' }
+  }
+
+  // Adjust positions based on logo placement
+  if (logoPosition === 'top-left') {
+    if (bounds.right > 60) {
+      positions.accountHolderName.left = `${bounds.right + 15}px`
+      positions.accountHolderAddress.left = `${bounds.right + 15}px`
+    }
+  }
+
+  if (logoPosition === 'top-center') {
+    if (bounds.left < 300) {
+      positions.accountHolderName.left = `${bounds.right + 15}px`
+      positions.accountHolderAddress.left = `${bounds.right + 15}px`
+    }
+    if (bounds.right > 800) {
+      positions.checkNumber.left = `${Math.max(bounds.left - 100, 600)}px`
+      positions.date.left = `${Math.max(bounds.left - 100, 600)}px`
+    }
+  }
+
+  if (logoPosition === 'top-right') {
+    if (bounds.left < 1000) {
+      positions.checkNumber.left = `${Math.max(bounds.left - 100, 700)}px`
+      positions.date.left = `${Math.max(bounds.left - 150, 700)}px`
+    }
+  }
+
+  return positions
+})
+
+const checkStyles = computed(() => {
+  if (!props.settings || !props.settings.fonts) return {}
+  
+  const fonts = props.settings.fonts
+  
+  // Helper function to safely get font styles with fallbacks
+  const getFontStyle = (fontConfig: any, fallback = { family: 'Arial, sans-serif', size: 16, weight: 'normal', color: '#000000' }) => {
+    // Apply adjustments if present
+    const adjustment = props.settings.adjustments?.[Object.keys(fonts).find(key => fonts[key] === fontConfig)]
+    const style: any = {
+      fontFamily: fontConfig?.family || fallback.family,
+      fontSize: `${fontConfig?.size || fallback.size}px`,
+      fontWeight: fontConfig?.weight || fallback.weight,
+      color: fontConfig?.color || fallback.color
+    }
+    
+    if (adjustment) {
+      style.transform = `translate(${adjustment.x}px, ${adjustment.y}px)`
+    }
+    
+    return style
+  }
+  
+  return {
+    accountHolderName: getFontStyle(fonts.accountHolder),
+    payTo: getFontStyle(fonts.payTo),
+    amount: getFontStyle(fonts.amount),
+    memo: getFontStyle(fonts.memo),
+    signature: getFontStyle(fonts.signature, { family: 'Caveat, cursive', size: 40, weight: 'normal', color: '#000000' }),
+    bankInfo: getFontStyle(fonts.bankInfo, { family: 'banking, monospace', size: 37, weight: 'normal', color: '#000000' }),
+    amountWords: getFontStyle(fonts.amountWords),
+    checkNumber: getFontStyle(fonts.checkNumber),
+    date: getFontStyle(fonts.date),
+    bankName: getFontStyle(fonts.bankName, { family: 'Open Sans, sans-serif', size: 24, weight: 'bold', color: '#000000' }),
+    fieldLabels: getFontStyle(fonts.fieldLabels, { family: 'Arial, sans-serif', size: 14, weight: 'normal', color: '#000000' })
+  }
+})
+</script>
+
+<style scoped>
+.check-renderer {
+  display: inline-block;
+}
+
+.logo-container {
+  position: absolute;
+  z-index: 1;
+}
+
+.logo-top-left {
+  top: 20px;
+  left: 20px;
+}
+
+.logo-top-center {
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.logo-top-right {
+  top: 20px;
+  right: 20px;
+}
+
+.logo-bottom-left {
+  bottom: 20px;
+  left: 20px;
+}
+
+.logo-bottom-center {
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.logo-bottom-right {
+  bottom: 20px;
+  right: 20px;
+}
+</style>
+
