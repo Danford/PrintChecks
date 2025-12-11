@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const wrapperStyle = computed(() => ({
   width: `${1200 * props.scale}px`,
-  height: `${450 * props.scale}px`,
+  height: `${490 * props.scale}px`,
   display: 'inline-block',
   position: 'relative',
   overflow: 'hidden'
@@ -30,7 +30,7 @@ const wrapperStyle = computed(() => ({
 
 const containerStyle = computed(() => ({
   width: '1200px',
-  height: '450px',
+  height: '490px',
   position: 'relative'
 }))
 

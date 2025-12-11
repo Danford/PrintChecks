@@ -170,11 +170,11 @@ const containerStyle = computed(() => {
   
   return {
     width: '1200px',
-    height: '450px',
+    height: '490px',
     backgroundColor: colors?.background || '#ffffff',
     backgroundImage: 'url(/src/assets/checkbg.png)',
     backgroundRepeat: 'no-repeat',
-    backgroundSize: '1200px 450px',
+    backgroundSize: '1200px 490px',
     position: 'relative',
     fontFamily: 'Arial, sans-serif',
     transform: `scale(${props.scale})`,
