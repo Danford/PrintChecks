@@ -45,18 +45,18 @@
       <span class="dollar-line"></span>
     </div>
     <!-- Hand-drawn line after amount words -->
-    <svg v-if="checkData.lineLength" 
+    <svg v-if="calculatedLineLength > 0" 
          class="amount-handdrawn-line" 
          :style="{ 
              position: 'absolute', 
              top: '252px', 
-             left: `${checkData.lineLength + 60 + 45}px`,
-             width: `${840 - checkData.lineLength - 45}px`,
+             left: `${calculatedLineLength + 60 + 45}px`,
+             width: `${840 - calculatedLineLength - 45}px`,
              height: '6px'
          }"
-         :viewBox="`0 0 ${840 - checkData.lineLength - 45} 6`"
+         :viewBox="`0 0 ${840 - calculatedLineLength - 45} 6`"
          preserveAspectRatio="none">
-      <path :d="`M 0 3 Q ${(840 - checkData.lineLength - 45) * 0.1} 2, ${(840 - checkData.lineLength - 45) * 0.2} 3.5 T ${(840 - checkData.lineLength - 45) * 0.4} 2.8 T ${(840 - checkData.lineLength - 45) * 0.6} 3.3 T ${(840 - checkData.lineLength - 45) * 0.8} 2.5 T ${840 - checkData.lineLength - 45} 3`"
+      <path :d="`M 0 3 Q ${(840 - calculatedLineLength - 45) * 0.1} 2, ${(840 - calculatedLineLength - 45) * 0.2} 3.5 T ${(840 - calculatedLineLength - 45) * 0.4} 2.8 T ${(840 - calculatedLineLength - 45) * 0.6} 3.3 T ${(840 - calculatedLineLength - 45) * 0.8} 2.5 T ${840 - calculatedLineLength - 45} 3`"
             stroke="#2b2b2b" 
             stroke-width="1.8" 
             stroke-linecap="round"
@@ -112,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 import type { CustomizationSettings } from '@/types'
 
 interface CheckData {
@@ -144,6 +144,18 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   scale: 1
 })
+
+const line = ref<HTMLElement | null>(null)
+const calculatedLineLength = ref<number>(props.checkData.lineLength || 0)
+
+// Dynamically calculate line length from rendered text
+watch(() => props.checkData, async () => {
+  await nextTick(() => {
+    if (line.value) {
+      calculatedLineLength.value = line.value.clientWidth
+    }
+  })
+}, { immediate: true, deep: true })
 
 const hasCustomLogo = computed(() => {
   return props.settings?.logo?.enabled && props.settings?.logo?.imageData
