@@ -34,9 +34,9 @@
       {{ checkData.payTo }}
     </div>
     <!-- Payee Name Line - level with amount box, ending where amount words line ends -->
-    <div class="payee-line-container" style="position: absolute; top: 215px; left: 180px; width: 760px; height: 1px; border-bottom: 1px solid black;"></div>
+    <div class="payee-line-container" style="position: absolute; top: 230px; left: 150px; width: 790px; height: 1px; border-bottom: 1px solid black; border-right: 1px solid black;"></div>
     <!-- Pay to the Order of text - anchored bottom-right to line start -->
-    <div class="pay-to-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '275px', right: '1020px', textAlign: 'right' }">
+    <div class="pay-to-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '260px', right: '1050px', textAlign: 'right' }">
       Pay to the<br>Order of:
     </div>
     <div class="amount-line-data" ref="line" :style="{ ...checkStyles.amountWords, position: 'absolute', ...dynamicTextPositions.amountWords }">
@@ -70,16 +70,16 @@
       {{ checkData.memo }}
     </div>
     <!-- Memo line -->
-    <div class="memo-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '60px' }">
+    <div class="memo-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '398px', left: '60px' }">
       Memo:
     </div>
-    <div class="memo-line-container" style="position: absolute; top: 405px; left: 115px; width: 300px; height: 1px; border-bottom: 1px solid black;"></div>
+    <div class="memo-line-container" style="position: absolute; top: 413px; left: 115px; width: 300px; height: 1px; border-bottom: 1px solid black;"></div>
     <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">
       {{ checkData.signature }}
     </div>
     <!-- Signature line -->
-    <div class="signature-line-container" style="position: absolute; top: 405px; left: 750px; width: 360px; height: 1px; border-bottom: 1px solid black;"></div>
-    <div class="signature-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '410px', left: '750px', width: '360px', textAlign: 'center' }">
+    <div class="signature-line-container" style="position: absolute; top: 413px; left: 750px; width: 360px; height: 1px; border-bottom: 1px solid black;"></div>
+    <div class="signature-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '418px', left: '750px', width: '360px', textAlign: 'center' }">
       Authorized Signature
     </div>
     <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo, width: '100%', textAlign: 'center' }">
@@ -260,12 +260,12 @@ const dynamicTextPositions = computed(() => {
     accountHolderAddress: { top: '70px', left: '60px' },
     checkNumber: { top: '40px', right: '50px' },
     date: { top: '85px', left: '850px' },
-    payTo: { top: '200px', left: '185px' },        // Aligned with payee line at 215px
+    payTo: { top: '215px', left: '155px' },        // Aligned with payee line at 230px
     amount: { top: '202px', left: '970px' },
     amountWords: { top: '240px', left: '100px' },
     bankName: { top: '300px', left: '60px' },
-    memo: { top: '393px', left: '120px' },         // Aligned with memo line
-    signature: { top: '380px', left: '770px' },    // Above signature line
+    memo: { top: '400px', left: '120px' },         // Aligned with memo line at 413px
+    signature: { top: '370px', left: '770px' },    // Above signature line at 413px
     bankInfo: { top: '435px', left: '0px' }
   }
 
