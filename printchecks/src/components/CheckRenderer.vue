@@ -72,11 +72,12 @@
     <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">
       {{ checkData.signature }}
     </div>
-    <div class="signature" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '750px' }">
-      _______________________________
-    </div>
-    <div class="signature-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '410px', left: '780px', width: '300px', textAlign: 'center' }">
-      Authorized Signature
+    <div class="signature-section" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '390px', left: '750px', width: '360px' }">
+      <div class="signature-line">
+        <span class="signature-underscores">___________________</span>
+        <span class="signature-label">Authorized Signature</span>
+        <span class="signature-underscores">___________________</span>
+      </div>
     </div>
     <div class="banking" :style="{ ...checkStyles.bankInfo, position: 'absolute', ...dynamicTextPositions.bankInfo, width: '100%', textAlign: 'center' }">
       <div class="routing" style="display: inline;">
@@ -255,8 +256,8 @@ const dynamicTextPositions = computed(() => {
     accountHolderName: { top: '40px', left: '60px' },
     accountHolderAddress: { top: '70px', left: '60px' },
     checkNumber: { top: '40px', right: '50px' },
-    date: { top: '90px', left: '850px' },
-    payTo: { top: '200px', left: '180px' },
+    date: { top: '85px', left: '850px' },          // Moved up 5px from 90px
+    payTo: { top: '180px', left: '180px' },        // Moved up 20px from 200px
     amount: { top: '202px', left: '970px' },
     amountWords: { top: '240px', left: '100px' },
     bankName: { top: '300px', left: '60px' },
@@ -341,6 +342,37 @@ const checkStyles = computed(() => {
 .logo-container {
   position: absolute;
   z-index: 1;
+}
+
+.payto-line {
+  width: 776px;
+  display: block;
+  border-bottom: 1px solid black;
+  margin-left: 73px;
+  border-right: 1px solid black;
+}
+
+.pay-to {
+  display: flex;
+  align-items: flex-end;
+  line-height: 1.2;
+}
+
+.signature-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.signature-label {
+  white-space: nowrap;
+  padding: 0 8px;
+}
+
+.signature-underscores {
+  flex: 1;
+  white-space: nowrap;
 }
 
 .logo-top-left {
