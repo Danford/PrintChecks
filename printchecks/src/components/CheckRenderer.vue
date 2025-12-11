@@ -20,9 +20,9 @@
       {{ checkData.date }}
     </div>
     <!-- Date line -->
-    <div class="date-line-container" style="position: absolute; top: 105px; left: 850px; width: 310px; height: 1px; border-bottom: 1px solid black;"></div>
+    <div class="date-line-container" style="position: absolute; top: 105px; left: 850px; width: 155px; height: 1px; border-bottom: 1px solid black;"></div>
     <!-- Date label - anchored bottom-right to line start -->
-    <div class="date-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '385px', right: '350px', textAlign: 'right' }">
+    <div class="date-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '385px', right: '505px', textAlign: 'right' }">
       Date:
     </div>
     <div class="amount-box-border" style="position: absolute; top: 195px; left: 950px; width: 225px; height: 40px; border: 1px solid #c7c7c7; background-color: white;">
@@ -263,13 +263,13 @@ const dynamicTextPositions = computed(() => {
     accountHolderName: { top: '40px', left: '60px' },
     accountHolderAddress: { top: '70px', left: '60px' },
     checkNumber: { top: '40px', right: '50px' },
-    date: { top: '85px', left: '850px' },
-    payTo: { top: '215px', left: '155px' },        // Aligned with payee line at 230px
+    date: { bottom: '385px', left: '850px' },       // Anchored bottom-left to date line at 105px
+    payTo: { bottom: '260px', left: '150px' },      // Anchored bottom-left to payee line at 230px
     amount: { top: '202px', left: '970px' },
     amountWords: { top: '240px', left: '100px' },
     bankName: { top: '300px', left: '60px' },
-    memo: { top: '400px', left: '120px' },         // Aligned with memo line at 413px
-    signature: { top: '370px', left: '770px' },    // Above signature line at 413px
+    memo: { bottom: '77px', left: '115px' },        // Anchored bottom-left to memo line at 413px
+    signature: { bottom: '77px', left: '750px' },   // Anchored bottom-left to signature line at 413px
     bankInfo: { top: '435px', left: '0px' }
   }
 
