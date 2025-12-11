@@ -293,6 +293,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     
     validateSettings()
     saveSettings()
+    syncCurrentSettingsToPreset()
   }
   
   function updateColors(colorUpdates: Partial<ColorScheme>) {
@@ -305,6 +306,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     
     validateSettings()
     saveSettings()
+    syncCurrentSettingsToPreset()
   }
   
   function updateLogo(logoSettings: Partial<LogoSettings>) {
@@ -317,6 +319,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     
     validateSettings()
     saveSettings()
+    syncCurrentSettingsToPreset()
   }
   
   function updateLayout(layoutSettings: Partial<LayoutSettings>) {
@@ -329,6 +332,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     
     validateSettings()
     saveSettings()
+    syncCurrentSettingsToPreset()
   }
   
   function updateAdjustment(element: keyof CustomizationSettings['fonts'], adjustment: { x?: number; y?: number }) {
@@ -345,6 +349,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     
     validateSettings()
     saveSettings()
+    syncCurrentSettingsToPreset()
   }
   
   function validateSettings(): boolean {
@@ -548,6 +553,20 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       presetToRename.name = newName
       presetToRename.description = newDescription
       presetToRename.updatedAt = new Date()
+      savePresets()
+    }
+  }
+  
+  function syncCurrentSettingsToPreset() {
+    // Sync the current settings back to the current preset (if it's not built-in)
+    if (!currentPreset.value || currentPreset.value.isBuiltIn || !currentSettings.value) {
+      return
+    }
+    
+    const presetToUpdate = presets.value.find(p => p.id === currentPreset.value?.id)
+    if (presetToUpdate) {
+      presetToUpdate.settings = { ...currentSettings.value }
+      presetToUpdate.updatedAt = new Date()
       savePresets()
     }
   }
@@ -1324,6 +1343,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     loadPresets,
     deletePreset,
     renamePreset,
+    syncCurrentSettingsToPreset,
     loadAvailableFonts,
     loadGoogleFonts,
     loadColorPalettes

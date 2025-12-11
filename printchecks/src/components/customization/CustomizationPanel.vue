@@ -31,7 +31,10 @@
               <span class="badge-text">{{ preset.isBuiltIn ? '✓ Active (Read-Only)' : '✓ Editing' }}</span>
             </div>
             <div class="preset-preview-container">
-              <CheckTemplatePreview :settings="preset.settings" :scale="0.2" />
+              <CheckTemplatePreview 
+                :settings="currentPreset?.id === preset.id && currentSettings ? currentSettings : preset.settings" 
+                :scale="0.2" 
+              />
             </div>
             <div class="preset-info">
               <h5>{{ preset.name }}</h5>
@@ -60,7 +63,7 @@
         <div v-if="currentPreset" class="selected-template-preview">
           <h5>📋 {{ currentPreset.name }} Preview</h5>
           <div class="large-preview-container">
-            <CheckTemplatePreview :settings="currentPreset.settings" :scale="0.5" />
+            <CheckTemplatePreview :settings="currentSettings || currentPreset.settings" :scale="0.5" />
           </div>
         </div>
         </div>
