@@ -42,7 +42,7 @@ const sampleCheckData = computed(() => ({
   signature: 'John Doe',
   routingNumber: '123456789',
   bankAccountNumber: '000111222333',
-  lineLength: 380  // Approximate length for "One Hundred and 00/100"
+  lineLength: 250  // Adjusted to better match actual rendered width
 }))
 </script>
 
