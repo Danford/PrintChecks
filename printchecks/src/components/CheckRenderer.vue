@@ -158,11 +158,13 @@ watch(() => props.checkData, async () => {
 }, { immediate: true, deep: true })
 
 const hasCustomLogo = computed(() => {
-  return props.settings?.logo?.enabled && props.settings?.logo?.imageData
+  const logo = props.settings?.logo
+  return logo?.enabled && (logo?.file?.url || logo?.url)
 })
 
 const logoImageSrc = computed(() => {
-  return props.settings?.logo?.imageData || ''
+  const logo = props.settings?.logo
+  return logo?.file?.url || logo?.url || ''
 })
 
 const containerStyle = computed(() => {
