@@ -1,6 +1,8 @@
 <template>
-  <div class="check-template-preview" :style="containerStyle">
-    <CheckRenderer :settings="settings" :checkData="sampleCheckData" :scale="scale" />
+  <div class="check-template-preview-wrapper" :style="wrapperStyle">
+    <div class="check-template-preview" :style="containerStyle">
+      <CheckRenderer :settings="settings" :checkData="sampleCheckData" :scale="scale" />
+    </div>
   </div>
 </template>
 
@@ -18,10 +20,17 @@ const props = withDefaults(defineProps<Props>(), {
   scale: 0.15
 })
 
-const containerStyle = computed(() => ({
+const wrapperStyle = computed(() => ({
   width: `${1200 * props.scale}px`,
   height: `${450 * props.scale}px`,
   display: 'inline-block',
+  position: 'relative',
+  overflow: 'hidden'
+}))
+
+const containerStyle = computed(() => ({
+  width: '1200px',
+  height: '450px',
   position: 'relative'
 }))
 
@@ -47,11 +56,12 @@ const sampleCheckData = computed(() => ({
 </script>
 
 <style scoped>
-.check-template-preview {
-  display: inline-block;
-  position: relative;
+.check-template-preview-wrapper {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
-  overflow: hidden;
+}
+
+.check-template-preview {
+  position: relative;
 }
 </style>
