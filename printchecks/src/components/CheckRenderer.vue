@@ -21,8 +21,8 @@
     </div>
     <!-- Date line -->
     <div class="date-line-container" style="position: absolute; top: 105px; left: 850px; width: 155px; height: 1px; border-bottom: 1px solid black;"></div>
-    <!-- Date label -->
-    <div class="date-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '90px', left: '780px' }">
+    <!-- Date label - anchored bottom-right to line start -->
+    <div class="date-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '385px', right: '505px', textAlign: 'right' }">
       Date:
     </div>
     <div class="amount-box-border" style="position: absolute; top: 195px; left: 950px; width: 225px; height: 40px; border: 1px solid #c7c7c7; background-color: white;">
@@ -38,8 +38,8 @@
     </div>
     <!-- Payee Name Line - level with amount box, ending where amount words line ends -->
     <div class="payee-line-container" style="position: absolute; top: 230px; left: 150px; width: 790px; height: 1px; border-bottom: 1px solid black; border-right: 1px solid black;"></div>
-    <!-- Pay to the Order of label -->
-    <div class="pay-to-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '200px', left: '60px' }">
+    <!-- Pay to the Order of label - anchored bottom-right to line start -->
+    <div class="pay-to-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '260px', right: '1050px', textAlign: 'right' }">
       Pay to the<br>Order of:
     </div>
     <div class="amount-line-data" ref="line" :style="{ ...checkStyles.amountWords, position: 'absolute', ...dynamicTextPositions.amountWords }">
@@ -74,8 +74,8 @@
     </div>
     <!-- Memo line -->
     <div class="memo-line-container" style="position: absolute; top: 413px; left: 115px; width: 300px; height: 1px; border-bottom: 1px solid black;"></div>
-    <!-- Memo label -->
-    <div class="memo-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '398px', left: '60px' }">
+    <!-- Memo label - anchored bottom-right to line start -->
+    <div class="memo-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '77px', right: '1085px', textAlign: 'right' }">
       Memo:
     </div>
     <div class="signature-data" :style="{ ...checkStyles.signature, position: 'absolute', ...dynamicTextPositions.signature }">
