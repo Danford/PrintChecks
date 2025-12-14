@@ -22,7 +22,7 @@
     <!-- Date line -->
     <div class="date-line-container" style="position: absolute; top: 105px; left: 900px; width: 155px; height: 1px; border-bottom: 1px solid black;"></div>
     <!-- Date label - anchored bottom-right to line start -->
-    <div class="date-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '385px', right: '455px', textAlign: 'right' }">
+    <div class="date-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '385px', right: '355px', textAlign: 'right' }">
       Date:
     </div>
     <div class="amount-box-border" style="position: absolute; top: 195px; left: 950px; width: 225px; height: 40px; border: 1px solid #c7c7c7; background-color: white;">
