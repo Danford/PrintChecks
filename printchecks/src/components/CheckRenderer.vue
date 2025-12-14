@@ -27,7 +27,8 @@
     </div>
     <div class="amount-box-border" style="position: absolute; top: 195px; left: 950px; width: 225px; height: 40px; border: 1px solid #c7c7c7; background-color: white;">
     </div>
-    <div class="amount-dollar-sign" :style="{ ...checkStyles.fieldLabels, position: 'absolute', top: '201px', left: '935px' }">
+    <!-- Dollar sign - anchored bottom-right to amount box -->
+    <div class="amount-dollar-sign" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '255px', right: '225px', textAlign: 'right' }">
       $
     </div>
     <div class="amount-data" :style="{ ...checkStyles.amount, position: 'absolute', ...dynamicTextPositions.amount }">
