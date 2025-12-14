@@ -20,15 +20,15 @@
       {{ checkData.date }}
     </div>
     <!-- Date line -->
-    <div class="date-line-container" style="position: absolute; top: 105px; left: 850px; width: 155px; height: 1px; border-bottom: 1px solid black;"></div>
+    <div class="date-line-container" style="position: absolute; top: 105px; left: 900px; width: 155px; height: 1px; border-bottom: 1px solid black;"></div>
     <!-- Date label - anchored bottom-right to line start -->
-    <div class="date-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '385px', right: '505px', textAlign: 'right' }">
+    <div class="date-label" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '385px', right: '455px', textAlign: 'right' }">
       Date:
     </div>
     <div class="amount-box-border" style="position: absolute; top: 195px; left: 950px; width: 225px; height: 40px; border: 1px solid #c7c7c7; background-color: white;">
     </div>
     <!-- Dollar sign - anchored bottom-right to amount box -->
-    <div class="amount-dollar-sign" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '255px', right: '225px', textAlign: 'right' }">
+    <div class="amount-dollar-sign" :style="{ ...checkStyles.fieldLabels, position: 'absolute', bottom: '247px', right: '245px', textAlign: 'right' }">
       $
     </div>
     <div class="amount-data" :style="{ ...checkStyles.amount, position: 'absolute', ...dynamicTextPositions.amount }">
@@ -264,7 +264,7 @@ const dynamicTextPositions = computed(() => {
     accountHolderName: { top: '40px', left: '60px' },
     accountHolderAddress: { top: '70px', left: '60px' },
     checkNumber: { top: '40px', right: '50px' },
-    date: { bottom: '385px', left: '850px' },       // Data value: bottom-left anchored to date line at 105px
+    date: { bottom: '385px', left: '900px' },       // Data value: bottom-left anchored to date line at 105px
     payTo: { bottom: '260px', left: '150px' },      // Data value: bottom-left anchored to payee line at 230px
     amount: { top: '202px', left: '970px' },
     amountWords: { bottom: '260px', left: '100px' }, // Data value: bottom-left anchored to payee line at 230px
