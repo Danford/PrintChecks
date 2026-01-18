@@ -85,10 +85,12 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { filterActiveChecks } from '@/utils/checkFilters'
 
 // Data from localStorage
 const vendors = ref(JSON.parse(localStorage.getItem('vendors') || '[]'))
-const paymentHistory = computed(() => JSON.parse(localStorage.getItem('checkList') || '[]'))
+// Filter out voided checks from payment history
+const paymentHistory = computed(() => filterActiveChecks(JSON.parse(localStorage.getItem('checkList') || '[]')))
 
 // Enhanced Statistics
 const enhancedStats = computed(() => {
@@ -217,4 +219,3 @@ const topVendors = computed(() => {
   font-weight: 600;
 }
 </style>
-

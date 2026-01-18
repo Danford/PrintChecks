@@ -54,14 +54,15 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import VendorModal from '../components/VendorModal.vue'
+import { filterActiveChecks } from '@/utils/checkFilters'
 
 // Vendor Management
 const vendors = ref(JSON.parse(localStorage.getItem('vendors') || '[]'))
 const showAddVendorModal = ref(false)
 const editingVendor = ref(null)
 
-// Payment history for statistics
-const paymentHistory = computed(() => JSON.parse(localStorage.getItem('checkList') || '[]'))
+// Payment history for statistics - filter out voided checks
+const paymentHistory = computed(() => filterActiveChecks(JSON.parse(localStorage.getItem('checkList') || '[]')))
 
 // Vendors with statistics
 const vendorsWithStats = computed(() => {

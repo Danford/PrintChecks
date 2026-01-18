@@ -806,8 +806,10 @@ const dynamicTextPositions = computed(() => {
 // Payment statistics
 const paymentStats = computed(() => {
     const currentYear = new Date().getFullYear()
+    // Filter out voided checks from payment statistics
+    const activeChecks = historyStore.checks.filter(check => !check.isVoid)
     const allPayments = [
-        ...historyStore.checks.map(check => ({
+        ...activeChecks.map(check => ({
             amount: parseFloat(check.amount || '0'),
             date: new Date(check.date || Date.now())
         })),
@@ -839,9 +841,12 @@ const enhancedPaymentStats = computed(() => {
     const now = new Date()
     const currentMonth = now.getMonth()
     const currentYear = now.getFullYear()
+    // Filter out voided checks from enhanced payment statistics
+    const activeChecks = historyStore.checks.filter(check => !check.isVoid)
+
     
     const allPayments = [
-        ...historyStore.checks.map(check => ({
+        ...activeChecks.map(check => ({
             amount: parseFloat(check.amount || '0'),
             date: new Date(check.date || Date.now()),
             payTo: check.payTo || 'Unknown'
