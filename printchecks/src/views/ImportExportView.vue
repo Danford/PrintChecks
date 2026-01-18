@@ -202,7 +202,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { encrypt, decrypt, isEncrypted } from '@/services/encryption'
+import { encrypt, decrypt, isEncrypted } from '@/services/encryption.ts'
 
 // Encryption state
 const encryptionEnabled = ref(false)
@@ -459,4 +459,3 @@ async function importData() {
   padding-left: 1.25rem;
 }
 </style>
-
