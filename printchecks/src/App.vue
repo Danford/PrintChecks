@@ -32,6 +32,9 @@ import { RouterLink, RouterView } from 'vue-router'
             <li class="nav-item">
                 <RouterLink to="/analytics" class="nav-link" :class="{'active': $route.path == '/analytics'}">📊 Analytics</RouterLink>
             </li>
+            <li class="nav-item">
+                <RouterLink to="/import-export" class="nav-link" :class="{'active': $route.path == '/import-export'}">💾 Import/Export</RouterLink>
+            </li>
         </ul>
       <nav>
       </nav>
