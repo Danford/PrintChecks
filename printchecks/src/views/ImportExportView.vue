@@ -21,13 +21,13 @@
             <strong>Enable Data Encryption</strong>
           </label>
           <small class="d-block text-muted mt-1">
-            When enabled, all data will be encrypted and you'll need to enter a password every time you access the app
+            When enabled, your session will lock after 5 minutes of inactivity. You'll have 60 seconds to keep your session active.
           </small>
         </div>
 
         <div v-if="encryptionEnabled" class="alert alert-info">
           <strong>🔒 Encryption Active</strong><br />
-          Your data is encrypted. You must enter the correct password to access the app.
+          After 5 minutes of inactivity, you'll be prompted to keep your session active (60 second timeout).
           <br /><br />
           <button class="btn btn-sm btn-warning" @click="changePassword">
             Change Encryption Password
@@ -269,7 +269,7 @@ function onEncryptionToggle() {
     }
     localStorage.setItem('encryption_enabled', 'true')
     sessionStorage.setItem('encryption_password', password)
-    alert('Encryption enabled. You will need to enter this password every time you load the app.')
+    alert('Encryption enabled! After 5 minutes of inactivity, you\'ll be prompted to keep your session active.')
   } else {
     if (confirm('Are you sure you want to disable encryption? Your data will no longer be protected.')) {
       localStorage.setItem('encryption_enabled', 'false')
@@ -387,17 +387,18 @@ async function importData() {
     return
   }
 
-  try {
-    importing.value = true
-    importError.value = ''
-    importSuccess.value = false
+  importing.value = true
+  importError.value = ''
+  importSuccess.value = false
 
+  try {
     const text = await selectedFile.value.text()
     let importedData
 
     if (importFileEncrypted.value) {
       if (!importPassword.value) {
         importError.value = 'Please enter the password for this encrypted file'
+        importing.value = false
         return
       }
       importedData = await decrypt(text, importPassword.value)
@@ -418,6 +419,7 @@ async function importData() {
     localStorage.setItem('bankAccounts', JSON.stringify(importedData.bankAccounts || []))
 
     importSuccess.value = true
+    importing.value = false
 
     // Reset form after success
     setTimeout(() => {
@@ -425,13 +427,12 @@ async function importData() {
     }, 2000)
   } catch (error: any) {
     console.error('Import error:', error)
+    importing.value = false
     if (error.message === 'Incorrect password') {
       importError.value = 'Incorrect password'
     } else {
       importError.value = 'Failed to import data. Please check the file and try again.'
     }
-  } finally {
-    importing.value = false
   }
 }
 </script>
