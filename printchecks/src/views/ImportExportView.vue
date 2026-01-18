@@ -45,10 +45,12 @@
     <ul class="nav nav-tabs mb-4" role="tablist">
       <li class="nav-item" role="presentation">
         <button
-          class="nav-link"
-          :class="{ active: activeTab === 'export' }"
-          @click="activeTab = 'export'"
+          class="nav-link active"
+          id="export-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#export"
           type="button"
+          role="tab"
         >
           📤 Export
         </button>
@@ -56,9 +58,11 @@
       <li class="nav-item" role="presentation">
         <button
           class="nav-link"
-          :class="{ active: activeTab === 'import' }"
-          @click="activeTab = 'import'"
+          id="import-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#import"
           type="button"
+          role="tab"
         >
           📥 Import
         </button>
@@ -68,7 +72,7 @@
     <!-- Tab Content -->
     <div class="tab-content">
       <!-- Export Tab -->
-      <div v-show="activeTab === 'export'" class="tab-pane" id="export" role="tabpanel">
+      <div class="tab-pane fade show active" id="export" role="tabpanel">
         <div class="card">
           <div class="card-body">
             <h5>Export Your Data</h5>
@@ -125,7 +129,7 @@
       </div>
 
       <!-- Import Tab -->
-      <div v-show="activeTab === 'import'" class="tab-pane" id="import" role="tabpanel">
+      <div class="tab-pane fade" id="import" role="tabpanel">
         <div class="card">
           <div class="card-body">
             <h5>Import Data</h5>
@@ -199,9 +203,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { encrypt, decrypt, isEncrypted } from '@/services/encryption.ts'
-
-// Tab state
-const activeTab = ref('export')
 
 // Encryption state
 const encryptionEnabled = ref(false)
