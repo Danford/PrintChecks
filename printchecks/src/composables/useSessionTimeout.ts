@@ -4,7 +4,7 @@
  * User has 60 seconds to respond before being locked out
  */
 
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 
 const INACTIVITY_TIMEOUT = 5 * 60 * 1000 // 5 minutes
 const WARNING_DURATION = 60 * 1000 // 60 seconds
@@ -19,8 +19,10 @@ export function useSessionTimeout() {
   let warningTimer: number | null = null
   let countdownInterval: number | null = null
 
-  // Check if encryption is enabled
+  // Check if encryption is enabled - make it reactive
   const encryptionEnabled = ref(localStorage.getItem('encryption_enabled') === 'true')
+  
+  console.log('[SessionTimeout] Initial encryption status:', encryptionEnabled.value)
 
   function clearAllTimers() {
     if (inactivityTimer) clearTimeout(inactivityTimer)
@@ -64,14 +66,22 @@ export function useSessionTimeout() {
 
   function resetInactivityTimer() {
     if (isLocked.value) return
-    if (!encryptionEnabled.value) return
-    if (!sessionStorage.getItem('encryption_password')) return
+    if (!encryptionEnabled.value) {
+      console.log('[SessionTimeout] Encryption not enabled, skipping timer')
+      return
+    }
+    if (!sessionStorage.getItem('encryption_password')) {
+      console.log('[SessionTimeout] No password in sessionStorage, skipping timer')
+      return
+    }
 
+    console.log('[SessionTimeout] Resetting inactivity timer - will show warning in 5 minutes')
     clearAllTimers()
     showWarning.value = false
     
     // Start new inactivity timer
     inactivityTimer = window.setTimeout(() => {
+      console.log('[SessionTimeout] Inactivity timeout reached! Showing warning...')
       showWarningPrompt()
     }, INACTIVITY_TIMEOUT)
   }
@@ -88,11 +98,19 @@ export function useSessionTimeout() {
   }
 
   function startSessionTimeout() {
+    const hasEncryption = localStorage.getItem('encryption_enabled') === 'true'
+    const hasPassword = !!sessionStorage.getItem('encryption_password')
+    
+    console.log('[SessionTimeout] Starting timeout check:', { hasEncryption, hasPassword })
+    
     // Only start if encryption is enabled and password exists
-    if (!encryptionEnabled.value || !sessionStorage.getItem('encryption_password')) {
+    if (!hasEncryption || !hasPassword) {
+      console.log('[SessionTimeout] Not starting - encryption disabled or no password')
       return
     }
 
+    console.log('[SessionTimeout] Starting session timeout monitoring')
+    
     // Add activity listeners
     ACTIVITY_EVENTS.forEach(event => {
       window.addEventListener(event, handleActivity)
@@ -103,17 +121,34 @@ export function useSessionTimeout() {
   }
 
   function stopSessionTimeout() {
+    console.log('[SessionTimeout] Stopping session timeout')
     clearAllTimers()
     ACTIVITY_EVENTS.forEach(event => {
       window.removeEventListener(event, handleActivity)
     })
   }
 
+  // Watch for changes in encryption status
+  watch(() => localStorage.getItem('encryption_enabled'), (newVal) => {
+    console.log('[SessionTimeout] Encryption status changed:', newVal)
+    encryptionEnabled.value = newVal === 'true'
+    if (newVal === 'true' && sessionStorage.getItem('encryption_password')) {
+      console.log('[SessionTimeout] Encryption enabled, restarting timeout')
+      stopSessionTimeout()
+      startSessionTimeout()
+    } else {
+      console.log('[SessionTimeout] Encryption disabled, stopping timeout')
+      stopSessionTimeout()
+    }
+  })
+
   onMounted(() => {
+    console.log('[SessionTimeout] Component mounted')
     startSessionTimeout()
   })
 
   onUnmounted(() => {
+    console.log('[SessionTimeout] Component unmounted')
     stopSessionTimeout()
   })
 
@@ -127,4 +162,3 @@ export function useSessionTimeout() {
     stopSessionTimeout
   }
 }
-
