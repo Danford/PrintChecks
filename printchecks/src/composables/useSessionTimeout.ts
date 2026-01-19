@@ -5,6 +5,7 @@
  */
 
 import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { secureStorage } from '@/services/secureStorage'
 
 const INACTIVITY_TIMEOUT = 5 * 60 * 1000 // 5 minutes
 const WARNING_DURATION = 60 * 1000 // 60 seconds
@@ -47,7 +48,10 @@ export function useSessionTimeout() {
     isLocked.value = true
     showWarning.value = false
     clearAllTimers()
+    
+    // Clear password from both sessionStorage and secureStorage
     sessionStorage.removeItem('encryption_password')
+    secureStorage.initialize(null) // Clear password from secure storage
     
     // Show lock screen overlay
     alert('⏱️ Session expired due to inactivity. Please refresh the page and enter your password again.')
