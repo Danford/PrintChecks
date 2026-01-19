@@ -61,6 +61,16 @@
                 <label class="form-label">Signature</label>
                 <input type="text" class="form-control" v-model="formData.signature">
               </div>
+              <div class="col-md-12">
+                <label class="form-label">Check Template</label>
+                <select class="form-control" v-model="formData.templateId">
+                  <option value="">Default Template</option>
+                  <option v-for="preset in availablePresets" :key="preset.id" :value="preset.id">
+                    {{ preset.name }}
+                  </option>
+                </select>
+                <small class="form-text text-muted">Choose a template to automatically apply when using this bank account</small>
+              </div>
             </div>
           </form>
         </div>
@@ -78,7 +88,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
+import { useCustomizationStore } from '../stores/customization'
+
+const customizationStore = useCustomizationStore()
+
+const availablePresets = computed(() => customizationStore.presets)
 
 interface BankAccount {
   id?: string
@@ -95,6 +110,7 @@ interface BankAccount {
   signature: string
   address?: string
   isDefault?: boolean
+  templateId?: string
 }
 
 interface Props {
@@ -125,7 +141,8 @@ const formData = ref<BankAccount>({
   startingCheckNumber: 1001,
   signature: '',
   address: '',
-  isDefault: false
+  isDefault: false,
+  templateId: ''
 })
 
 // Watch for changes to editingBank and update formData
@@ -148,7 +165,8 @@ watch(() => props.editingBank, (newBank) => {
       startingCheckNumber: 1001,
       signature: '',
       address: '',
-      isDefault: false
+      isDefault: false,
+      templateId: ''
     }
   }
 }, { immediate: true })
@@ -166,4 +184,3 @@ function handleCancel() {
 <style scoped>
 /* No custom styles needed - using Bootstrap modal classes */
 </style>
-

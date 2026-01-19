@@ -39,6 +39,11 @@ export interface LogoSettings {
   }
 }
 
+export interface PositionAdjustment {
+  x: number
+  y: number
+}
+
 export interface LayoutSettings {
   checkPosition: {
     x: number
@@ -76,6 +81,22 @@ export interface CustomizationSettings extends BaseEntity {
     checkNumber: FontSettings
     date: FontSettings
     fieldLabels: FontSettings  // For "Pay to the order of", "Date:", "Memo:", etc.
+    bankName: FontSettings
+  }
+  
+  // Position adjustments for fine-tuning element positions
+  adjustments?: {
+    accountHolder?: PositionAdjustment
+    payTo?: PositionAdjustment
+    amount?: PositionAdjustment
+    amountWords?: PositionAdjustment
+    memo?: PositionAdjustment
+    signature?: PositionAdjustment
+    bankInfo?: PositionAdjustment
+    checkNumber?: PositionAdjustment
+    date?: PositionAdjustment
+    fieldLabels?: PositionAdjustment
+    bankName?: PositionAdjustment
   }
   
   // Color scheme
