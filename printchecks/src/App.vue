@@ -1,8 +1,28 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import { onMounted } from 'vue'
 import { useSessionTimeout } from '@/composables/useSessionTimeout'
 
 const { showWarning, countdown, keepSessionActive } = useSessionTimeout()
+
+onMounted(() => {
+  // Check if encryption is enabled but password is missing
+  const encryptionEnabled = localStorage.getItem('encryption_enabled') === 'true'
+  const hasPassword = !!sessionStorage.getItem('encryption_password')
+  
+  if (encryptionEnabled && !hasPassword) {
+    const password = prompt('🔐 Encryption is enabled. Please enter your password:')
+    if (password) {
+      sessionStorage.setItem('encryption_password', password)
+      // Trigger event to start session timeout
+      window.dispatchEvent(new CustomEvent('encryption-password-set'))
+    } else {
+      alert('⚠️ You must enter your password to access encrypted data.')
+      // Keep prompting until they enter a password or refresh
+      window.location.reload()
+    }
+  }
+})
 </script>
 
 <template>
