@@ -142,13 +142,25 @@ export function useSessionTimeout() {
     }
   })
 
+  // Listen for password being set
+  function handlePasswordSet() {
+    console.log('[SessionTimeout] Password set event received, starting timeout')
+    stopSessionTimeout()
+    startSessionTimeout()
+  }
+
   onMounted(() => {
     console.log('[SessionTimeout] Component mounted')
+    
+    // Listen for encryption password being set
+    window.addEventListener('encryption-password-set', handlePasswordSet)
+    
     startSessionTimeout()
   })
 
   onUnmounted(() => {
     console.log('[SessionTimeout] Component unmounted')
+    window.removeEventListener('encryption-password-set', handlePasswordSet)
     stopSessionTimeout()
   })
 

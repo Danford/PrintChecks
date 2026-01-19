@@ -269,6 +269,10 @@ function onEncryptionToggle() {
     }
     localStorage.setItem('encryption_enabled', 'true')
     sessionStorage.setItem('encryption_password', password)
+    
+    // Trigger custom event to notify session timeout composable
+    window.dispatchEvent(new CustomEvent('encryption-password-set'))
+    
     alert('Encryption enabled! After 5 minutes of inactivity, you\'ll be prompted to keep your session active.')
   } else {
     if (confirm('Are you sure you want to disable encryption? Your data will no longer be protected.')) {
