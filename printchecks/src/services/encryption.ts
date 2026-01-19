@@ -72,12 +72,23 @@ export async function encrypt(data: any, password: string): Promise<string> {
     )
 
     // Convert buffers to base64 for storage
+    // Use chunked conversion to avoid stack overflow with large arrays
+    const arrayToBase64 = (array: Uint8Array): string => {
+      const CHUNK_SIZE = 0x8000 // 32KB chunks
+      let binary = ''
+      for (let i = 0; i < array.length; i += CHUNK_SIZE) {
+        const chunk = array.subarray(i, Math.min(i + CHUNK_SIZE, array.length))
+        binary += String.fromCharCode(...chunk)
+      }
+      return btoa(binary)
+    }
+
     const encryptedData: EncryptedData = {
       encrypted: true,
       version: '1.0',
-      salt: btoa(String.fromCharCode(...salt)),
-      iv: btoa(String.fromCharCode(...iv)),
-      data: btoa(String.fromCharCode(...new Uint8Array(encryptedBuffer)))
+      salt: arrayToBase64(salt),
+      iv: arrayToBase64(iv),
+      data: arrayToBase64(new Uint8Array(encryptedBuffer))
     }
 
     return JSON.stringify(encryptedData)
@@ -153,4 +164,3 @@ export async function verifyPassword(encryptedString: string, password: string):
     return false
   }
 }
-
