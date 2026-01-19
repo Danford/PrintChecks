@@ -223,35 +223,43 @@ const importSuccess = ref(false)
 const importError = ref('')
 const importPreview = ref<any>(null)
 
+// Data storage refs
+const checks = ref<any[]>([])
+const receipts = ref<any[]>([])
+const payments = ref<any[]>([])
+const vendors = ref<any[]>([])
+const bankAccounts = ref<any[]>([])
+
 // Data counts for export preview
-const checksCount = computed(() => {
-  const checks = JSON.parse(localStorage.getItem('checkList') || '[]')
-  return checks.length
-})
+const checksCount = computed(() => checks.value.length)
+const receiptsCount = computed(() => receipts.value.length)
+const paymentsCount = computed(() => payments.value.length)
+const vendorsCount = computed(() => vendors.value.length)
+const bankAccountsCount = computed(() => bankAccounts.value.length)
 
-const receiptsCount = computed(() => {
-  const receipts = JSON.parse(localStorage.getItem('printchecks_receipts') || '[]')
-  return receipts.length
-})
-
-const paymentsCount = computed(() => {
-  const payments = JSON.parse(localStorage.getItem('printchecks_payments') || '[]')
-  return payments.length
-})
-
-const vendorsCount = computed(() => {
-  const vendors = JSON.parse(localStorage.getItem('vendors') || '[]')
-  return vendors.length
-})
-
-const bankAccountsCount = computed(() => {
-  const banks = JSON.parse(localStorage.getItem('bankAccounts') || '[]')
-  return banks.length
-})
-
-onMounted(() => {
+onMounted(async () => {
   // Check if encryption is enabled
   encryptionEnabled.value = localStorage.getItem('encryption_enabled') === 'true'
+  
+  // Load all data from secure storage
+  try {
+    const checksData = await secureStorage.get('checkList')
+    if (checksData) checks.value = JSON.parse(checksData)
+    
+    const receiptsData = await secureStorage.get('printchecks_receipts')
+    if (receiptsData) receipts.value = JSON.parse(receiptsData)
+    
+    const paymentsData = await secureStorage.get('printchecks_payments')
+    if (paymentsData) payments.value = JSON.parse(paymentsData)
+    
+    const vendorsData = await secureStorage.get('vendors')
+    if (vendorsData) vendors.value = JSON.parse(vendorsData)
+    
+    const banksData = await secureStorage.get('bankAccounts')
+    if (banksData) bankAccounts.value = JSON.parse(banksData)
+  } catch (e) {
+    console.error('Failed to load export data:', e)
+  }
 })
 
 async function onEncryptionToggle() {
@@ -365,15 +373,15 @@ async function exportData() {
     exporting.value = true
     exportSuccess.value = false
 
-    // Gather all data
+    // Gather all data from refs (already loaded from secureStorage)
     const exportData = {
       version: '1.0',
       exportDate: new Date().toISOString(),
-      checks: JSON.parse(localStorage.getItem('checkList') || '[]'),
-      receipts: JSON.parse(localStorage.getItem('printchecks_receipts') || '[]'),
-      payments: JSON.parse(localStorage.getItem('printchecks_payments') || '[]'),
-      vendors: JSON.parse(localStorage.getItem('vendors') || '[]'),
-      bankAccounts: JSON.parse(localStorage.getItem('bankAccounts') || '[]'),
+      checks: checks.value,
+      receipts: receipts.value,
+      payments: payments.value,
+      vendors: vendors.value,
+      bankAccounts: bankAccounts.value,
       encrypted: exportEncrypted.value
     }
 

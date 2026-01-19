@@ -630,7 +630,7 @@ const selectedVendor = computed(() => vendors.value.find(v => v.id === selectedV
 const nextCheckNumber = computed(() => {
     if (!selectedBank.value) return '1001'
     
-    const bankChecks = JSON.parse(localStorage.getItem('checkList') || '[]')
+    const bankChecks = historyStore.checks
         .filter(check => check.bankName === selectedBank.value.name)
     
     if (bankChecks.length === 0) {
@@ -1123,17 +1123,9 @@ function saveToHistory () {
         return
     }
     
-    let checkList = JSON.parse(localStorage.getItem('checkList') || '[]')
-    
-    // Create a copy of the check with a unique ID and timestamp
+    // Create a copy of the check with line items
     const checkToSave = {
         ...check,
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString(),
-        printedAt: new Date().toISOString(),
-        isVoid: false,
-        isPrinted: true,
-        isSaved: true,
         lineItems: currentLineItems.value // Include line items when saving
     }
     if (DEBUG_MODE.value) {
@@ -1141,11 +1133,8 @@ function saveToHistory () {
         console.log('checkToSave:', checkToSave)
     }
     
-    checkList.push(checkToSave)
-    localStorage.setItem('checkList', JSON.stringify(checkList))
-    
-    // Reload history store to reflect the new check
-    historyStore.loadHistory()
+    // Add check to history store (handles saving to secure storage)
+    historyStore.addCheck(checkToSave)
     
     // Mark the current check as saved to make it read-only
     check.isSaved = true

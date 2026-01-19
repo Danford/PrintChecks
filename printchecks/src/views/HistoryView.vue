@@ -51,20 +51,28 @@ import {formatMoney} from '../utilities.ts'
 import { ref, onMounted} from 'vue'
 import { useAppStore } from '../stores/app.ts'
 import { useRouter } from 'vue-router'
+import { secureStorage } from '../services/secureStorage.ts'
 
 const state = useAppStore()
 const router = useRouter()
 
 const history = ref([])
 
-const loadHistory = () => {
-  history.value = JSON.parse(localStorage.getItem('checkList') || '[]')
+const loadHistory = async () => {
+  try {
+    const data = await secureStorage.get('checkList')
+    if (data) {
+      history.value = JSON.parse(data)
+    }
+  } catch (e) {
+    console.error('Failed to load check history:', e)
+  }
 }
 
-const voidItem = (index) => {
+const voidItem = async (index) => {
   if (confirm('Are you sure you want to void this check? This action marks the check as invalid but keeps it in the records.')) {
     history.value[index].isVoid = true
-    localStorage.setItem('checkList', JSON.stringify(history.value))
+    await secureStorage.set('checkList', JSON.stringify(history.value))
   }
 }
 

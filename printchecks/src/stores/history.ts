@@ -142,6 +142,20 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
   
   // Checks cannot be deleted once created - they can only be voided
   // This function is disabled to prevent accidental deletion
+  async function addCheck(checkData: Partial<CheckData>) {
+    const newCheck: CheckData = {
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString(),
+      printedAt: new Date().toISOString(),
+      isVoid: false,
+      isPrinted: true,
+      isSaved: true,
+      ...checkData as CheckData
+    }
+    checks.value.push(newCheck)
+    await saveChecks()
+  }
+  
   function deleteCheck(checkId: string) {
     console.warn('Checks cannot be deleted. Use voidCheck() instead.')
     // checks.value = checks.value.filter(check => check.id !== checkId)
@@ -246,6 +260,7 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     
     // Actions
     loadHistory,
+    addCheck, // Add a new check to history
     deleteCheck, // Disabled - kept for backwards compatibility
     voidCheck, // Use this instead of deleteCheck
     deleteReceipt,
