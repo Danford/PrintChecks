@@ -475,6 +475,7 @@ import { useHistoryStore } from '../stores/history.ts'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import BankAccountModal from './BankAccountModal.vue'
 import VendorModal from './VendorModal.vue'
+import { secureStorage } from '../services/secureStorage.ts'
 
 const state = useAppStore()
 const customizationStore = useCustomizationStore()
@@ -563,9 +564,9 @@ const testTotals = ref({
 })
 
 // Bank and Vendor Data for Quick Check (read-only)
-const bankAccounts = ref(JSON.parse(localStorage.getItem('bankAccounts') || '[]'))
+const bankAccounts = ref<any[]>([])
 const selectedBankId = ref('')
-const vendors = ref(JSON.parse(localStorage.getItem('vendors') || '[]'))
+const vendors = ref<any[]>([])
 const selectedVendorId = ref('')
 
 // Quick Check Modal
@@ -1393,7 +1394,22 @@ function saveVendor(vendorData) {
 }
 
 
-onMounted(() => {
+onMounted(async () => {
+    // Load bank accounts and vendors from encrypted storage
+    try {
+        const banksData = await secureStorage.get('bankAccounts')
+        if (banksData) {
+            bankAccounts.value = JSON.parse(banksData)
+        }
+        
+        const vendorsData = await secureStorage.get('vendors')
+        if (vendorsData) {
+            vendors.value = JSON.parse(vendorsData)
+        }
+    } catch (e) {
+        console.error('Failed to load bank/vendor data:', e)
+    }
+    
     // Initialize stores
     customizationStore.initializeCustomization()
     historyStore.loadHistory()
