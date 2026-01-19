@@ -203,6 +203,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { encrypt, decrypt, isEncrypted } from '@/services/encryption.ts'
+import { secureStorage } from '@/services/secureStorage'
 
 // Encryption state
 const encryptionEnabled = ref(false)
@@ -276,27 +277,52 @@ async function onEncryptionToggle() {
       localStorage.setItem('encryption_enabled', 'true')
       sessionStorage.setItem('encryption_password', password)
       
+      // Initialize secure storage with password
+      secureStorage.initialize(password)
+      
+      // Migrate existing data to encrypted format
+      alert('Encrypting your existing data... This may take a moment.')
+      try {
+        await secureStorage.migrateToEncrypted()
+        alert('✓ Encryption enabled! All your data is now encrypted.\n\nAfter 5 minutes of inactivity, you\'ll be prompted to keep your session active.')
+      } catch (migrationError) {
+        console.error('Migration error:', migrationError)
+        alert('⚠️ Encryption enabled but some data failed to encrypt. Please check the console for details.')
+      }
+      
       // Trigger custom event to notify session timeout composable
       window.dispatchEvent(new CustomEvent('encryption-password-set'))
-      
-      alert('Encryption enabled! After 5 minutes of inactivity, you\'ll be prompted to keep your session active.')
     } catch (error) {
       console.error('Failed to enable encryption:', error)
       alert('Failed to enable encryption. Please try again.')
       encryptionEnabled.value = false
     }
   } else {
-    if (confirm('Are you sure you want to disable encryption? Your data will no longer be protected.')) {
-      localStorage.setItem('encryption_enabled', 'false')
-      localStorage.removeItem('encryption_test')
-      sessionStorage.removeItem('encryption_password')
+    if (confirm('Are you sure you want to disable encryption? Your data will be decrypted and stored in plain text.')) {
+      try {
+        const password = sessionStorage.getItem('encryption_password')
+        if (password) {
+          // Decrypt all data back to plain text
+          secureStorage.initialize(password)
+          await secureStorage.migrateToPlainText()
+        }
+        
+        localStorage.setItem('encryption_enabled', 'false')
+        localStorage.removeItem('encryption_test')
+        sessionStorage.removeItem('encryption_password')
+        alert('✓ Encryption disabled. Your data is now stored in plain text.')
+      } catch (error) {
+        console.error('Failed to disable encryption:', error)
+        alert('⚠️ Failed to decrypt some data. Please try again or check the console for details.')
+        encryptionEnabled.value = true
+      }
     } else {
       encryptionEnabled.value = true
     }
   }
 }
 
-function changePassword() {
+async function changePassword() {
   const currentPassword = sessionStorage.getItem('encryption_password')
   if (!currentPassword) {
     alert('You must be logged in to change the password')
@@ -312,8 +338,26 @@ function changePassword() {
     return
   }
 
-  sessionStorage.setItem('encryption_password', newPassword)
-  alert('Password changed successfully')
+  try {
+    alert('Re-encrypting all your data with the new password... This may take a moment.')
+    
+    // Re-encrypt all data with new password
+    await secureStorage.reencryptWithNewPassword(currentPassword, newPassword)
+    
+    // Update the encryption test value
+    const testValue = 'printchecks_password_test'
+    const encryptedTest = await encrypt(testValue, newPassword)
+    localStorage.setItem('encryption_test', encryptedTest)
+    
+    // Update password in storage
+    sessionStorage.setItem('encryption_password', newPassword)
+    secureStorage.updatePassword(newPassword)
+    
+    alert('✓ Password changed successfully! All your data has been re-encrypted with the new password.')
+  } catch (error) {
+    console.error('Failed to change password:', error)
+    alert('⚠️ Failed to change password. Your data remains encrypted with the old password. Please try again.')
+  }
 }
 
 async function exportData() {

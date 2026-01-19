@@ -3,6 +3,7 @@ import { RouterLink, RouterView } from 'vue-router'
 import { onMounted } from 'vue'
 import { useSessionTimeout } from '@/composables/useSessionTimeout'
 import { verifyPassword } from '@/services/encryption'
+import { secureStorage } from '@/services/secureStorage'
 
 const { showWarning, countdown, keepSessionActive } = useSessionTimeout()
 
@@ -26,6 +27,8 @@ async function promptForPassword() {
     const isValid = await verifyPassword(encryptionTest, password)
     if (isValid) {
       sessionStorage.setItem('encryption_password', password)
+      // Initialize secure storage with the password
+      secureStorage.initialize(password)
       // Trigger event to start session timeout
       window.dispatchEvent(new CustomEvent('encryption-password-set'))
       break
