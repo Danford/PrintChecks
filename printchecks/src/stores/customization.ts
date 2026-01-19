@@ -11,6 +11,7 @@ import type {
   LogoSettings,
   LayoutSettings
 } from '@/types'
+import { secureStorage } from '@/services/secureStorage'
 
 export const useCustomizationStore = defineStore('useCustomizationStore', () => {
   // Current customization settings
@@ -226,9 +227,9 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     loadColorPalettes()
   }
   
-  function loadSettings() {
+  async function loadSettings() {
     try {
-      const saved = localStorage.getItem('printchecks_customization')
+      const saved = await secureStorage.get('printchecks_customization')
       if (saved) {
         const parsed = JSON.parse(saved)
         currentSettings.value = { ...defaultSettings, ...parsed }
@@ -241,12 +242,12 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     }
   }
   
-  function saveSettings() {
+  async function saveSettings() {
     if (!currentSettings.value) return
     
     try {
       currentSettings.value.updatedAt = new Date()
-      localStorage.setItem('printchecks_customization', JSON.stringify(currentSettings.value))
+      await secureStorage.set('printchecks_customization', JSON.stringify(currentSettings.value))
     } catch (e) {
       console.error('Failed to save customization settings:', e)
     }
@@ -408,9 +409,9 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     return preset
   }
   
-  function loadPresets() {
+  async function loadPresets() {
     try {
-      const saved = localStorage.getItem('printchecks_presets')
+      const saved = await secureStorage.get('printchecks_presets')
       if (saved) {
         presets.value = JSON.parse(saved)
       }
@@ -423,9 +424,9 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     }
   }
   
-  function savePresets() {
+  async function savePresets() {
     try {
-      localStorage.setItem('printchecks_presets', JSON.stringify(presets.value))
+      await secureStorage.set('printchecks_presets', JSON.stringify(presets.value))
     } catch (e) {
       console.error('Failed to save presets:', e)
     }

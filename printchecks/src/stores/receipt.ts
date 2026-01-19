@@ -8,6 +8,7 @@ import type {
   ReceiptTemplate,
   PaymentRecord
 } from '@/types'
+import { secureStorage } from '@/services/secureStorage'
 
 export const useReceiptStore = defineStore('useReceiptStore', () => {
   // Current receipt being edited
@@ -225,11 +226,12 @@ export const useReceiptStore = defineStore('useReceiptStore', () => {
     return validation.value.overall
   }
   
-  function saveReceipt() {
+  async function saveReceipt() {
     if (!currentReceipt.value) return false
     
     try {
-      const receipts = JSON.parse(localStorage.getItem('printchecks_receipts') || '[]')
+      const receiptsData = await secureStorage.get('printchecks_receipts')
+      const receipts = receiptsData ? JSON.parse(receiptsData) : []
       
       const existingIndex = receipts.findIndex((r: any) => r.id === currentReceipt.value?.id)
       if (existingIndex >= 0) {
@@ -238,7 +240,7 @@ export const useReceiptStore = defineStore('useReceiptStore', () => {
         receipts.push({ ...currentReceipt.value })
       }
       
-      localStorage.setItem('printchecks_receipts', JSON.stringify(receipts))
+      await secureStorage.set('printchecks_receipts', JSON.stringify(receipts))
       return true
     } catch (e) {
       console.error('Failed to save receipt:', e)
@@ -284,9 +286,9 @@ export const useReceiptStore = defineStore('useReceiptStore', () => {
     return template
   }
   
-  function loadTemplates() {
+  async function loadTemplates() {
     try {
-      const saved = localStorage.getItem('printchecks_receipt_templates')
+      const saved = await secureStorage.get('printchecks_receipt_templates')
       if (saved) {
         templates.value = JSON.parse(saved)
       }
@@ -295,9 +297,9 @@ export const useReceiptStore = defineStore('useReceiptStore', () => {
     }
   }
   
-  function saveTemplates() {
+  async function saveTemplates() {
     try {
-      localStorage.setItem('printchecks_receipt_templates', JSON.stringify(templates.value))
+      await secureStorage.set('printchecks_receipt_templates', JSON.stringify(templates.value))
     } catch (e) {
       console.error('Failed to save receipt templates:', e)
     }

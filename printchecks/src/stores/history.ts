@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { CheckData, ReceiptData, PaymentRecord } from '@/types'
+import { secureStorage } from '@/services/secureStorage'
 
 export const useHistoryStore = defineStore('useHistoryStore', () => {
   // History data
@@ -106,9 +107,9 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     loadPaymentRecords()
   }
   
-  function loadChecks() {
+  async function loadChecks() {
     try {
-      const saved = localStorage.getItem('checkList')
+      const saved = await secureStorage.get('checkList')
       if (saved) {
         checks.value = JSON.parse(saved)
       }
@@ -117,9 +118,9 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     }
   }
   
-  function loadReceipts() {
+  async function loadReceipts() {
     try {
-      const saved = localStorage.getItem('printchecks_receipts')
+      const saved = await secureStorage.get('printchecks_receipts')
       if (saved) {
         receipts.value = JSON.parse(saved)
       }
@@ -128,9 +129,9 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     }
   }
   
-  function loadPaymentRecords() {
+  async function loadPaymentRecords() {
     try {
-      const saved = localStorage.getItem('printchecks_payments')
+      const saved = await secureStorage.get('printchecks_payments')
       if (saved) {
         paymentRecords.value = JSON.parse(saved)
       }
@@ -165,25 +166,25 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     savePaymentRecords()
   }
   
-  function saveChecks() {
+  async function saveChecks() {
     try {
-      localStorage.setItem('checkList', JSON.stringify(checks.value))
+      await secureStorage.set('checkList', JSON.stringify(checks.value))
     } catch (e) {
       console.error('Failed to save check history:', e)
     }
   }
   
-  function saveReceipts() {
+  async function saveReceipts() {
     try {
-      localStorage.setItem('printchecks_receipts', JSON.stringify(receipts.value))
+      await secureStorage.set('printchecks_receipts', JSON.stringify(receipts.value))
     } catch (e) {
       console.error('Failed to save receipt history:', e)
     }
   }
   
-  function savePaymentRecords() {
+  async function savePaymentRecords() {
     try {
-      localStorage.setItem('printchecks_payments', JSON.stringify(paymentRecords.value))
+      await secureStorage.set('printchecks_payments', JSON.stringify(paymentRecords.value))
     } catch (e) {
       console.error('Failed to save payment records:', e)
     }

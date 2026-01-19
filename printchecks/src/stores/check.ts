@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { CheckData, LegacyCheckData, CheckTemplate, CheckValidation, CheckStatus } from '@/types'
 import { ToWords } from 'to-words'
+import { secureStorage } from '@/services/secureStorage'
 
 export const useCheckStore = defineStore('useCheckStore', () => {
   // Current check being edited
@@ -98,9 +99,10 @@ export const useCheckStore = defineStore('useCheckStore', () => {
     return baseCheck
   }
   
-  function loadFromRecentCheck(check: CheckData) {
+  async function loadFromRecentCheck(check: CheckData) {
     try {
-      const checkList = JSON.parse(localStorage.getItem('checkList') || '[]')
+      const checkListData = await secureStorage.get('checkList')
+      const checkList = checkListData ? JSON.parse(checkListData) : []
       const recentCheck = checkList[checkList.length - 1]
       
       if (recentCheck) {
@@ -165,7 +167,7 @@ export const useCheckStore = defineStore('useCheckStore', () => {
     return !isNaN(parsed.getTime())
   }
   
-  function saveCheck() {
+  async function saveCheck() {
     if (!currentCheck.value || !isValid.value) return false
     
     try {
@@ -173,7 +175,8 @@ export const useCheckStore = defineStore('useCheckStore', () => {
       currentCheck.value.amountInWords = amountInWords.value
       
       // Save to history
-      const checkList = JSON.parse(localStorage.getItem('checkList') || '[]')
+      const checkListData = await secureStorage.get('checkList')
+      const checkList = checkListData ? JSON.parse(checkListData) : []
       
       // Check if updating existing check
       const existingIndex = checkList.findIndex((c: any) => c.id === currentCheck.value?.id)
@@ -183,7 +186,7 @@ export const useCheckStore = defineStore('useCheckStore', () => {
         checkList.push({ ...currentCheck.value })
       }
       
-      localStorage.setItem('checkList', JSON.stringify(checkList))
+      await secureStorage.set('checkList', JSON.stringify(checkList))
       
       lastSaved.value = new Date()
       hasUnsavedChanges.value = false
@@ -299,9 +302,9 @@ export const useCheckStore = defineStore('useCheckStore', () => {
     return template
   }
   
-  function loadTemplates() {
+  async function loadTemplates() {
     try {
-      const saved = localStorage.getItem('printchecks_templates')
+      const saved = await secureStorage.get('printchecks_templates')
       if (saved) {
         templates.value = JSON.parse(saved)
       }
@@ -310,9 +313,9 @@ export const useCheckStore = defineStore('useCheckStore', () => {
     }
   }
   
-  function saveTemplates() {
+  async function saveTemplates() {
     try {
-      localStorage.setItem('printchecks_templates', JSON.stringify(templates.value))
+      await secureStorage.set('printchecks_templates', JSON.stringify(templates.value))
     } catch (e) {
       console.error('Failed to save templates:', e)
     }
