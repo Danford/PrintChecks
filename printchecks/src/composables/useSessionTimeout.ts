@@ -19,6 +19,7 @@ export function useSessionTimeout() {
   let inactivityTimer: number | null = null
   let warningTimer: number | null = null
   let countdownInterval: number | null = null
+  let lastActivityTime: number = Date.now()
 
   // Check if encryption is enabled - make it reactive
   const encryptionEnabled = ref(localStorage.getItem('encryption_enabled') === 'true')
@@ -80,6 +81,7 @@ export function useSessionTimeout() {
     }
 
     console.log('[SessionTimeout] Resetting inactivity timer - will show warning in 5 minutes')
+    lastActivityTime = Date.now()
     clearAllTimers()
     showWarning.value = false
     
@@ -101,6 +103,30 @@ export function useSessionTimeout() {
     resetInactivityTimer()
   }
 
+  function handleVisibilityChange() {
+    if (!encryptionEnabled.value || !sessionStorage.getItem('encryption_password')) {
+      return
+    }
+
+    if (document.visibilityState === 'visible') {
+      // Page became visible again - check if we've been away too long
+      const now = Date.now()
+      const timeSinceLastActivity = now - lastActivityTime
+      
+      console.log('[SessionTimeout] Page became visible. Time since last activity:', timeSinceLastActivity / 1000, 'seconds')
+      
+      // If more than 5 minutes passed while away, lock immediately
+      if (timeSinceLastActivity >= INACTIVITY_TIMEOUT) {
+        console.log('[SessionTimeout] Computer was asleep/inactive too long - locking session')
+        lockSession()
+      } else {
+        // Otherwise, reset the timer
+        console.log('[SessionTimeout] Resuming session timeout')
+        resetInactivityTimer()
+      }
+    }
+  }
+
   function startSessionTimeout() {
     const hasEncryption = localStorage.getItem('encryption_enabled') === 'true'
     const hasPassword = !!sessionStorage.getItem('encryption_password')
@@ -120,6 +146,9 @@ export function useSessionTimeout() {
       window.addEventListener(event, handleActivity)
     })
 
+    // Add visibility change listener to detect sleep/wake
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
     // Start the initial timer
     resetInactivityTimer()
   }
@@ -130,6 +159,7 @@ export function useSessionTimeout() {
     ACTIVITY_EVENTS.forEach(event => {
       window.removeEventListener(event, handleActivity)
     })
+    document.removeEventListener('visibilitychange', handleVisibilityChange)
   }
 
   // Watch for changes in encryption status
