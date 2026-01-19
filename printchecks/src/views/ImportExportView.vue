@@ -479,12 +479,12 @@ async function importData() {
       throw new Error('Invalid import file structure')
     }
 
-    // Replace all data
-    localStorage.setItem('checkList', JSON.stringify(importedData.checks))
-    localStorage.setItem('printchecks_receipts', JSON.stringify(importedData.receipts))
-    localStorage.setItem('printchecks_payments', JSON.stringify(importedData.payments))
-    localStorage.setItem('vendors', JSON.stringify(importedData.vendors || []))
-    localStorage.setItem('bankAccounts', JSON.stringify(importedData.bankAccounts || []))
+    // Replace all data using secureStorage
+    await secureStorage.set('checkList', JSON.stringify(importedData.checks))
+    await secureStorage.set('printchecks_receipts', JSON.stringify(importedData.receipts))
+    await secureStorage.set('printchecks_payments', JSON.stringify(importedData.payments))
+    await secureStorage.set('vendors', JSON.stringify(importedData.vendors || []))
+    await secureStorage.set('bankAccounts', JSON.stringify(importedData.bankAccounts || []))
 
     importSuccess.value = true
     importing.value = false

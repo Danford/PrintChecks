@@ -1320,7 +1320,7 @@ function closeBankAccountModal() {
     showBankAccountModal.value = false
 }
 
-function saveBankAccount(bankData) {
+async function saveBankAccount(bankData) {
     // Validate required fields (matching BankAccountsView.vue)
     if (!bankData.name || !bankData.accountNumber || !bankData.routingNumber) {
         alert('Please fill in Bank Name, Account Number, and Routing Number.')
@@ -1337,7 +1337,7 @@ function saveBankAccount(bankData) {
     bankAccounts.value.push(newBank)
     
     // Save to localStorage
-    localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
+    await secureStorage.set('bankAccounts', JSON.stringify(bankAccounts.value))
     
     // Auto-select the new bank
     selectedBankId.value = newBank.id
@@ -1355,7 +1355,7 @@ function closeVendorModal() {
     showVendorModal.value = false
 }
 
-function saveVendor(vendorData) {
+async function saveVendor(vendorData) {
     // Validate required fields (matching VendorsView.vue)
     if (!vendorData.name) {
         alert('Please enter a vendor name.')
@@ -1372,7 +1372,7 @@ function saveVendor(vendorData) {
     vendors.value.push(newVendor)
     
     // Save to localStorage
-    localStorage.setItem('vendors', JSON.stringify(vendors.value))
+    await secureStorage.set('vendors', JSON.stringify(vendors.value))
     
     // Auto-select the new vendor
     selectedVendorId.value = newVendor.id
