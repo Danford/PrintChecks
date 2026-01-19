@@ -253,7 +253,7 @@ onMounted(() => {
   encryptionEnabled.value = localStorage.getItem('encryption_enabled') === 'true'
 })
 
-function onEncryptionToggle() {
+async function onEncryptionToggle() {
   if (encryptionEnabled.value) {
     // Prompt for password to enable encryption
     const password = prompt('Enter a password to encrypt your data:')
@@ -267,16 +267,28 @@ function onEncryptionToggle() {
       encryptionEnabled.value = false
       return
     }
-    localStorage.setItem('encryption_enabled', 'true')
-    sessionStorage.setItem('encryption_password', password)
     
-    // Trigger custom event to notify session timeout composable
-    window.dispatchEvent(new CustomEvent('encryption-password-set'))
-    
-    alert('Encryption enabled! After 5 minutes of inactivity, you\'ll be prompted to keep your session active.')
+    try {
+      // Create a test encrypted value to validate passwords against
+      const testValue = 'printchecks_password_test'
+      const encryptedTest = await encrypt(testValue, password)
+      localStorage.setItem('encryption_test', encryptedTest)
+      localStorage.setItem('encryption_enabled', 'true')
+      sessionStorage.setItem('encryption_password', password)
+      
+      // Trigger custom event to notify session timeout composable
+      window.dispatchEvent(new CustomEvent('encryption-password-set'))
+      
+      alert('Encryption enabled! After 5 minutes of inactivity, you\'ll be prompted to keep your session active.')
+    } catch (error) {
+      console.error('Failed to enable encryption:', error)
+      alert('Failed to enable encryption. Please try again.')
+      encryptionEnabled.value = false
+    }
   } else {
     if (confirm('Are you sure you want to disable encryption? Your data will no longer be protected.')) {
       localStorage.setItem('encryption_enabled', 'false')
+      localStorage.removeItem('encryption_test')
       sessionStorage.removeItem('encryption_password')
     } else {
       encryptionEnabled.value = true
