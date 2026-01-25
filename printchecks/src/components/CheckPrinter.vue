@@ -1241,7 +1241,13 @@ function handleLogoLoad(event: Event) {
 // Bank Management Methods
 // Bank account selection - don't populate check until user clicks "Create Check"
 function loadBankAccount() {
-    // Bank selection is now just for reference
+    // Apply the bank account's selected template if it has one
+    if (selectedBank.value?.templateId) {
+        const preset = customizationStore.presets.find(p => p.id === selectedBank.value.templateId)
+        if (preset) {
+            customizationStore.applyPreset(preset)
+        }
+    }
     // The actual check data will be populated in createQuickCheck()
 }
 
@@ -1280,6 +1286,14 @@ function createQuickCheck() {
     if (!selectedBank.value) {
         alert('Please select a bank account.')
         return
+    }
+    
+    // Apply the bank account's selected template if it has one
+    if (selectedBank.value.templateId) {
+        const preset = customizationStore.presets.find(p => p.id === selectedBank.value.templateId)
+        if (preset) {
+            customizationStore.applyPreset(preset)
+        }
     }
     
     // Fill in the check form with bank account and form data

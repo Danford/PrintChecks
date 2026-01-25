@@ -537,6 +537,17 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       console.warn('Cannot delete built-in preset')
       return
     }
+    
+    // If deleting the currently active preset, switch to default before deletion
+    if (currentPreset.value?.id === presetId) {
+      // Find the first built-in preset as a safe default
+      const defaultPreset = presets.value.find(p => p.isBuiltIn && p.id === 'business-classic') 
+                          || presets.value.find(p => p.isBuiltIn)
+      if (defaultPreset) {
+        applyPreset(defaultPreset)
+      }
+    }
+    
     presets.value = presets.value.filter(p => p.id !== presetId)
     savePresets()
   }

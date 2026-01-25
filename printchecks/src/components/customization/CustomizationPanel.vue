@@ -648,14 +648,10 @@ function updateFont(element: keyof typeof currentSettings.value.fonts, property:
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
     const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
     
-    // Apply the new preset and then the font update
+    // Apply the new preset and then the font update immediately (no delays)
     if (newPreset) {
-      setTimeout(() => {
-        customizationStore.applyPreset(newPreset)
-        setTimeout(() => {
-          customizationStore.updateFont(element, { [property]: value })
-        }, 50)
-      }, 50)
+      customizationStore.applyPreset(newPreset)
+      customizationStore.updateFont(element, { [property]: value })
     }
   } else {
     customizationStore.updateFont(element, { [property]: value })
@@ -875,14 +871,10 @@ function updateAdjustmentValue(fontKey: keyof CustomizationSettings['fonts'], ax
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
     const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
     
-    // Apply the new preset and then the adjustment update
+    // Apply the new preset and then the adjustment update immediately (no delays)
     if (newPreset) {
-      setTimeout(() => {
-        customizationStore.applyPreset(newPreset)
-        setTimeout(() => {
-          customizationStore.updateAdjustment(fontKey, { [axis]: value })
-        }, 50)
-      }, 50)
+      customizationStore.applyPreset(newPreset)
+      customizationStore.updateAdjustment(fontKey, { [axis]: value })
     }
   } else {
     customizationStore.updateAdjustment(fontKey, { [axis]: value })
@@ -890,7 +882,21 @@ function updateAdjustmentValue(fontKey: keyof CustomizationSettings['fonts'], ax
 }
 
 function resetAdjustment(fontKey: keyof CustomizationSettings['fonts']) {
-  customizationStore.updateAdjustment(fontKey, { x: 0, y: 0 })
+  // Check if we're editing a built-in template
+  if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
+    // Create a new custom template based on the built-in one (only once)
+    hasCreatedCustomTemplate.value = true
+    const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
+    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
+    
+    // Apply the new preset and then reset the adjustment
+    if (newPreset) {
+      customizationStore.applyPreset(newPreset)
+      customizationStore.updateAdjustment(fontKey, { x: 0, y: 0 })
+    }
+  } else {
+    customizationStore.updateAdjustment(fontKey, { x: 0, y: 0 })
+  }
 }
 
 // Initialize on mount

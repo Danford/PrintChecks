@@ -148,7 +148,11 @@ const formData = ref<BankAccount>({
 // Watch for changes to editingBank and update formData
 watch(() => props.editingBank, (newBank) => {
   if (newBank) {
-    formData.value = { ...newBank }
+    // Normalize templateId to ensure it's always a string, never undefined
+    formData.value = { 
+      ...newBank, 
+      templateId: newBank.templateId ?? '' 
+    }
   } else {
     // Reset form when not editing
     formData.value = {
