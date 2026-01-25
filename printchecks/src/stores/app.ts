@@ -1,10 +1,10 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import type { AppSettings, PrintOptions } from '@/types'
+import type { AppSettings, PrintOptions, CheckData } from '@/types'
 
 export const useAppStore = defineStore('useAppStore', () => {
   // Legacy check reference for backward compatibility
-  const check = ref(null)
+  const check = ref<CheckData | null>(null)
   
   // App-wide settings
   const settings = ref<AppSettings>({

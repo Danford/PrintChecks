@@ -2,7 +2,7 @@
     <!-- FORM SECTION - Now at the top -->
     <div class="form-container">
         <!-- QUICK CHECK CREATION (only show when no check data exists) -->
-        <div v-if="!(check.payTo && check.amount > 0)" class="enhanced-check-creation" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <div v-if="!(check.payTo && Number(check.amount) > 0)" class="enhanced-check-creation" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <h5 style="margin-bottom: 15px; color: #495057;">✏️ Quick Check Creation</h5>
             <div class="alert alert-warning" role="alert" style="margin-bottom: 15px;">
                 <strong>⚠️ Important:</strong> Once a check is written and printed, it cannot be deleted. Checks can only be voided in the history.
@@ -171,7 +171,7 @@
 
         <div class="check-data">
             <!-- Show Save/Print Buttons when check is ready -->
-            <div v-if="check.payTo && check.amount > 0" class="text-center" style="padding: 30px;">
+            <div v-if="check.payTo && Number(check.amount) > 0" class="text-center" style="padding: 30px;">
                 <!-- Saved Check Message -->
                 <div v-if="check.isSaved" class="alert alert-info mb-4" role="alert">
                     <strong>💾 Check Saved!</strong> This check has been saved to history and is now read-only. You can reprint it below.
@@ -201,7 +201,7 @@
     </div>
     
     <!-- CHECK PREVIEW - Shown when check is created (outside form-container for printing) -->
-    <div v-if="check.payTo && check.amount > 0">
+    <div v-if="check.payTo && Number(check.amount) > 0">
         <!-- MAIN PRINT CONTAINER - All 3 sections in one div -->
         <div class="print-container" id="print-container">
                     <!-- SECTION 1: Check (Top Third) -->
@@ -289,12 +289,7 @@
                                  }">
                                 <img :src="logoImageSrc" 
                                      alt="Logo"
-                                     :style="{
-                                       width: '100%',
-                                       height: '100%',
-                                       objectFit: currentSettings?.logo?.objectFit || 'contain',
-                                       objectPosition: currentSettings?.logo?.objectPosition || 'center'
-                                     }"
+                                     :style="logoImageStyle"
                                      @error="handleLogoError"
                                      @load="handleLogoLoad" />
                             </div>
@@ -467,14 +462,16 @@
 import print from 'print-js';
 import { ToWords } from 'to-words';
 import { ref, reactive, nextTick, watch, onMounted, onUnmounted, computed } from 'vue'
-import { formatMoney } from '../utilities.ts'
-import { useAppStore } from '../stores/app.ts'
-import { useCustomizationStore } from '../stores/customization.ts'
-import { useReceiptStore } from '../stores/receipt.ts'
-import { useHistoryStore } from '../stores/history.ts'
+import type { CSSProperties } from 'vue'
+import { formatMoney } from '../utilities'
+import { useAppStore } from '../stores/app'
+import { useCustomizationStore } from '../stores/customization'
+import { useReceiptStore } from '../stores/receipt'
+import { useHistoryStore } from '../stores/history'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import BankAccountModal from './BankAccountModal.vue'
 import VendorModal from './VendorModal.vue'
+import type { CheckData } from '../types'
 
 const state = useAppStore()
 const customizationStore = useCustomizationStore()
@@ -543,6 +540,12 @@ const logoImageSrc = computed(() => {
   if (!currentSettings.value?.logo) return ''
   return currentSettings.value.logo.file?.url || currentSettings.value.logo.url || ''
 })
+const logoImageStyle = computed((): CSSProperties => ({
+  width: '100%',
+  height: '100%',
+  objectFit: (currentSettings.value?.logo?.objectFit || 'contain') as CSSProperties['objectFit'],
+  objectPosition: (currentSettings.value?.logo?.objectPosition || 'center') as CSSProperties['objectPosition']
+}))
 const lineItems = computed(() => receiptStore.currentReceipt?.lineItems || [])
 const hasLineItems = computed(() => receiptStore.hasLineItems)
 const calculatedTotals = computed(() => receiptStore.calculatedTotals)
@@ -650,7 +653,7 @@ const dynamicTextPositions = computed(() => {
     return {
       accountHolderName: { top: '40px', left: '60px' },
       accountHolderAddress: { top: '70px', left: '60px' },
-      checkNumber: { top: '40px', right: '50px' },
+      checkNumber: { top: '40px', right: '50px', left: 'auto' },
       date: { top: '90px', left: '850px' },
       payTo: { top: '200px', left: '180px' },
       amount: { top: '202px', left: '970px' },
@@ -713,7 +716,7 @@ const dynamicTextPositions = computed(() => {
   let positions = {
     accountHolderName: { top: '40px', left: '60px' },
     accountHolderAddress: { top: '70px', left: '60px' },
-    checkNumber: { top: '40px', right: '50px' },
+    checkNumber: { top: '40px', right: '50px', left: 'auto' },
     date: { top: '90px', left: '850px' },
     payTo: { top: '200px', left: '180px' },
     amount: { top: '202px', left: '970px' },
@@ -808,7 +811,7 @@ const paymentStats = computed(() => {
     const currentYear = new Date().getFullYear()
     const allPayments = [
         ...historyStore.checks.map(check => ({
-            amount: parseFloat(check.amount || '0'),
+            amount: Number(check.amount ?? 0),
             date: new Date(check.date || Date.now())
         })),
         ...historyStore.paymentRecords.map(payment => ({
@@ -842,14 +845,14 @@ const enhancedPaymentStats = computed(() => {
     
     const allPayments = [
         ...historyStore.checks.map(check => ({
-            amount: parseFloat(check.amount || '0'),
+            amount: Number(check.amount ?? 0),
             date: new Date(check.date || Date.now()),
             payTo: check.payTo || 'Unknown'
         })),
         ...historyStore.paymentRecords.map(payment => ({
             amount: payment.amount,
             date: new Date(payment.date),
-            payTo: payment.payTo || 'Unknown'
+            payTo: payment.checkData?.payTo || 'Unknown'
         }))
     ]
     
@@ -952,7 +955,7 @@ const checkStyles = computed(() => {
 
 function printCheck () {
     // Validate check has required data before printing
-    if (!check.payTo || !check.amount || check.amount <= 0) {
+    if (!check.payTo || !check.amount || Number(check.amount) <= 0) {
         alert('Cannot print: Check must have a payee and valid amount.')
         return
     }
@@ -1106,7 +1109,7 @@ function printCheck () {
 
 function saveToHistory () {
     // Only save checks that have been properly filled out
-    if (!check.payTo || !check.amount || check.amount <= 0) {
+    if (!check.payTo || !check.amount || Number(check.amount) <= 0) {
         if (DEBUG_MODE.value) console.warn('Cannot save empty check to history')
         return
     }
@@ -1146,7 +1149,7 @@ function saveToHistory () {
 }
 
 // Initialize check as empty - only populate when user creates a check
-const check = reactive({
+const check = reactive<CheckData>({
     accountHolderName: '',
     accountHolderAddress: '',
     accountHolderCity: '',
@@ -1177,7 +1180,7 @@ let pendingRoute: any = null
 // Navigation guard to warn about unsaved changes
 onBeforeRouteLeave((to, from, next) => {
     // Check if there's an unsaved check (has data but not saved)
-    const hasCheckData = check.payTo && check.amount > 0
+    const hasCheckData = check.payTo && Number(check.amount) > 0
     if (hasCheckData && !check.isSaved) {
         // Show modal instead of navigating
         showUnsavedModal.value = true

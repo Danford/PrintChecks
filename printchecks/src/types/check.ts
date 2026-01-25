@@ -1,6 +1,13 @@
 // Check-related type definitions
 import type { BaseEntity, Money } from './common'
 
+export interface CheckLineItem {
+  id: number
+  description: string
+  quantity: number
+  rate: number
+}
+
 export interface CheckData extends BaseEntity {
   // Account holder information
   accountHolderName: string
@@ -13,6 +20,7 @@ export interface CheckData extends BaseEntity {
   bankName: string
   routingNumber: string
   bankAccountNumber: string
+  bankAddress?: string
   
   // Check details
   checkNumber: string
@@ -30,6 +38,9 @@ export interface CheckData extends BaseEntity {
   isVoid?: boolean
   isPrinted?: boolean
   printedAt?: Date
+  isSaved?: boolean
+  lineItems?: CheckLineItem[]
+  lineLength?: number
   
   // Relationships
   receiptId?: string

@@ -31,6 +31,8 @@ export interface LogoSettings {
     height: number
   }
   opacity: number
+  objectFit?: string
+  objectPosition?: string
   margin: {
     top: number
     right: number
@@ -66,6 +68,7 @@ export interface CustomizationSettings extends BaseEntity {
   
   // Font settings for different elements
   fonts: {
+    [key: string]: FontSettings
     accountHolder: FontSettings
     payTo: FontSettings
     amount: FontSettings
@@ -73,6 +76,7 @@ export interface CustomizationSettings extends BaseEntity {
     memo: FontSettings
     signature: FontSettings
     bankInfo: FontSettings
+    bankName: FontSettings
     checkNumber: FontSettings
     date: FontSettings
     fieldLabels: FontSettings  // For "Pay to the order of", "Date:", "Memo:", etc.
@@ -113,9 +117,10 @@ export interface CustomizationPreset extends BaseEntity {
 export interface FontFamily {
   name: string
   displayName: string
-  category: 'serif' | 'sans-serif' | 'monospace' | 'cursive' | 'fantasy'
+  category: 'serif' | 'sans-serif' | 'monospace' | 'cursive' | 'fantasy' | 'handwriting' | 'banking' | 'display'
   variants: string[]
   isWebFont: boolean
+  description?: string
   url?: string
 }
 

@@ -50,7 +50,7 @@
                 <div class="font-family-dropdown">
                   <select 
                     :value="currentSettings?.fonts[fontKey]?.family || ''"
-                    @change="updateFont(fontKey, 'family', $event.target.value)"
+                    @change="updateFont(fontKey, 'family', getInputValue($event))"
                     class="font-family-select enhanced"
                   >
                     <optgroup v-for="category in fontCategories" :key="category" :label="getCategoryLabel(category)">
@@ -78,7 +78,7 @@
                   <input 
                     type="range"
                     :value="currentSettings?.fonts[fontKey]?.size || 16"
-                    @input="updateFont(fontKey, 'size', parseInt($event.target.value))"
+                    @input="updateFont(fontKey, 'size', parseInt(getInputValue($event)))"
                     min="8" 
                     max="72" 
                     class="font-size-slider"
@@ -86,7 +86,7 @@
                   <input 
                     type="number" 
                     :value="currentSettings?.fonts[fontKey]?.size || 16"
-                    @input="updateFont(fontKey, 'size', parseInt($event.target.value))"
+                    @input="updateFont(fontKey, 'size', parseInt(getInputValue($event)))"
                     min="8" 
                     max="72" 
                     class="font-size-input"
@@ -99,7 +99,7 @@
                 <label class="control-label">Weight</label>
                 <select 
                   :value="currentSettings?.fonts[fontKey]?.weight || 'normal'"
-                  @change="updateFont(fontKey, 'weight', $event.target.value)"
+                  @change="updateFont(fontKey, 'weight', getInputValue($event))"
                   class="font-weight-select"
                 >
                   <option value="normal">Normal</option>
@@ -116,7 +116,7 @@
                   <input 
                     type="color" 
                     :value="currentSettings?.fonts[fontKey]?.color || '#000000'"
-                    @input="updateFont(fontKey, 'color', $event.target.value)"
+                    @input="updateFont(fontKey, 'color', getInputValue($event))"
                     class="color-input enhanced"
                   />
                   <span class="color-value">{{ currentSettings?.fonts[fontKey]?.color || '#000000' }}</span>
@@ -136,7 +136,7 @@
               type="checkbox" 
               id="enable-logo"
               :checked="currentSettings?.logo.enabled || false"
-              @change="updateLogo('enabled', $event.target.checked)"
+              @change="updateLogo('enabled', getInputChecked($event))"
             />
             <label for="enable-logo">Enable Logo</label>
           </div>
@@ -177,7 +177,7 @@
               <label>Position</label>
               <select 
                 :value="currentSettings?.logo.position || 'top-left'"
-                @change="updateLogo('position', $event.target.value)"
+                @change="updateLogo('position', getInputValue($event))"
               >
                 <option value="top-left">Top Left</option>
                 <option value="top-center">Top Center</option>
@@ -195,7 +195,7 @@
                   <input 
                     type="number" 
                     :value="currentSettings?.logo.size.width || 100"
-                    @input="updateLogoSize('width', parseInt($event.target.value))"
+                    @input="updateLogoSize('width', parseInt(getInputValue($event)))"
                     placeholder="Width"
                     min="10"
                     max="500"
@@ -204,7 +204,7 @@
                   <input 
                     type="number" 
                     :value="currentSettings?.logo.size.height || 50"
-                    @input="updateLogoSize('height', parseInt($event.target.value))"
+                    @input="updateLogoSize('height', parseInt(getInputValue($event)))"
                     placeholder="Height"
                     min="10"
                     max="500"
@@ -216,7 +216,7 @@
                       type="checkbox" 
                       id="maintain-aspect-ratio"
                       :checked="maintainAspectRatio"
-                      @change="maintainAspectRatio = $event.target.checked"
+                      @change="maintainAspectRatio = getInputChecked($event)"
                     />
                     <label for="maintain-aspect-ratio">Lock Aspect Ratio</label>
                   </div>
@@ -236,7 +236,7 @@
                   <input 
                     type="number" 
                     :value="currentSettings?.logo.margin?.top || 10"
-                    @input="updateLogoMargin('top', parseInt($event.target.value))"
+                    @input="updateLogoMargin('top', parseInt(getInputValue($event)))"
                     min="0"
                     max="100"
                   />
@@ -246,7 +246,7 @@
                   <input 
                     type="number" 
                     :value="currentSettings?.logo.margin?.right || 10"
-                    @input="updateLogoMargin('right', parseInt($event.target.value))"
+                    @input="updateLogoMargin('right', parseInt(getInputValue($event)))"
                     min="0"
                     max="100"
                   />
@@ -256,7 +256,7 @@
                   <input 
                     type="number" 
                     :value="currentSettings?.logo.margin?.bottom || 10"
-                    @input="updateLogoMargin('bottom', parseInt($event.target.value))"
+                    @input="updateLogoMargin('bottom', parseInt(getInputValue($event)))"
                     min="0"
                     max="100"
                   />
@@ -266,7 +266,7 @@
                   <input 
                     type="number" 
                     :value="currentSettings?.logo.margin?.left || 10"
-                    @input="updateLogoMargin('left', parseInt($event.target.value))"
+                    @input="updateLogoMargin('left', parseInt(getInputValue($event)))"
                     min="0"
                     max="100"
                   />
@@ -280,7 +280,7 @@
               <input 
                 type="range" 
                 :value="currentSettings?.logo.opacity || 1"
-                @input="updateLogo('opacity', parseFloat($event.target.value))"
+                @input="updateLogo('opacity', parseFloat(getInputValue($event)))"
                 min="0.1"
                 max="1"
                 step="0.1"
@@ -296,7 +296,7 @@
                   <label>Fit Mode</label>
                   <select 
                     :value="currentSettings?.logo.objectFit || 'contain'"
-                    @change="updateLogo('objectFit', $event.target.value)"
+                    @change="updateLogo('objectFit', getInputValue($event))"
                   >
                     <option value="contain">Fit (Show All)</option>
                     <option value="cover">Fill (Crop to Fit)</option>
@@ -308,7 +308,7 @@
                   <label>Image Position</label>
                   <select 
                     :value="currentSettings?.logo.objectPosition || 'center'"
-                    @change="updateLogo('objectPosition', $event.target.value)"
+                    @change="updateLogo('objectPosition', getInputValue($event))"
                   >
                     <option value="center">Center</option>
                     <option value="top">Top</option>
@@ -342,6 +342,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import type { CSSProperties } from 'vue'
 import { useCustomizationStore } from '@/stores/customization'
 import type { CustomizationPreset, FontSettings } from '@/types'
 
@@ -367,15 +368,15 @@ const logoPreviewSrc = computed(() => {
   return currentSettings.value.logo.file?.url || currentSettings.value.logo.url || ''
 })
 
-const logoPreviewStyle = computed(() => {
+const logoPreviewStyle = computed((): CSSProperties => {
   if (!currentSettings.value?.logo) return {}
   
   const logo = currentSettings.value.logo
   return {
     width: `${Math.min(logo.size?.width || 100, 200)}px`,
     height: `${Math.min(logo.size?.height || 50, 100)}px`,
-    objectFit: logo.objectFit || 'contain',
-    objectPosition: logo.objectPosition || 'center',
+    objectFit: (logo.objectFit || 'contain') as CSSProperties['objectFit'],
+    objectPosition: (logo.objectPosition || 'center') as CSSProperties['objectPosition'],
     opacity: logo.opacity || 1
   }
 })
@@ -385,6 +386,7 @@ const fontElements = [
   'accountHolder', 'payTo', 'amount', 'amountWords', 
   'memo', 'signature', 'bankInfo', 'bankName', 'checkNumber', 'date', 'fieldLabels'
 ] as const
+type FontKey = typeof fontElements[number]
 
 // Font categories for organized display
 const fontCategories = computed(() => {
@@ -396,6 +398,14 @@ const fontCategories = computed(() => {
 })
 
 // Methods
+function getInputValue(event: Event): string {
+  return (event.target as HTMLInputElement).value
+}
+
+function getInputChecked(event: Event): boolean {
+  return (event.target as HTMLInputElement).checked
+}
+
 function formatFontLabel(key: string): string {
   const labels: Record<string, string> = {
     accountHolder: 'Account Holder',
@@ -428,7 +438,7 @@ function getFontsByCategory(category: string) {
   return availableFonts.value.filter(font => font.category === category)
 }
 
-function getSelectedFontDescription(fontKey: string): string {
+function getSelectedFontDescription(fontKey: FontKey): string {
   const selectedFamily = currentSettings.value?.fonts[fontKey]?.family
   if (!selectedFamily) return ''
   
@@ -436,7 +446,7 @@ function getSelectedFontDescription(fontKey: string): string {
   return font?.description || ''
 }
 
-function getFontPreviewStyle(fontKey: string) {
+function getFontPreviewStyle(fontKey: FontKey) {
   const font = currentSettings.value?.fonts[fontKey]
   if (!font) return {}
   
@@ -460,7 +470,7 @@ function getDropdownOptionStyle(fontName: string) {
   }
 }
 
-function getFontPreviewText(fontKey: string): string {
+function getFontPreviewText(fontKey: FontKey): string {
   const previews: Record<string, string> = {
     accountHolder: 'John Smith',
     payTo: 'Michael Johnson',
@@ -476,7 +486,7 @@ function getFontPreviewText(fontKey: string): string {
   return previews[fontKey] || 'Sample Text'
 }
 
-function updateFont(element: keyof typeof currentSettings.value.fonts, property: keyof FontSettings, value: any) {
+function updateFont(element: FontKey, property: keyof FontSettings, value: unknown) {
   customizationStore.updateFont(element, { [property]: value })
 }
 
@@ -546,13 +556,7 @@ function handleLogoUpload(event: Event) {
 function updateLogoMargin(side: 'top' | 'right' | 'bottom' | 'left', value: number) {
   if (!currentSettings.value) return
   
-  const newMargin = { 
-    top: 10, 
-    right: 10, 
-    bottom: 10, 
-    left: 10,
-    ...currentSettings.value.logo.margin 
-  }
+  const newMargin = { ...currentSettings.value.logo.margin }
   newMargin[side] = value
   customizationStore.updateLogo({ margin: newMargin })
 }

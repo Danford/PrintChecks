@@ -338,8 +338,8 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     
     // Validate logo
     const logoValid = !currentSettings.value.logo.enabled || 
-      currentSettings.value.logo.file || 
-      currentSettings.value.logo.url
+      !!currentSettings.value.logo.file || 
+      !!currentSettings.value.logo.url
     
     if (!logoValid) {
       errors.push('Logo enabled but no file or URL provided')

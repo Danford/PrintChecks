@@ -2,6 +2,7 @@
 import type { BaseEntity, Money } from './common'
 
 export interface LineItem extends BaseEntity {
+  id: string
   description: string
   quantity: number
   unitPrice: number
@@ -136,7 +137,9 @@ export interface PaymentRecord extends BaseEntity {
   
   // Combined totals and validation
   totalAmount: number
+  amount?: number
   currency: string
+  date?: string
   
   // Status and metadata
   status: 'draft' | 'completed' | 'void' | 'cancelled'

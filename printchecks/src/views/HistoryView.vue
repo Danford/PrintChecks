@@ -46,29 +46,30 @@
 <style>
 </style>
 
-<script setup>
-import {formatMoney} from '../utilities.ts'
-import { ref, onMounted} from 'vue'
-import { useAppStore } from '../stores/app.ts'
+<script setup lang="ts">
+import { formatMoney } from '../utilities'
+import { ref, onMounted } from 'vue'
+import { useAppStore } from '../stores/app'
 import { useRouter } from 'vue-router'
+import type { CheckData } from '../types'
 
 const state = useAppStore()
 const router = useRouter()
 
-const history = ref([])
+const history = ref<CheckData[]>([])
 
-const loadHistory = () => {
-  history.value = JSON.parse(localStorage.getItem('checkList') || '[]')
+const loadHistory = (): void => {
+  history.value = JSON.parse(localStorage.getItem('checkList') || '[]') as CheckData[]
 }
 
-const voidItem = (index) => {
+const voidItem = (index: number): void => {
   if (confirm('Are you sure you want to void this check? This action marks the check as invalid but keeps it in the records.')) {
     history.value[index].isVoid = true
     localStorage.setItem('checkList', JSON.stringify(history.value))
   }
 }
 
-const viewItem = (index) => {
+const viewItem = (index: number): void => {
     const item = history.value[index]
     state.check = item
     router.push('/')
