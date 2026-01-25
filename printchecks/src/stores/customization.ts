@@ -124,6 +124,19 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         color: '#000000'
       }
     },
+    adjustments: {
+      accountHolder: { x: 0, y: 0 },
+      payTo: { x: 0, y: 0 },
+      amount: { x: 0, y: 0 },
+      amountWords: { x: 0, y: 0 },
+      memo: { x: 0, y: 0 },
+      signature: { x: 0, y: 0 },
+      bankInfo: { x: 0, y: 0 },
+      checkNumber: { x: 0, y: 0 },
+      date: { x: 0, y: 0 },
+      fieldLabels: { x: 0, y: 0 },
+      bankName: { x: 0, y: 0 }
+    },
     colors: {
       primary: '#000000',
       secondary: '#666666',
@@ -224,6 +237,11 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     loadPresets()
     loadAvailableFonts()
     loadColorPalettes()
+    
+    // If no preset is selected, apply the first one
+    if (!currentPreset.value && presets.value.length > 0) {
+      applyPreset(presets.value[0])
+    }
   }
   
   function loadSettings() {
@@ -275,6 +293,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     
     validateSettings()
     saveSettings()
+    syncCurrentSettingsToPreset()
   }
   
   function updateColors(colorUpdates: Partial<ColorScheme>) {
@@ -287,6 +306,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     
     validateSettings()
     saveSettings()
+    syncCurrentSettingsToPreset()
   }
   
   function updateLogo(logoSettings: Partial<LogoSettings>) {
@@ -299,6 +319,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     
     validateSettings()
     saveSettings()
+    syncCurrentSettingsToPreset()
   }
   
   function updateLayout(layoutSettings: Partial<LayoutSettings>) {
@@ -311,6 +332,24 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     
     validateSettings()
     saveSettings()
+    syncCurrentSettingsToPreset()
+  }
+  
+  function updateAdjustment(element: keyof CustomizationSettings['fonts'], adjustment: { x?: number; y?: number }) {
+    if (!currentSettings.value) return
+    
+    if (!currentSettings.value.adjustments) {
+      currentSettings.value.adjustments = {}
+    }
+    
+    currentSettings.value.adjustments[element] = {
+      x: adjustment.x !== undefined ? adjustment.x : (currentSettings.value.adjustments[element]?.x || 0),
+      y: adjustment.y !== undefined ? adjustment.y : (currentSettings.value.adjustments[element]?.y || 0)
+    }
+    
+    validateSettings()
+    saveSettings()
+    syncCurrentSettingsToPreset()
   }
   
   function validateSettings(): boolean {
@@ -412,20 +451,27 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     try {
       const saved = localStorage.getItem('printchecks_presets')
       if (saved) {
-        presets.value = JSON.parse(saved)
+        const parsed = JSON.parse(saved)
+        // Only load custom presets (not built-in)
+        presets.value = parsed.filter((p: CustomizationPreset) => !p.isBuiltIn)
+      } else {
+        presets.value = []
       }
       
-      // Add built-in presets if not already present
+      // Always add fresh built-in presets (ensures defaults are never modified)
       addBuiltInPresets()
     } catch (e) {
       console.warn('Failed to load presets:', e)
+      presets.value = []
       addBuiltInPresets()
     }
   }
   
   function savePresets() {
     try {
-      localStorage.setItem('printchecks_presets', JSON.stringify(presets.value))
+      // Only save custom presets (never save built-in presets)
+      const customPresets = presets.value.filter(p => !p.isBuiltIn)
+      localStorage.setItem('printchecks_presets', JSON.stringify(customPresets))
     } catch (e) {
       console.error('Failed to save presets:', e)
     }
@@ -478,17 +524,62 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       }
     ]
     
-    // Only add built-in presets that don't already exist
+    // Always add built-in presets fresh (ensures hardcoded defaults are never modified)
     builtInPresets.forEach(preset => {
-      if (!presets.value.find(p => p.id === preset.id)) {
-        presets.value.push(preset)
-      }
+      presets.value.push(preset)
     })
   }
   
   function deletePreset(presetId: string) {
-    presets.value = presets.value.filter(p => p.id !== presetId && !p.isBuiltIn)
+    // Only delete if not built-in, and filter out the specific preset
+    const presetToDelete = presets.value.find(p => p.id === presetId)
+    if (presetToDelete && presetToDelete.isBuiltIn) {
+      console.warn('Cannot delete built-in preset')
+      return
+    }
+    
+    // If deleting the currently active preset, switch to default before deletion
+    if (currentPreset.value?.id === presetId) {
+      // Find the first built-in preset as a safe default
+      const defaultPreset = presets.value.find(p => p.isBuiltIn && p.id === 'business-classic') 
+                          || presets.value.find(p => p.isBuiltIn)
+      if (defaultPreset) {
+        applyPreset(defaultPreset)
+      }
+    }
+    
+    presets.value = presets.value.filter(p => p.id !== presetId)
     savePresets()
+  }
+  
+  function renamePreset(presetId: string, newName: string, newDescription: string) {
+    // Only rename if not built-in
+    const presetToRename = presets.value.find(p => p.id === presetId)
+    if (presetToRename && presetToRename.isBuiltIn) {
+      console.warn('Cannot rename built-in preset')
+      return
+    }
+    
+    if (presetToRename) {
+      presetToRename.name = newName
+      presetToRename.description = newDescription
+      presetToRename.updatedAt = new Date()
+      savePresets()
+    }
+  }
+  
+  function syncCurrentSettingsToPreset() {
+    // Sync the current settings back to the current preset (if it's not built-in)
+    if (!currentPreset.value || currentPreset.value.isBuiltIn || !currentSettings.value) {
+      return
+    }
+    
+    const presetToUpdate = presets.value.find(p => p.id === currentPreset.value?.id)
+    if (presetToUpdate) {
+      presetToUpdate.settings = { ...currentSettings.value }
+      presetToUpdate.updatedAt = new Date()
+      savePresets()
+    }
   }
   
   function loadAvailableFonts() {
@@ -1255,12 +1346,15 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     updateColors,
     updateLogo,
     updateLayout,
+    updateAdjustment,
     validateSettings,
     resetToDefault,
     applyPreset,
     saveAsPreset,
     loadPresets,
     deletePreset,
+    renamePreset,
+    syncCurrentSettingsToPreset,
     loadAvailableFonts,
     loadGoogleFonts,
     loadColorPalettes

@@ -928,12 +928,22 @@ const checkStyles = computed(() => {
     const fonts = settings.fonts
     
     // Helper function to safely get font styles with fallbacks
-    const getFontStyle = (fontConfig: any, fallback = { family: 'Arial, sans-serif', size: 16, weight: 'normal', color: '#000000' }) => ({
-        fontFamily: fontConfig?.family || fallback.family,
-        fontSize: `${fontConfig?.size || fallback.size}px`,
-        fontWeight: fontConfig?.weight || fallback.weight,
-        color: fontConfig?.color || fallback.color
-    })
+    const getFontStyle = (fontConfig: any, fallback = { family: 'Arial, sans-serif', size: 16, weight: 'normal', color: '#000000' }) => {
+        // Apply adjustments if present
+        const adjustment = settings.adjustments?.[Object.keys(fonts).find(key => fonts[key] === fontConfig)]
+        const style: any = {
+            fontFamily: fontConfig?.family || fallback.family,
+            fontSize: `${fontConfig?.size || fallback.size}px`,
+            fontWeight: fontConfig?.weight || fallback.weight,
+            color: fontConfig?.color || fallback.color
+        }
+        
+        if (adjustment) {
+            style.transform = `translate(${adjustment.x}px, ${adjustment.y}px)`
+        }
+        
+        return style
+    }
     
     return {
         accountHolderName: getFontStyle(fonts.accountHolder),
@@ -1241,7 +1251,13 @@ function handleLogoLoad(event: Event) {
 // Bank Management Methods
 // Bank account selection - don't populate check until user clicks "Create Check"
 function loadBankAccount() {
-    // Bank selection is now just for reference
+    // Apply the bank account's selected template if it has one
+    if (selectedBank.value?.templateId) {
+        const preset = customizationStore.presets.find(p => p.id === selectedBank.value.templateId)
+        if (preset) {
+            customizationStore.applyPreset(preset)
+        }
+    }
     // The actual check data will be populated in createQuickCheck()
 }
 
@@ -1281,6 +1297,9 @@ function createQuickCheck() {
         alert('Please select a bank account.')
         return
     }
+    
+    // Note: Template is already applied in loadBankAccount(), don't re-apply here
+    // to preserve any customizations the user made after selecting the bank
     
     // Fill in the check form with bank account and form data
     check.accountHolderName = selectedBank.value.accountHolderName || ''
