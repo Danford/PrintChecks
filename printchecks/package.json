@@ -2,7 +2,18 @@
   "name": "printchecks",
   "version": "1.0.0",
   "description": "Professional check printing and payment documentation system that runs locally in your browser",
-  "private": true,
+  "private": false,
+  "main": "./dist/printchecks.umd.js",
+  "module": "./dist/printchecks.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/printchecks.es.js",
+      "require": "./dist/printchecks.umd.js"
+    },
+    "./styles.css": "./dist/style.css"
+  },
   "scripts": {
     "dev": "vite",
     "dev:clear": "node scripts/clear-history.js",
