@@ -1,0 +1,60 @@
+{
+  "name": "@printchecks/core",
+  "version": "1.0.0",
+  "description": "Framework-agnostic core library for check printing, vendor management, and payment documentation",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./models": {
+      "import": "./dist/models/index.mjs",
+      "require": "./dist/models/index.cjs",
+      "types": "./dist/models/index.d.ts"
+    },
+    "./services": {
+      "import": "./dist/services/index.mjs",
+      "require": "./dist/services/index.cjs",
+      "types": "./dist/services/index.d.ts"
+    },
+    "./storage": {
+      "import": "./dist/storage/index.mjs",
+      "require": "./dist/storage/index.cjs",
+      "types": "./dist/storage/index.d.ts"
+    },
+    "./utils": {
+      "import": "./dist/utils/index.mjs",
+      "require": "./dist/utils/index.cjs",
+      "types": "./dist/utils/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "check-printing",
+    "payment",
+    "invoice",
+    "receipt",
+    "banking",
+    "financial"
+  ],
+  "author": "Joshua Danford",
+  "license": "MIT",
+  "dependencies": {
+    "to-words": "^4.1.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.4"
+  }
+}
