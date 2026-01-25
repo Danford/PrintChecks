@@ -233,9 +233,9 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
   })
   
   // Actions
-  function initializeCustomization() {
-    loadSettings()
-    loadPresets()
+  async function initializeCustomization() {
+    await loadSettings()
+    await loadPresets()
     loadAvailableFonts()
     loadColorPalettes()
     
@@ -271,7 +271,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     }
   }
   
-  function updateSettings(updates: Partial<CustomizationSettings>) {
+  async function updateSettings(updates: Partial<CustomizationSettings>) {
     if (!currentSettings.value) return
     
     currentSettings.value = {
@@ -281,7 +281,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     }
     
     validateSettings()
-    saveSettings()
+    await saveSettings()
   }
   
   function updateFont(element: keyof CustomizationSettings['fonts'], fontSettings: Partial<FontSettings>) {

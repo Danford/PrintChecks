@@ -1120,7 +1120,7 @@ function printCheck () {
     style.remove();
 }
 
-function saveToHistory () {
+async function saveToHistory () {
     // Only save checks that have been properly filled out
     if (!check.payTo || !check.amount || check.amount <= 0) {
         if (DEBUG_MODE.value) console.warn('Cannot save empty check to history')
@@ -1144,7 +1144,7 @@ function saveToHistory () {
     }
     
     // Add check to history store (handles saving to secure storage)
-    historyStore.addCheck(checkToSave)
+    await historyStore.addCheck(checkToSave)
     
     // Mark the current check as saved to make it read-only
     check.isSaved = true

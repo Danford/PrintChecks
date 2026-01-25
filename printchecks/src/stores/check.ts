@@ -63,7 +63,7 @@ export const useCheckStore = defineStore('useCheckStore', () => {
   })
   
   // Actions
-  function createNewCheck(template?: CheckTemplate): CheckData {
+  async function createNewCheck(template?: CheckTemplate): Promise<CheckData> {
     const baseCheck: CheckData = {
       id: generateId(),
       accountHolderName: '',
@@ -90,7 +90,7 @@ export const useCheckStore = defineStore('useCheckStore', () => {
       baseCheck.date = new Date().toLocaleDateString()
     } else {
       // Load from most recent check if available
-      loadFromRecentCheck(baseCheck)
+      await loadFromRecentCheck(baseCheck)
     }
     
     currentCheck.value = baseCheck

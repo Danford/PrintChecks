@@ -162,11 +162,23 @@ export function useSessionTimeout() {
     document.removeEventListener('visibilitychange', handleVisibilityChange)
   }
 
-  // Watch for changes in encryption status
-  watch(() => localStorage.getItem('encryption_enabled'), (newVal) => {
-    console.log('[SessionTimeout] Encryption status changed:', newVal)
-    encryptionEnabled.value = newVal === 'true'
-    if (newVal === 'true' && sessionStorage.getItem('encryption_password')) {
+  // Listen for password being set
+  function handlePasswordSet() {
+    console.log('[SessionTimeout] Password set event received, starting timeout')
+    encryptionEnabled.value = true
+    stopSessionTimeout()
+    startSessionTimeout()
+  }
+
+  // Listen for encryption being toggled
+  function handleEncryptionToggled(event: Event) {
+    const customEvent = event as CustomEvent<{ enabled: boolean }>
+    const isEnabled = customEvent.detail?.enabled ?? (localStorage.getItem('encryption_enabled') === 'true')
+    
+    console.log('[SessionTimeout] Encryption toggled:', isEnabled)
+    encryptionEnabled.value = isEnabled
+    
+    if (isEnabled && sessionStorage.getItem('encryption_password')) {
       console.log('[SessionTimeout] Encryption enabled, restarting timeout')
       stopSessionTimeout()
       startSessionTimeout()
@@ -174,13 +186,6 @@ export function useSessionTimeout() {
       console.log('[SessionTimeout] Encryption disabled, stopping timeout')
       stopSessionTimeout()
     }
-  })
-
-  // Listen for password being set
-  function handlePasswordSet() {
-    console.log('[SessionTimeout] Password set event received, starting timeout')
-    stopSessionTimeout()
-    startSessionTimeout()
   }
 
   onMounted(() => {
@@ -188,6 +193,8 @@ export function useSessionTimeout() {
     
     // Listen for encryption password being set
     window.addEventListener('encryption-password-set', handlePasswordSet)
+    // Listen for encryption state changes
+    window.addEventListener('encryption-toggled', handleEncryptionToggled as EventListener)
     
     startSessionTimeout()
   })
@@ -195,6 +202,7 @@ export function useSessionTimeout() {
   onUnmounted(() => {
     console.log('[SessionTimeout] Component unmounted')
     window.removeEventListener('encryption-password-set', handlePasswordSet)
+    window.removeEventListener('encryption-toggled', handleEncryptionToggled as EventListener)
     stopSessionTimeout()
   })
 

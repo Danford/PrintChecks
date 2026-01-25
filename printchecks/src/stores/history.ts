@@ -101,10 +101,10 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
   const totalItems = computed(() => filteredItems.value.length)
   
   // Actions
-  function loadHistory() {
-    loadChecks()
-    loadReceipts()
-    loadPaymentRecords()
+  async function loadHistory() {
+    await loadChecks()
+    await loadReceipts()
+    await loadPaymentRecords()
   }
   
   async function loadChecks() {
@@ -162,22 +162,22 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     // saveChecks()
   }
   
-  function voidCheck(checkId: string) {
+  async function voidCheck(checkId: string) {
     const check = checks.value.find(c => c.id === checkId)
     if (check) {
       check.isVoid = true
-      saveChecks()
+      await saveChecks()
     }
   }
   
-  function deleteReceipt(receiptId: string) {
+  async function deleteReceipt(receiptId: string) {
     receipts.value = receipts.value.filter(receipt => receipt.id !== receiptId)
-    saveReceipts()
+    await saveReceipts()
   }
   
-  function deletePaymentRecord(paymentId: string) {
+  async function deletePaymentRecord(paymentId: string) {
     paymentRecords.value = paymentRecords.value.filter(payment => payment.id !== paymentId)
-    savePaymentRecords()
+    await savePaymentRecords()
   }
   
   async function saveChecks() {
@@ -204,13 +204,13 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     }
   }
   
-  function clearHistory() {
+  async function clearHistory() {
     checks.value = []
     receipts.value = []
     paymentRecords.value = []
-    saveChecks()
-    saveReceipts()
-    savePaymentRecords()
+    await saveChecks()
+    await saveReceipts()
+    await savePaymentRecords()
   }
   
   function setSearch(query: string) {

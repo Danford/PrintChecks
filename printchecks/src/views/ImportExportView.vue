@@ -298,31 +298,42 @@ async function onEncryptionToggle() {
         alert('⚠️ Encryption enabled but some data failed to encrypt. Please check the console for details.')
       }
       
-      // Trigger custom event to notify session timeout composable
+      // Trigger custom events to notify session timeout composable
       window.dispatchEvent(new CustomEvent('encryption-password-set'))
+      window.dispatchEvent(new CustomEvent('encryption-toggled', { detail: { enabled: true } }))
     } catch (error) {
       console.error('Failed to enable encryption:', error)
       alert('Failed to enable encryption. Please try again.')
       encryptionEnabled.value = false
+      window.dispatchEvent(new CustomEvent('encryption-toggled', { detail: { enabled: false } }))
     }
   } else {
     if (confirm('Are you sure you want to disable encryption? Your data will be decrypted and stored in plain text.')) {
       try {
         const password = sessionStorage.getItem('encryption_password')
+        
+        // Set localStorage FIRST before reinitializing secureStorage
+        localStorage.setItem('encryption_enabled', 'false')
+        localStorage.removeItem('encryption_test')
+        
         if (password) {
           // Decrypt all data back to plain text
           secureStorage.initialize(password)
           await secureStorage.migrateToPlainText()
         }
         
-        localStorage.setItem('encryption_enabled', 'false')
-        localStorage.removeItem('encryption_test')
         sessionStorage.removeItem('encryption_password')
         alert('✓ Encryption disabled. Your data is now stored in plain text.')
+        
+        // Notify session timeout that encryption is disabled
+        window.dispatchEvent(new CustomEvent('encryption-toggled', { detail: { enabled: false } }))
       } catch (error) {
         console.error('Failed to disable encryption:', error)
         alert('⚠️ Failed to decrypt some data. Please try again or check the console for details.')
+        // Restore encryption state on error
+        localStorage.setItem('encryption_enabled', 'true')
         encryptionEnabled.value = true
+        window.dispatchEvent(new CustomEvent('encryption-toggled', { detail: { enabled: true } }))
       }
     } else {
       encryptionEnabled.value = true
@@ -474,9 +485,14 @@ async function importData() {
       importedData = JSON.parse(text)
     }
 
-    // Validate data structure
+    // Validate data structure and types
     if (!importedData.checks || !importedData.receipts || !importedData.payments) {
-      throw new Error('Invalid import file structure')
+      throw new Error('Invalid import file structure: missing required fields')
+    }
+    
+    // Validate that required fields are arrays
+    if (!Array.isArray(importedData.checks) || !Array.isArray(importedData.receipts) || !Array.isArray(importedData.payments)) {
+      throw new Error('Invalid import file format: checks, receipts, and payments must be arrays')
     }
 
     // Replace all data using secureStorage

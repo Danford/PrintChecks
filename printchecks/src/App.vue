@@ -39,12 +39,19 @@ async function promptForPassword() {
 }
 
 onMounted(async () => {
-  // Check if encryption is enabled but password is missing
+  // Check if encryption is enabled
   const encryptionEnabled = localStorage.getItem('encryption_enabled') === 'true'
   const hasPassword = !!sessionStorage.getItem('encryption_password')
   
-  if (encryptionEnabled && !hasPassword) {
-    await promptForPassword()
+  if (encryptionEnabled) {
+    if (!hasPassword) {
+      // No password in session - prompt for it
+      await promptForPassword()
+    } else {
+      // Password exists in session - initialize secureStorage with it
+      const password = sessionStorage.getItem('encryption_password')
+      secureStorage.initialize(password)
+    }
   }
 })
 </script>
