@@ -238,9 +238,9 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     loadAvailableFonts()
     loadColorPalettes()
     
-    // If no preset is selected, select the first one
+    // If no preset is selected, apply the first one
     if (!currentPreset.value && presets.value.length > 0) {
-      currentPreset.value = presets.value[0]
+      applyPreset(presets.value[0])
     }
   }
   

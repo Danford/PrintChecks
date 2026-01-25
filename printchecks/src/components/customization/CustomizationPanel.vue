@@ -659,7 +659,19 @@ function updateFont(element: keyof typeof currentSettings.value.fonts, property:
 }
 
 function updateLogo(property: string, value: any) {
-  customizationStore.updateLogo({ [property]: value })
+  // Check if we're editing a built-in template
+  if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
+    hasCreatedCustomTemplate.value = true
+    const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
+    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
+    
+    if (newPreset) {
+      customizationStore.applyPreset(newPreset)
+      customizationStore.updateLogo({ [property]: value })
+    }
+  } else {
+    customizationStore.updateLogo({ [property]: value })
+  }
 }
 
 function updateLogoSize(dimension: 'width' | 'height', value: number) {
@@ -681,7 +693,19 @@ function updateLogoSize(dimension: 'width' | 'height', value: number) {
     newSize[dimension] = value
   }
   
-  customizationStore.updateLogo({ size: newSize })
+  // Check if we're editing a built-in template
+  if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
+    hasCreatedCustomTemplate.value = true
+    const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
+    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
+    
+    if (newPreset) {
+      customizationStore.applyPreset(newPreset)
+      customizationStore.updateLogo({ size: newSize })
+    }
+  } else {
+    customizationStore.updateLogo({ size: newSize })
+  }
 }
 
 function handleLogoUpload(event: Event) {
@@ -702,17 +726,38 @@ function handleLogoUpload(event: Event) {
           height: img.height
         }
         
-        // Update logo with file and auto-enable
-        customizationStore.updateLogo({
-          enabled: true,
-          file: {
-            file,
-            url,
-            name: file.name,
-            size: file.size,
-            type: file.type
+        // Check if we're editing a built-in template
+        if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
+          hasCreatedCustomTemplate.value = true
+          const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
+          const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
+          
+          if (newPreset) {
+            customizationStore.applyPreset(newPreset)
+            customizationStore.updateLogo({
+              enabled: true,
+              file: {
+                file,
+                url,
+                name: file.name,
+                size: file.size,
+                type: file.type
+              }
+            })
           }
-        })
+        } else {
+          // Update logo with file and auto-enable
+          customizationStore.updateLogo({
+            enabled: true,
+            file: {
+              file,
+              url,
+              name: file.name,
+              size: file.size,
+              type: file.type
+            }
+          })
+        }
       }
       img.src = url
     }
@@ -732,18 +777,48 @@ function updateLogoMargin(side: 'top' | 'right' | 'bottom' | 'left', value: numb
     ...currentSettings.value.logo.margin 
   }
   newMargin[side] = value
-  customizationStore.updateLogo({ margin: newMargin })
+  
+  // Check if we're editing a built-in template
+  if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
+    hasCreatedCustomTemplate.value = true
+    const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
+    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
+    
+    if (newPreset) {
+      customizationStore.applyPreset(newPreset)
+      customizationStore.updateLogo({ margin: newMargin })
+    }
+  } else {
+    customizationStore.updateLogo({ margin: newMargin })
+  }
 }
 
 function resetToOriginalSize() {
   if (!originalImageDimensions.value) return
   
-  customizationStore.updateLogo({
-    size: {
-      width: originalImageDimensions.value.width,
-      height: originalImageDimensions.value.height
+  // Check if we're editing a built-in template
+  if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
+    hasCreatedCustomTemplate.value = true
+    const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
+    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
+    
+    if (newPreset) {
+      customizationStore.applyPreset(newPreset)
+      customizationStore.updateLogo({
+        size: {
+          width: originalImageDimensions.value.width,
+          height: originalImageDimensions.value.height
+        }
+      })
     }
-  })
+  } else {
+    customizationStore.updateLogo({
+      size: {
+        width: originalImageDimensions.value.width,
+        height: originalImageDimensions.value.height
+      }
+    })
+  }
 }
 
 function getPresetPreviewStyle(preset: CustomizationPreset) {

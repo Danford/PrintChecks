@@ -259,18 +259,18 @@ const dynamicTextPositions = computed(() => {
 
   const bounds = logoBounds[logoPosition]
   
-  // Default positions
+  // Default positions (matched with CheckPrinter.vue for consistency)
   let positions = {
     accountHolderName: { top: '40px', left: '60px' },
     accountHolderAddress: { top: '70px', left: '60px' },
     checkNumber: { top: '40px', right: '50px' },
-    date: { bottom: '385px', left: '900px' },       // Data value: bottom-left anchored to date line at 105px
-    payTo: { bottom: '260px', left: '150px' },      // Data value: bottom-left anchored to payee line at 230px
+    date: { top: '90px', left: '850px' },
+    payTo: { top: '200px', left: '180px' },
     amount: { top: '202px', left: '970px' },
-    amountWords: { bottom: '260px', left: '100px' }, // Data value: bottom-left anchored to payee line at 230px
+    amountWords: { top: '240px', left: '100px' },
     bankName: { top: '300px', left: '60px' },
-    memo: { bottom: '77px', left: '115px' },        // Data value: bottom-left anchored to memo line at 413px
-    signature: { bottom: '77px', left: '750px' },   // Data value: bottom-left anchored to signature line at 413px
+    memo: { top: '390px', left: '130px' },
+    signature: { top: '366px', left: '770px' },
     bankInfo: { top: '435px', left: '0px' }
   }
 
