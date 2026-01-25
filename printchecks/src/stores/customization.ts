@@ -1322,6 +1322,13 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     return Date.now().toString(36) + Math.random().toString(36).substr(2)
   }
 
+  // Listen for password initialization to reload data
+  if (typeof window !== 'undefined') {
+    window.addEventListener('password-initialized', () => {
+      initializeCustomization()
+    })
+  }
+
   return {
     // State
     currentSettings,

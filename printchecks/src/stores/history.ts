@@ -240,6 +240,13 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     }
   }
 
+  // Listen for password initialization to reload data
+  if (typeof window !== 'undefined') {
+    window.addEventListener('password-initialized', () => {
+      loadHistory()
+    })
+  }
+
   return {
     // State
     checks,

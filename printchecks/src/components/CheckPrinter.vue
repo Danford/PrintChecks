@@ -1137,7 +1137,8 @@ async function saveToHistory () {
     const checkToSave = {
         ...check,
         lineItems: currentLineItems.value, // Include line items when saving
-        isSaved: true // Ensure saved status is preserved
+        isSaved: true, // Ensure saved status is preserved
+        isPrinted: true // Ensure printed status is preserved
     }
     if (DEBUG_MODE.value) {
         console.log('Saving line items to history:', currentLineItems.value)
@@ -1403,8 +1404,8 @@ async function saveVendor(vendorData) {
 }
 
 
-onMounted(async () => {
-    // Load bank accounts and vendors from encrypted storage
+// Load bank accounts and vendors from encrypted storage
+async function loadBankAndVendorData() {
     try {
         const banksData = await secureStorage.get('bankAccounts')
         if (banksData) {
@@ -1418,6 +1419,18 @@ onMounted(async () => {
     } catch (e) {
         console.error('Failed to load bank/vendor data:', e)
     }
+}
+
+// Listen for password initialization to reload bank/vendor data
+if (typeof window !== 'undefined') {
+    window.addEventListener('password-initialized', () => {
+        loadBankAndVendorData()
+    })
+}
+
+onMounted(async () => {
+    // Load bank accounts and vendors from encrypted storage
+    await loadBankAndVendorData()
     
     // Initialize stores
     await customizationStore.initializeCustomization()
