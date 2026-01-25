@@ -52,16 +52,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import VendorModal from '../components/VendorModal.vue'
+import { filterActiveChecks } from '@/utils/checkFilters'
+import { secureStorage } from '../services/secureStorage.ts'
 
 // Vendor Management
-const vendors = ref(JSON.parse(localStorage.getItem('vendors') || '[]'))
+const vendors = ref<any[]>([])
+const checkList = ref<any[]>([])
 const showAddVendorModal = ref(false)
 const editingVendor = ref(null)
 
-// Payment history for statistics
-const paymentHistory = computed(() => JSON.parse(localStorage.getItem('checkList') || '[]'))
+// Load vendors and check list from encrypted storage
+onMounted(async () => {
+  try {
+    const vendorsData = await secureStorage.get('vendors')
+    if (vendorsData) {
+      vendors.value = JSON.parse(vendorsData)
+    }
+    
+    const checksData = await secureStorage.get('checkList')
+    if (checksData) {
+      checkList.value = JSON.parse(checksData)
+    }
+  } catch (e) {
+    console.error('Failed to load vendor data:', e)
+  }
+})
+
+// Payment history for statistics - filter out voided checks
+const paymentHistory = computed(() => filterActiveChecks(checkList.value))
 
 // Vendors with statistics
 const vendorsWithStats = computed(() => {
@@ -84,7 +104,7 @@ const vendorsWithStats = computed(() => {
   })
 })
 
-function saveVendor(vendorData) {
+async function saveVendor(vendorData) {
   if (editingVendor.value) {
     // Update existing vendor
     const index = vendors.value.findIndex(v => v.id === editingVendor.value.id)
@@ -100,7 +120,7 @@ function saveVendor(vendorData) {
     vendors.value.push(newVendor)
   }
   
-  localStorage.setItem('vendors', JSON.stringify(vendors.value))
+  await secureStorage.set('vendors', JSON.stringify(vendors.value))
   cancelVendorEdit()
 }
 
@@ -109,10 +129,10 @@ function editVendor(vendor) {
   showAddVendorModal.value = true
 }
 
-function deleteVendor(vendorId) {
+async function deleteVendor(vendorId) {
   if (confirm('Are you sure you want to delete this vendor?')) {
     vendors.value = vendors.value.filter(v => v.id !== vendorId)
-    localStorage.setItem('vendors', JSON.stringify(vendors.value))
+    await secureStorage.set('vendors', JSON.stringify(vendors.value))
   }
 }
 

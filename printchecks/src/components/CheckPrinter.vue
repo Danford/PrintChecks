@@ -475,6 +475,7 @@ import { useHistoryStore } from '../stores/history.ts'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import BankAccountModal from './BankAccountModal.vue'
 import VendorModal from './VendorModal.vue'
+import { secureStorage } from '../services/secureStorage.ts'
 
 const state = useAppStore()
 const customizationStore = useCustomizationStore()
@@ -563,9 +564,9 @@ const testTotals = ref({
 })
 
 // Bank and Vendor Data for Quick Check (read-only)
-const bankAccounts = ref(JSON.parse(localStorage.getItem('bankAccounts') || '[]'))
+const bankAccounts = ref<any[]>([])
 const selectedBankId = ref('')
-const vendors = ref(JSON.parse(localStorage.getItem('vendors') || '[]'))
+const vendors = ref<any[]>([])
 const selectedVendorId = ref('')
 
 // Quick Check Modal
@@ -629,7 +630,7 @@ const selectedVendor = computed(() => vendors.value.find(v => v.id === selectedV
 const nextCheckNumber = computed(() => {
     if (!selectedBank.value) return '1001'
     
-    const bankChecks = JSON.parse(localStorage.getItem('checkList') || '[]')
+    const bankChecks = historyStore.checks
         .filter(check => check.bankName === selectedBank.value.name)
     
     if (bankChecks.length === 0) {
@@ -806,8 +807,10 @@ const dynamicTextPositions = computed(() => {
 // Payment statistics
 const paymentStats = computed(() => {
     const currentYear = new Date().getFullYear()
+    // Filter out voided checks from payment statistics
+    const activeChecks = historyStore.checks.filter(check => !check.isVoid)
     const allPayments = [
-        ...historyStore.checks.map(check => ({
+        ...activeChecks.map(check => ({
             amount: parseFloat(check.amount || '0'),
             date: new Date(check.date || Date.now())
         })),
@@ -839,9 +842,12 @@ const enhancedPaymentStats = computed(() => {
     const now = new Date()
     const currentMonth = now.getMonth()
     const currentYear = now.getFullYear()
+    // Filter out voided checks from enhanced payment statistics
+    const activeChecks = historyStore.checks.filter(check => !check.isVoid)
+
     
     const allPayments = [
-        ...historyStore.checks.map(check => ({
+        ...activeChecks.map(check => ({
             amount: parseFloat(check.amount || '0'),
             date: new Date(check.date || Date.now()),
             payTo: check.payTo || 'Unknown'
@@ -960,7 +966,7 @@ const checkStyles = computed(() => {
     }
 })
 
-function printCheck () {
+async function printCheck () {
     // Validate check has required data before printing
     if (!check.payTo || !check.amount || check.amount <= 0) {
         alert('Cannot print: Check must have a payee and valid amount.')
@@ -969,7 +975,7 @@ function printCheck () {
     
     // Only save to history on first print
     if (!check.isPrinted) {
-        saveToHistory()
+        await saveToHistory()
         check.isPrinted = true
     }
     
@@ -1114,7 +1120,7 @@ function printCheck () {
     style.remove();
 }
 
-function saveToHistory () {
+async function saveToHistory () {
     // Only save checks that have been properly filled out
     if (!check.payTo || !check.amount || check.amount <= 0) {
         if (DEBUG_MODE.value) console.warn('Cannot save empty check to history')
@@ -1127,29 +1133,20 @@ function saveToHistory () {
         return
     }
     
-    let checkList = JSON.parse(localStorage.getItem('checkList') || '[]')
-    
-    // Create a copy of the check with a unique ID and timestamp
+    // Create a copy of the check with line items
     const checkToSave = {
         ...check,
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString(),
-        printedAt: new Date().toISOString(),
-        isVoid: false,
-        isPrinted: true,
-        isSaved: true,
-        lineItems: currentLineItems.value // Include line items when saving
+        lineItems: currentLineItems.value, // Include line items when saving
+        isSaved: true, // Ensure saved status is preserved
+        isPrinted: true // Ensure printed status is preserved
     }
     if (DEBUG_MODE.value) {
         console.log('Saving line items to history:', currentLineItems.value)
         console.log('checkToSave:', checkToSave)
     }
     
-    checkList.push(checkToSave)
-    localStorage.setItem('checkList', JSON.stringify(checkList))
-    
-    // Reload history store to reflect the new check
-    historyStore.loadHistory()
+    // Add check to history store (handles saving to secure storage)
+    await historyStore.addCheck(checkToSave)
     
     // Mark the current check as saved to make it read-only
     check.isSaved = true
@@ -1344,7 +1341,7 @@ function closeBankAccountModal() {
     showBankAccountModal.value = false
 }
 
-function saveBankAccount(bankData) {
+async function saveBankAccount(bankData) {
     // Validate required fields (matching BankAccountsView.vue)
     if (!bankData.name || !bankData.accountNumber || !bankData.routingNumber) {
         alert('Please fill in Bank Name, Account Number, and Routing Number.')
@@ -1361,7 +1358,7 @@ function saveBankAccount(bankData) {
     bankAccounts.value.push(newBank)
     
     // Save to localStorage
-    localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
+    await secureStorage.set('bankAccounts', JSON.stringify(bankAccounts.value))
     
     // Auto-select the new bank
     selectedBankId.value = newBank.id
@@ -1379,7 +1376,7 @@ function closeVendorModal() {
     showVendorModal.value = false
 }
 
-function saveVendor(vendorData) {
+async function saveVendor(vendorData) {
     // Validate required fields (matching VendorsView.vue)
     if (!vendorData.name) {
         alert('Please enter a vendor name.')
@@ -1396,7 +1393,7 @@ function saveVendor(vendorData) {
     vendors.value.push(newVendor)
     
     // Save to localStorage
-    localStorage.setItem('vendors', JSON.stringify(vendors.value))
+    await secureStorage.set('vendors', JSON.stringify(vendors.value))
     
     // Auto-select the new vendor
     selectedVendorId.value = newVendor.id
@@ -1407,10 +1404,37 @@ function saveVendor(vendorData) {
 }
 
 
-onMounted(() => {
+// Load bank accounts and vendors from encrypted storage
+async function loadBankAndVendorData() {
+    try {
+        const banksData = await secureStorage.get('bankAccounts')
+        if (banksData) {
+            bankAccounts.value = JSON.parse(banksData)
+        }
+        
+        const vendorsData = await secureStorage.get('vendors')
+        if (vendorsData) {
+            vendors.value = JSON.parse(vendorsData)
+        }
+    } catch (e) {
+        console.error('Failed to load bank/vendor data:', e)
+    }
+}
+
+// Listen for password initialization to reload bank/vendor data
+if (typeof window !== 'undefined') {
+    window.addEventListener('password-initialized', () => {
+        loadBankAndVendorData()
+    })
+}
+
+onMounted(async () => {
+    // Load bank accounts and vendors from encrypted storage
+    await loadBankAndVendorData()
+    
     // Initialize stores
-    customizationStore.initializeCustomization()
-    historyStore.loadHistory()
+    await customizationStore.initializeCustomization()
+    await historyStore.loadHistory()
     
     // Auto-select default bank account if one exists
     const defaultBank = bankAccounts.value.find(bank => bank.isDefault)

@@ -38,6 +38,11 @@ const router = createRouter({
       path: '/analytics',
       name: 'analytics',
       component: () => import('../views/AnalyticsView.vue')
+    },
+    {
+      path: '/import-export',
+      name: 'import-export',
+      component: () => import('../views/ImportExportView.vue')
     }
   ]
 })

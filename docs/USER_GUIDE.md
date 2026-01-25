@@ -548,6 +548,37 @@ Filter analytics by:
 3. Try a different image
 4. Check browser console for errors
 
+#### Need to Clear All Check History
+
+**For Development/Testing:**
+
+If you need to completely clear all check history (useful for testing or starting fresh):
+
+**Method 1: Browser Console (Recommended for Production)**
+1. Open your browser's Developer Console:
+   - Chrome/Edge: Press `F12` or `Ctrl+Shift+J` (Windows) / `Cmd+Option+J` (Mac)
+   - Firefox: Press `F12` or `Ctrl+Shift+K` (Windows) / `Cmd+Option+K` (Mac)
+2. Paste the following commands:
+   ```javascript
+   localStorage.removeItem('checkList')
+   localStorage.removeItem('printchecks_receipts')
+   localStorage.removeItem('printchecks_payments')
+   ```
+3. Press Enter
+4. Refresh the page
+
+**Method 2: Development Script**
+If you're running the app in development mode:
+```bash
+npm run dev:clear
+```
+
+This will start the dev server with debug mode enabled, automatically clearing all localStorage data on page load.
+
+⚠️ **Warning**: Both methods will **permanently delete** all your check history, receipts, and payment records. This action cannot be undone. Make sure to export your data first if you want to keep a backup (see Import/Export section).
+
+💡 **Tip**: Consider using the Import/Export feature to backup your data before clearing history.
+
 #### Print Button Doesn't Work
 
 **Solution:**

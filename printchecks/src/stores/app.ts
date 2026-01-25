@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { AppSettings, PrintOptions } from '@/types'
+import { secureStorage } from '@/services/secureStorage'
 
 export const useAppStore = defineStore('useAppStore', () => {
   // Legacy check reference for backward compatibility
@@ -57,19 +58,19 @@ export const useAppStore = defineStore('useAppStore', () => {
     error.value = null
   }
   
-  function updateSettings(newSettings: Partial<AppSettings>) {
+  async function updateSettings(newSettings: Partial<AppSettings>) {
     settings.value = { ...settings.value, ...newSettings }
-    // Persist to localStorage
-    localStorage.setItem('printchecks_settings', JSON.stringify(settings.value))
+    // Persist to secureStorage
+    await secureStorage.set('printchecks_settings', JSON.stringify(settings.value))
   }
   
-  function loadSettings() {
-    const saved = localStorage.getItem('printchecks_settings')
+  async function loadSettings() {
+    const saved = await secureStorage.get('printchecks_settings')
     if (saved) {
       try {
         settings.value = { ...settings.value, ...JSON.parse(saved) }
       } catch (e) {
-        console.warn('Failed to load settings from localStorage:', e)
+        console.warn('Failed to load settings from secureStorage:', e)
       }
     }
   }

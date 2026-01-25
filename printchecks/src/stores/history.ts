@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { CheckData, ReceiptData, PaymentRecord } from '@/types'
+import { secureStorage } from '@/services/secureStorage'
 
 export const useHistoryStore = defineStore('useHistoryStore', () => {
   // History data
@@ -100,15 +101,15 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
   const totalItems = computed(() => filteredItems.value.length)
   
   // Actions
-  function loadHistory() {
-    loadChecks()
-    loadReceipts()
-    loadPaymentRecords()
+  async function loadHistory() {
+    await loadChecks()
+    await loadReceipts()
+    await loadPaymentRecords()
   }
   
-  function loadChecks() {
+  async function loadChecks() {
     try {
-      const saved = localStorage.getItem('checkList')
+      const saved = await secureStorage.get('checkList')
       if (saved) {
         checks.value = JSON.parse(saved)
       }
@@ -117,9 +118,9 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     }
   }
   
-  function loadReceipts() {
+  async function loadReceipts() {
     try {
-      const saved = localStorage.getItem('printchecks_receipts')
+      const saved = await secureStorage.get('printchecks_receipts')
       if (saved) {
         receipts.value = JSON.parse(saved)
       }
@@ -128,9 +129,9 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     }
   }
   
-  function loadPaymentRecords() {
+  async function loadPaymentRecords() {
     try {
-      const saved = localStorage.getItem('printchecks_payments')
+      const saved = await secureStorage.get('printchecks_payments')
       if (saved) {
         paymentRecords.value = JSON.parse(saved)
       }
@@ -141,61 +142,75 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
   
   // Checks cannot be deleted once created - they can only be voided
   // This function is disabled to prevent accidental deletion
+  async function addCheck(checkData: Partial<CheckData>) {
+    const newCheck: CheckData = {
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString(),
+      printedAt: new Date().toISOString(),
+      isVoid: false,
+      isPrinted: true,
+      isSaved: true,
+      ...checkData as CheckData
+    }
+    checks.value.push(newCheck)
+    await saveChecks()
+  }
+  
   function deleteCheck(checkId: string) {
     console.warn('Checks cannot be deleted. Use voidCheck() instead.')
     // checks.value = checks.value.filter(check => check.id !== checkId)
     // saveChecks()
   }
   
-  function voidCheck(checkId: string) {
+  async function voidCheck(checkId: string) {
     const check = checks.value.find(c => c.id === checkId)
     if (check) {
       check.isVoid = true
-      saveChecks()
+      await saveChecks()
     }
   }
   
-  function deleteReceipt(receiptId: string) {
+  async function deleteReceipt(receiptId: string) {
     receipts.value = receipts.value.filter(receipt => receipt.id !== receiptId)
-    saveReceipts()
+    await saveReceipts()
   }
   
-  function deletePaymentRecord(paymentId: string) {
+  async function deletePaymentRecord(paymentId: string) {
     paymentRecords.value = paymentRecords.value.filter(payment => payment.id !== paymentId)
-    savePaymentRecords()
+    await savePaymentRecords()
   }
   
-  function saveChecks() {
+  async function saveChecks() {
     try {
-      localStorage.setItem('checkList', JSON.stringify(checks.value))
+      await secureStorage.set('checkList', JSON.stringify(checks.value))
     } catch (e) {
       console.error('Failed to save check history:', e)
     }
   }
   
-  function saveReceipts() {
+  async function saveReceipts() {
     try {
-      localStorage.setItem('printchecks_receipts', JSON.stringify(receipts.value))
+      await secureStorage.set('printchecks_receipts', JSON.stringify(receipts.value))
     } catch (e) {
       console.error('Failed to save receipt history:', e)
     }
   }
   
-  function savePaymentRecords() {
+  async function savePaymentRecords() {
     try {
-      localStorage.setItem('printchecks_payments', JSON.stringify(paymentRecords.value))
+      await secureStorage.set('printchecks_payments', JSON.stringify(paymentRecords.value))
     } catch (e) {
       console.error('Failed to save payment records:', e)
     }
   }
   
-  function clearHistory() {
+  async function clearHistory() {
     checks.value = []
     receipts.value = []
     paymentRecords.value = []
-    saveChecks()
-    saveReceipts()
-    savePaymentRecords()
+    await saveChecks()
+    await saveReceipts()
+    await savePaymentRecords()
   }
   
   function setSearch(query: string) {
@@ -225,6 +240,13 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     }
   }
 
+  // Listen for password initialization to reload data
+  if (typeof window !== 'undefined') {
+    window.addEventListener('password-initialized', () => {
+      loadHistory()
+    })
+  }
+
   return {
     // State
     checks,
@@ -245,6 +267,7 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     
     // Actions
     loadHistory,
+    addCheck, // Add a new check to history
     deleteCheck, // Disabled - kept for backwards compatibility
     voidCheck, // Use this instead of deleteCheck
     deleteReceipt,

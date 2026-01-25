@@ -45,15 +45,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import BankAccountModal from '../components/BankAccountModal.vue'
+import { secureStorage } from '../services/secureStorage.ts'
 
 // Bank Account Management
-const bankAccounts = ref(JSON.parse(localStorage.getItem('bankAccounts') || '[]'))
+const bankAccounts = ref<any[]>([])
 const showAddBankModal = ref(false)
 const editingBank = ref(null)
 
-function saveBankAccount(bankData) {
+// Load bank accounts from encrypted storage
+onMounted(async () => {
+  try {
+    const data = await secureStorage.get('bankAccounts')
+    if (data) {
+      bankAccounts.value = JSON.parse(data)
+    }
+  } catch (e) {
+    console.error('Failed to load bank accounts:', e)
+  }
+})
+
+async function saveBankAccount(bankData) {
   if (editingBank.value) {
     // Update existing bank
     const index = bankAccounts.value.findIndex(b => b.id === editingBank.value.id)
@@ -69,7 +82,7 @@ function saveBankAccount(bankData) {
     bankAccounts.value.push(newBank)
   }
   
-  localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
+  await secureStorage.set('bankAccounts', JSON.stringify(bankAccounts.value))
   cancelBankEdit()
 }
 
@@ -78,18 +91,18 @@ function editBank(bank) {
   showAddBankModal.value = true
 }
 
-function deleteBank(bankId) {
+async function deleteBank(bankId) {
   if (confirm('Are you sure you want to delete this bank account?')) {
     bankAccounts.value = bankAccounts.value.filter(b => b.id !== bankId)
-    localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
+    await secureStorage.set('bankAccounts', JSON.stringify(bankAccounts.value))
   }
 }
 
-function setDefaultBank(bankId) {
+async function setDefaultBank(bankId) {
   bankAccounts.value.forEach(bank => {
     bank.isDefault = bank.id === bankId
   })
-  localStorage.setItem('bankAccounts', JSON.stringify(bankAccounts.value))
+  await secureStorage.set('bankAccounts', JSON.stringify(bankAccounts.value))
 }
 
 function cancelBankEdit() {

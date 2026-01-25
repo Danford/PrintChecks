@@ -84,11 +84,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { filterActiveChecks } from '@/utils/checkFilters'
+import { secureStorage } from '../services/secureStorage.ts'
 
 // Data from localStorage
-const vendors = ref(JSON.parse(localStorage.getItem('vendors') || '[]'))
-const paymentHistory = computed(() => JSON.parse(localStorage.getItem('checkList') || '[]'))
+const vendors = ref<any[]>([])
+const checkList = ref<any[]>([])
+
+// Load data from encrypted storage
+onMounted(async () => {
+  try {
+    const vendorsData = await secureStorage.get('vendors')
+    if (vendorsData) {
+      vendors.value = JSON.parse(vendorsData)
+    }
+    
+    const checksData = await secureStorage.get('checkList')
+    if (checksData) {
+      checkList.value = JSON.parse(checksData)
+    }
+  } catch (e) {
+    console.error('Failed to load analytics data:', e)
+  }
+})
+
+// Filter out voided checks from payment history
+const paymentHistory = computed(() => filterActiveChecks(checkList.value))
 
 // Enhanced Statistics
 const enhancedStats = computed(() => {
@@ -217,4 +239,3 @@ const topVendors = computed(() => {
   font-weight: 600;
 }
 </style>
-
