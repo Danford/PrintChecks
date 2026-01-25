@@ -966,7 +966,7 @@ const checkStyles = computed(() => {
     }
 })
 
-function printCheck () {
+async function printCheck () {
     // Validate check has required data before printing
     if (!check.payTo || !check.amount || check.amount <= 0) {
         alert('Cannot print: Check must have a payee and valid amount.')
@@ -975,7 +975,7 @@ function printCheck () {
     
     // Only save to history on first print
     if (!check.isPrinted) {
-        saveToHistory()
+        await saveToHistory()
         check.isPrinted = true
     }
     
@@ -1136,7 +1136,8 @@ async function saveToHistory () {
     // Create a copy of the check with line items
     const checkToSave = {
         ...check,
-        lineItems: currentLineItems.value // Include line items when saving
+        lineItems: currentLineItems.value, // Include line items when saving
+        isSaved: true // Ensure saved status is preserved
     }
     if (DEBUG_MODE.value) {
         console.log('Saving line items to history:', currentLineItems.value)
@@ -1419,8 +1420,8 @@ onMounted(async () => {
     }
     
     // Initialize stores
-    customizationStore.initializeCustomization()
-    historyStore.loadHistory()
+    await customizationStore.initializeCustomization()
+    await historyStore.loadHistory()
     
     // Auto-select default bank account if one exists
     const defaultBank = bankAccounts.value.find(bank => bank.isDefault)

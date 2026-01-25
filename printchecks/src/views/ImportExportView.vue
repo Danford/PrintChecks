@@ -311,10 +311,10 @@ async function onEncryptionToggle() {
     if (confirm('Are you sure you want to disable encryption? Your data will be decrypted and stored in plain text.')) {
       try {
         const password = sessionStorage.getItem('encryption_password')
+        const encryptionTest = localStorage.getItem('encryption_test') // Backup for error recovery
         
         // Set localStorage FIRST before reinitializing secureStorage
         localStorage.setItem('encryption_enabled', 'false')
-        localStorage.removeItem('encryption_test')
         
         if (password) {
           // Decrypt all data back to plain text
@@ -322,6 +322,8 @@ async function onEncryptionToggle() {
           await secureStorage.migrateToPlainText()
         }
         
+        // Only remove encryption_test after successful migration
+        localStorage.removeItem('encryption_test')
         sessionStorage.removeItem('encryption_password')
         alert('✓ Encryption disabled. Your data is now stored in plain text.')
         
@@ -330,8 +332,9 @@ async function onEncryptionToggle() {
       } catch (error) {
         console.error('Failed to disable encryption:', error)
         alert('⚠️ Failed to decrypt some data. Please try again or check the console for details.')
-        // Restore encryption state on error
+        // Restore encryption state on error (including encryption_test)
         localStorage.setItem('encryption_enabled', 'true')
+        // encryption_test was not removed yet, so no need to restore
         encryptionEnabled.value = true
         window.dispatchEvent(new CustomEvent('encryption-toggled', { detail: { enabled: true } }))
       }
@@ -493,6 +496,14 @@ async function importData() {
     // Validate that required fields are arrays
     if (!Array.isArray(importedData.checks) || !Array.isArray(importedData.receipts) || !Array.isArray(importedData.payments)) {
       throw new Error('Invalid import file format: checks, receipts, and payments must be arrays')
+    }
+    
+    // Validate optional fields are arrays if present
+    if (importedData.vendors && !Array.isArray(importedData.vendors)) {
+      throw new Error('Invalid import file format: vendors must be an array')
+    }
+    if (importedData.bankAccounts && !Array.isArray(importedData.bankAccounts)) {
+      throw new Error('Invalid import file format: bankAccounts must be an array')
     }
 
     // Replace all data using secureStorage
