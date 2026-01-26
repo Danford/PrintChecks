@@ -163,6 +163,9 @@ export class Receipt implements ReceiptData {
     }
     this.updatedAt = new Date()
     
+    // Initialize lineItems if not provided (prevents crash in calculateTotals)
+    this.lineItems = this.lineItems || []
+    
     // Calculate totals if not provided
     if (!this.totals) {
       this.calculateTotals()
