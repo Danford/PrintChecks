@@ -1,0 +1,21 @@
+{
+  "name": "printchecks-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "PrintChecks monorepo - Core library and integrations",
+  "scripts": {
+    "build": "pnpm --filter '@printchecks/*' run build",
+    "build:core": "pnpm --filter '@printchecks/core' run build",
+    "build:vue": "pnpm --filter '@printchecks/vue' run build",
+    "dev:core": "pnpm --filter '@printchecks/core' run dev",
+    "dev:vue": "pnpm --filter '@printchecks/vue' run dev",
+    "type-check": "pnpm --filter '@printchecks/*' run type-check"
+  },
+  "keywords": [
+    "printchecks",
+    "monorepo"
+  ],
+  "author": "Joshua Danford",
+  "license": "MIT",
+  "devDependencies": {}
+}

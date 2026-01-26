@@ -7,29 +7,29 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     },
     "./models": {
+      "types": "./dist/models/index.d.ts",
       "import": "./dist/models/index.mjs",
-      "require": "./dist/models/index.cjs",
-      "types": "./dist/models/index.d.ts"
+      "require": "./dist/models/index.cjs"
     },
     "./services": {
+      "types": "./dist/services/index.d.ts",
       "import": "./dist/services/index.mjs",
-      "require": "./dist/services/index.cjs",
-      "types": "./dist/services/index.d.ts"
+      "require": "./dist/services/index.cjs"
     },
     "./storage": {
+      "types": "./dist/storage/index.d.ts",
       "import": "./dist/storage/index.mjs",
-      "require": "./dist/storage/index.cjs",
-      "types": "./dist/storage/index.d.ts"
+      "require": "./dist/storage/index.cjs"
     },
     "./utils": {
+      "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils/index.mjs",
-      "require": "./dist/utils/index.cjs",
-      "types": "./dist/utils/index.d.ts"
+      "require": "./dist/utils/index.cjs"
     }
   },
   "files": [
