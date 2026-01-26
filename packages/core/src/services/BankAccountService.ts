@@ -124,13 +124,18 @@ export class BankAccountService {
       throw new Error(`Bank account with ID ${id} not found`)
     }
 
+    // Prevent ID overwrite vulnerability
+    const safeUpdates = { ...updates }
+    delete safeUpdates.id
+    delete safeUpdates.createdAt
+
     // If setting as default, unset other defaults first
-    if (updates.isDefault === true) {
+    if (safeUpdates.isDefault === true) {
       await this.clearDefaultAccounts(id)
     }
 
     // Apply updates
-    Object.assign(account, updates)
+    Object.assign(account, safeUpdates)
     account.updatedAt = new Date()
 
     // Validate

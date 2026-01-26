@@ -161,8 +161,13 @@ export class ReceiptService {
       throw new Error(`Receipt with ID ${id} not found`)
     }
 
+    // Prevent ID overwrite vulnerability
+    const safeUpdates = { ...updates }
+    delete safeUpdates.id
+    delete safeUpdates.createdAt
+
     // Apply updates
-    Object.assign(receipt, updates)
+    Object.assign(receipt, safeUpdates)
     receipt.updatedAt = new Date()
 
     // Recalculate totals if line items changed

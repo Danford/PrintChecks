@@ -176,8 +176,13 @@ export class CheckService {
       throw new Error(`Check with ID ${id} not found`)
     }
 
+    // Prevent ID overwrite vulnerability
+    const safeUpdates = { ...updates }
+    delete safeUpdates.id
+    delete safeUpdates.createdAt
+
     // Apply updates
-    Object.assign(check, updates)
+    Object.assign(check, safeUpdates)
     check.updatedAt = new Date()
 
     // Recalculate amount in words if amount changed
@@ -214,6 +219,16 @@ export class CheckService {
     const check = await this.getCheck(id)
     if (!check) {
       throw new Error(`Check with ID ${id} not found`)
+    }
+
+    // Prevent printing voided checks
+    if (check.isVoid) {
+      throw new Error('Cannot print a voided check')
+    }
+
+    // Validate check can be printed
+    if (!check.canBePrinted()) {
+      throw new Error('Check cannot be printed. Check may already be printed or invalid.')
     }
 
     check.markAsPrinted()
@@ -256,6 +271,13 @@ export class CheckService {
       : original.checkNumber)
 
     const duplicate = original.duplicate(checkNumber)
+    
+    // Validate duplicated check before saving
+    const validation = duplicate.validate()
+    if (!validation.isValid) {
+      throw new Error(`Duplicated check validation failed: ${validation.errors.join(', ')}`)
+    }
+    
     await this.saveCheck(duplicate)
 
     return duplicate

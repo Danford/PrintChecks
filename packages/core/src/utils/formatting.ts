@@ -120,8 +120,21 @@ export function amountToWords(amount: number | string, currency: Currency = 'USD
     return 'Zero Dollars'
   }
   
+  // Map currency codes to locale codes for proper conversion
+  const currencyLocaleMap: Record<Currency, string> = {
+    'USD': 'en-US',
+    'EUR': 'en-GB',
+    'GBP': 'en-GB',
+    'CAD': 'en-US',
+    'AUD': 'en-AU',
+    'JPY': 'ja-JP',
+    'CNY': 'zh-CN'
+  }
+  
+  const localeCode = currencyLocaleMap[currency] || 'en-US'
+  
   const toWords = new ToWords({
-    localeCode: 'en-US',
+    localeCode,
     converterOptions: {
       currency: true,
       ignoreDecimal: false,

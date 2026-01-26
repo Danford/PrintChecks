@@ -213,6 +213,17 @@ export async function verifyPassword(encryptedString: string, password: string):
  * Generate a random password
  */
 export function generatePassword(length: number = 16): string {
+  if (!isCryptoAvailable()) {
+    // Fallback to Math.random if crypto is not available
+    console.warn('Web Crypto API not available, using less secure Math.random() fallback')
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
+    let password = ''
+    for (let i = 0; i < length; i++) {
+      password += charset[Math.floor(Math.random() * charset.length)]
+    }
+    return password
+  }
+  
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
   const array = new Uint8Array(length)
   crypto.getRandomValues(array)

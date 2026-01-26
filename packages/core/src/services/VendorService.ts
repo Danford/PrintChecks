@@ -128,8 +128,13 @@ export class VendorService {
       throw new Error(`Vendor with ID ${id} not found`)
     }
 
+    // Prevent ID overwrite vulnerability
+    const safeUpdates = { ...updates }
+    delete safeUpdates.id
+    delete safeUpdates.createdAt
+
     // Apply updates
-    Object.assign(vendor, updates)
+    Object.assign(vendor, safeUpdates)
     vendor.updatedAt = new Date()
 
     // Validate

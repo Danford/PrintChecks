@@ -211,7 +211,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
   }
 
   /**
-   * Migrate data to encrypted format
+   * Migrate data to encrypted format with atomic rollback
    */
   async migrateToEncrypted(password: string): Promise<void> {
     if (!password) {
@@ -219,19 +219,22 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
     }
 
     const oldPassword = this.password
+    const oldEncryptionState = this.encryptionEnabled
     this.password = password
     this.encryptionEnabled = true
 
+    // Store backup data for rollback
+    const backup = new Map<string, any>()
     const migrationErrors: string[] = []
     const allKeys = await this.baseAdapter.keys()
 
-    for (const key of allKeys) {
-      // Skip metadata keys and non-sensitive keys
-      if (METADATA_KEYS.includes(key) || !this.shouldEncrypt(key)) {
-        continue
-      }
+    try {
+      // Phase 1: Backup and validate
+      for (const key of allKeys) {
+        if (METADATA_KEYS.includes(key) || !this.shouldEncrypt(key)) {
+          continue
+        }
 
-      try {
         const rawValue = await this.baseAdapter.get<any>(key)
         if (!rawValue) {
           continue
@@ -243,28 +246,44 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
           continue
         }
 
-        // Encrypt the data
-        const encrypted = await encrypt(rawValue, password)
-        await this.baseAdapter.set(key, encrypted)
-      } catch (error) {
-        migrationErrors.push(key)
-        console.error(`Failed to migrate key "${key}":`, error)
+        backup.set(key, rawValue)
       }
-    }
 
-    if (migrationErrors.length > 0) {
+      // Phase 2: Encrypt all data atomically
+      for (const [key, rawValue] of backup) {
+        try {
+          const encrypted = await encrypt(rawValue, password)
+          await this.baseAdapter.set(key, encrypted)
+        } catch (error) {
+          migrationErrors.push(key)
+          console.error(`Failed to migrate key "${key}":`, error)
+          throw error // Trigger rollback
+        }
+      }
+
+      // Phase 3: Mark migration as complete
+      await this.baseAdapter.set('encryption_enabled', 'true')
+      await this.baseAdapter.set('encryption_migration_complete', 'true')
+      await this.baseAdapter.set('encryption_test', await encrypt({ test: true }, password))
+    } catch (error) {
+      // Rollback on failure
       this.password = oldPassword
+      this.encryptionEnabled = oldEncryptionState
+      
+      // Restore backup data
+      for (const [key, value] of backup) {
+        try {
+          await this.baseAdapter.set(key, value)
+        } catch (restoreError) {
+          console.error(`Failed to restore key "${key}" during rollback:`, restoreError)
+        }
+      }
+      
       throw new EncryptionError(
-        `Migration failed for keys: ${migrationErrors.join(', ')}`
+        `Migration failed and rolled back. Failed keys: ${migrationErrors.join(', ')}`,
+        error as Error
       )
     }
-
-    // Mark migration as complete
-    await this.baseAdapter.set('encryption_enabled', 'true')
-    await this.baseAdapter.set('encryption_migration_complete', 'true')
-    
-    // Create test data for password verification
-    await this.baseAdapter.set('encryption_test', await encrypt({ test: true }, password))
   }
 
   /**

@@ -112,9 +112,13 @@ export class PrintChecksCore {
         autoMigrate: true
       })
       
-      // Initialize encryption
-      secureStorage.initialize(config.storageOptions.password).catch(error => {
+      // Initialize encryption synchronously to prevent race condition
+      // Services will need to wait for initialization before accessing storage
+      secureStorage.initialize(config.storageOptions.password).then(() => {
+        this.log('Encryption initialized successfully')
+      }).catch(error => {
         console.error('Failed to initialize encryption:', error)
+        throw new Error('Encryption initialization failed: ' + error.message)
       })
       
       return secureStorage

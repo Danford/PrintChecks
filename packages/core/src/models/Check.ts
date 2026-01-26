@@ -217,19 +217,20 @@ export class Check implements CheckData {
 
   /**
    * Duplicate check with new check number
+   * Preserves amount and payee to allow for duplicate payments
    */
   duplicate(newCheckNumber?: string): Check {
     const duplicateData = { ...this.toJSON() }
     
-    // Reset fields for new check
+    // Reset only metadata fields for new check
     delete duplicateData.id
     delete duplicateData.createdAt
     delete duplicateData.updatedAt
     duplicateData.checkNumber = newCheckNumber || this.checkNumber
     duplicateData.date = new Date().toLocaleDateString()
-    duplicateData.amount = '0.00'
-    duplicateData.payTo = ''
-    duplicateData.memo = ''
+    // Preserve amount and payee - user likely wants to duplicate a payment
+    // duplicateData.amount = '0.00'  // REMOVED
+    // duplicateData.payTo = ''  // REMOVED
     duplicateData.isPrinted = false
     duplicateData.printedAt = undefined
     duplicateData.isVoid = false
