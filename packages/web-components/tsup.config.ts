@@ -4,8 +4,7 @@ export default defineConfig({
   entry: {
     index: 'src/index.ts',
   },
-  format: ['esm', 'cjs', 'iife'],
-  globalName: 'PrintChecks',
+  format: ['esm', 'cjs'],
   dts: true,
   sourcemap: true,
   clean: true,
