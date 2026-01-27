@@ -36,6 +36,15 @@
   ],
   "author": "PrintChecks",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Danford/PrintChecks.git",
+    "directory": "packages/vue"
+  },
+  "homepage": "https://github.com/Danford/PrintChecks#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "vue": "^3.3.0"
   },

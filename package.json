@@ -9,7 +9,10 @@
     "build:vue": "pnpm --filter '@printchecks/vue' run build",
     "dev:core": "pnpm --filter '@printchecks/core' run dev",
     "dev:vue": "pnpm --filter '@printchecks/vue' run dev",
-    "type-check": "pnpm --filter '@printchecks/*' run type-check"
+    "type-check": "pnpm --filter '@printchecks/*' run type-check",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "publish": "changeset publish"
   },
   "keywords": [
     "printchecks",
@@ -17,5 +20,7 @@
   ],
   "author": "Joshua Danford",
   "license": "MIT",
-  "devDependencies": {}
+  "devDependencies": {
+    "@changesets/cli": "^2.29.8"
+  }
 }
