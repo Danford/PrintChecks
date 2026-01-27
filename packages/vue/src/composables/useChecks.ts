@@ -7,6 +7,7 @@ import { ref, computed, watch, type Ref } from 'vue'
 import { CheckService, type CheckFilters } from '@printchecks/core/services'
 import type { Check, CheckData } from '@printchecks/core/models'
 import type { StorageAdapter } from '@printchecks/core/storage'
+import { amountToWords } from '@printchecks/core/utils'
 
 export interface UseChecksOptions {
   storage: StorageAdapter
@@ -68,7 +69,6 @@ export function useChecks(options: UseChecksOptions): UseChecksReturn {
   const amountInWords = computed(() => {
     if (!currentCheck.value) return ''
     try {
-      const { amountToWords } = require('@printchecks/core/utils')
       const amount = typeof currentCheck.value.amount === 'string' 
         ? parseFloat(currentCheck.value.amount) 
         : currentCheck.value.amount
