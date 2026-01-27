@@ -9,7 +9,7 @@
     "build:vue": "pnpm --filter '@printchecks/vue' run build",
     "dev:core": "pnpm --filter '@printchecks/core' run dev",
     "dev:vue": "pnpm --filter '@printchecks/vue' run dev",
-    "type-check": "pnpm --filter '@printchecks/*' run type-check",
+    "type-check": "pnpm -r run type-check",
     "changeset": "changeset",
     "version": "changeset version",
     "publish": "changeset publish"
