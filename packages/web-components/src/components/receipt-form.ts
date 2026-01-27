@@ -28,7 +28,16 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
       this.loadReceipt(receiptId)
     } else {
       // Initialize with one empty line item
-      this.lineItems = [{ description: '', quantity: 1, unitPrice: 0 }]
+      this.lineItems = [{
+        description: '',
+        quantity: 1,
+        unitPrice: 0,
+        totalPrice: 0,
+        taxable: false,
+        taxRate: 0,
+        taxAmount: 0,
+        discountAmount: 0
+      }]
     }
   }
 
@@ -493,7 +502,16 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
   }
 
   private addLineItem(): void {
-    this.lineItems.push({ description: '', quantity: 1, unitPrice: 0 })
+    this.lineItems.push({
+      description: '',
+      quantity: 1,
+      unitPrice: 0,
+      totalPrice: 0,
+      taxable: false,
+      taxRate: 0,
+      taxAmount: 0,
+      discountAmount: 0
+    })
     this.render()
     this.attachEventListeners()
   }
@@ -579,7 +597,16 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
     }
     this.currentReceipt = null
     this.errorMessage = null
-    this.lineItems = [{ description: '', quantity: 1, unitPrice: 0 }]
+    this.lineItems = [{
+      description: '',
+      quantity: 1,
+      unitPrice: 0,
+      totalPrice: 0,
+      taxable: false,
+      taxRate: 0,
+      taxAmount: 0,
+      discountAmount: 0
+    }]
     this.render()
   }
 
