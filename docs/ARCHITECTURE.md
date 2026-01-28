@@ -62,18 +62,21 @@ PrintChecks is a **client-side single-page application (SPA)** that runs entirel
 ## 🛠️ Technology Stack
 
 ### Core Framework
+
 - **Vue.js 3.3.4** (Composition API)
   - Modern reactive framework
   - Composition API for better code organization
   - Script setup syntax for cleaner components
 
 ### Language
+
 - **TypeScript 5.0.4**
   - Static type checking
   - Enhanced IDE support
   - Better refactoring capabilities
 
 ### State Management
+
 - **Pinia 2.1.3**
   - Official Vue state management
   - Type-safe stores
@@ -81,12 +84,14 @@ PrintChecks is a **client-side single-page application (SPA)** that runs entirel
   - Modular store architecture
 
 ### Routing
+
 - **Vue Router 4.2.2**
   - Official Vue routing solution
   - Lazy-loaded routes
   - Named routes with type safety
 
 ### Build Tool
+
 - **Vite 4.3.9**
   - Lightning-fast HMR (Hot Module Replacement)
   - Optimized production builds
@@ -94,16 +99,19 @@ PrintChecks is a **client-side single-page application (SPA)** that runs entirel
   - Efficient code splitting
 
 ### UI Framework
+
 - **Bootstrap 5**
   - Responsive grid system
   - Pre-built components
   - Utility classes for rapid development
 
 ### Utilities
+
 - **to-words 4.1.0**: Currency to text conversion
 - **print-js 1.6.0**: Browser printing functionality
 
 ### Development Tools
+
 - **ESLint**: Code linting
 - **Prettier**: Code formatting
 - **vue-tsc**: TypeScript type checking for Vue
@@ -162,6 +170,7 @@ PrintChecks uses **five primary stores**:
 **Purpose**: Global application state and shared resources
 
 **State:**
+
 ```typescript
 {
   bankAccounts: BankAccount[];
@@ -172,6 +181,7 @@ PrintChecks uses **five primary stores**:
 ```
 
 **Key Actions:**
+
 - `addBankAccount(account: BankAccount)`
 - `updateBankAccount(id: string, updates: Partial<BankAccount>)`
 - `deleteBankAccount(id: string)`
@@ -184,15 +194,17 @@ PrintChecks uses **five primary stores**:
 **Purpose**: Check creation and printing logic
 
 **State:**
+
 ```typescript
 {
-  currentCheck: CheckData;
-  lastCheckNumber: Record<string, number>; // Per bank account
-  printSettings: PrintSettings;
+  currentCheck: CheckData
+  lastCheckNumber: Record<string, number> // Per bank account
+  printSettings: PrintSettings
 }
 ```
 
 **Key Actions:**
+
 - `createCheck(data: Partial<CheckData>)`
 - `updateCheckField(field: keyof CheckData, value: any)`
 - `printCheck()`
@@ -204,6 +216,7 @@ PrintChecks uses **five primary stores**:
 **Purpose**: Visual styling and personalization
 
 **State:**
+
 ```typescript
 {
   fonts: FontSettings;
@@ -216,6 +229,7 @@ PrintChecks uses **five primary stores**:
 ```
 
 **Key Actions:**
+
 - `updateFont(element: string, font: string)`
 - `updateColors(colors: Partial<ColorScheme>)`
 - `uploadLogo(file: File)`
@@ -228,6 +242,7 @@ PrintChecks uses **five primary stores**:
 **Purpose**: Receipt and line item management
 
 **State:**
+
 ```typescript
 {
   currentReceipt: ReceiptData;
@@ -238,6 +253,7 @@ PrintChecks uses **five primary stores**:
 ```
 
 **Key Actions:**
+
 - `addLineItem(item: LineItem)`
 - `updateLineItem(id: string, updates: Partial<LineItem>)`
 - `deleteLineItem(id: string)`
@@ -250,6 +266,7 @@ PrintChecks uses **five primary stores**:
 **Purpose**: Payment history tracking and analytics
 
 **State:**
+
 ```typescript
 {
   payments: Payment[];
@@ -260,6 +277,7 @@ PrintChecks uses **five primary stores**:
 ```
 
 **Key Actions:**
+
 - `addPayment(payment: Payment)`
 - `searchPayments(query: string): Payment[]`
 - `filterPayments(filters: HistoryFilters): Payment[]`
@@ -273,23 +291,25 @@ Stores can reference each other when needed:
 
 ```typescript
 // In check.ts store
-import { useHistoryStore } from './history';
-import { useAppStore } from './app';
+import { useHistoryStore } from './history'
+import { useAppStore } from './app'
 
 export const useCheckStore = defineStore('check', () => {
-  const historyStore = useHistoryStore();
-  const appStore = useAppStore();
-  
+  const historyStore = useHistoryStore()
+  const appStore = useAppStore()
+
   const printCheck = () => {
     // Create check...
-    const payment = { /* ... */ };
-    
+    const payment = {
+      /* ... */
+    }
+
     // Log to history
-    historyStore.addPayment(payment);
-  };
-  
-  return { printCheck };
-});
+    historyStore.addPayment(payment)
+  }
+
+  return { printCheck }
+})
 ```
 
 ---
@@ -325,18 +345,21 @@ App.vue
 ### Component Types
 
 #### 1. **View Components** (`views/`)
+
 - Page-level components
 - Route targets
 - Compose smaller components
 - Handle page-level logic
 
 #### 2. **Container Components**
+
 - Manage local state
 - Handle business logic
 - Pass data to presentational components
 - Example: `CheckPrinter.vue`
 
 #### 3. **Presentational Components**
+
 - Pure UI components
 - Receive data via props
 - Emit events for interactions
@@ -344,6 +367,7 @@ App.vue
 - Example: `StatisticsCard.vue`
 
 #### 4. **Modal Components**
+
 - Overlay UI for data entry
 - Self-contained forms
 - Emit save/cancel events
@@ -352,24 +376,24 @@ App.vue
 ### Component Communication
 
 **Parent → Child**: Props
+
 ```vue
 <CheckPrinter :bankAccount="currentAccount" :vendors="vendorList" />
 ```
 
 **Child → Parent**: Events
-```vue
-// Child
-emit('save', formData);
 
-// Parent
+```vue
+// Child emit('save', formData); // Parent
 <VendorModal @save="handleSave" @cancel="handleCancel" />
 ```
 
 **Store Access**: Any component can access stores
-```typescript
-import { useCheckStore } from '@/stores/check';
 
-const checkStore = useCheckStore();
+```typescript
+import { useCheckStore } from '@/stores/check'
+
+const checkStore = useCheckStore()
 ```
 
 ---
@@ -453,6 +477,7 @@ App Ready
 PrintChecks uses browser LocalStorage for data persistence:
 
 **Keys:**
+
 ```
 printchecks_bankAccounts    → JSON array of bank accounts
 printchecks_vendors         → JSON array of vendors
@@ -468,10 +493,10 @@ All data is stored as JSON strings:
 
 ```typescript
 // Write
-localStorage.setItem('printchecks_vendors', JSON.stringify(vendors));
+localStorage.setItem('printchecks_vendors', JSON.stringify(vendors))
 
 // Read
-const vendors = JSON.parse(localStorage.getItem('printchecks_vendors') || '[]');
+const vendors = JSON.parse(localStorage.getItem('printchecks_vendors') || '[]')
 ```
 
 ### Storage Limitations
@@ -486,18 +511,18 @@ For future schema changes:
 
 ```typescript
 interface StorageMetadata {
-  version: string;
-  lastUpdated: Date;
+  version: string
+  lastUpdated: Date
 }
 
-const CURRENT_VERSION = '1.0.0';
+const CURRENT_VERSION = '1.0.0'
 
 function migrateData(data: any, fromVersion: string): any {
   if (fromVersion === '1.0.0' && CURRENT_VERSION === '2.0.0') {
     // Perform migration
-    return migratedData;
+    return migratedData
   }
-  return data;
+  return data
 }
 ```
 
@@ -516,11 +541,13 @@ function migrateData(data: any, fromVersion: string): any {
 ### Data Protection
 
 **Client-Side Only:**
+
 - All data remains on user's computer
 - No transmission to external servers
 - No cloud backup (user's responsibility)
 
 **Browser Isolation:**
+
 - Data scoped to origin (same-origin policy)
 - Other websites cannot access PrintChecks data
 - Each browser maintains separate data
@@ -535,15 +562,18 @@ function migrateData(data: any, fromVersion: string): any {
 ### Potential Vulnerabilities
 
 **XSS (Cross-Site Scripting):**
+
 - Vue.js escapes user input by default
 - No `v-html` usage with untrusted data
 
 **LocalStorage Access:**
+
 - Accessible via browser DevTools
 - Accessible by any script on the same origin
 - Not encrypted by default
 
 **Mitigation:**
+
 - User education
 - Secure hosting recommendations
 - Open source for auditability
@@ -555,43 +585,50 @@ function migrateData(data: any, fromVersion: string): any {
 ### Optimization Strategies
 
 #### 1. **Code Splitting**
+
 ```typescript
 // Lazy-loaded routes
-const HistoryView = () => import('@/views/HistoryView.vue');
-const AnalyticsView = () => import('@/views/AnalyticsView.vue');
+const HistoryView = () => import('@/views/HistoryView.vue')
+const AnalyticsView = () => import('@/views/AnalyticsView.vue')
 ```
 
 #### 2. **Computed Properties**
+
 ```typescript
 const filteredPayments = computed(() => {
   return payments.value.filter(p => /* filter logic */);
 });
 ```
+
 - Cached until dependencies change
 - Avoids redundant calculations
 
 #### 3. **Virtual Scrolling**
+
 For large payment histories:
+
 ```typescript
 // Consider implementing virtual scrolling for 1000+ items
-import { useVirtualList } from '@vueuse/core';
+import { useVirtualList } from '@vueuse/core'
 ```
 
 #### 4. **Debounced Search**
+
 ```typescript
-import { debounce } from 'lodash-es';
+import { debounce } from 'lodash-es'
 
 const searchPayments = debounce((query: string) => {
   // Search logic
-}, 300);
+}, 300)
 ```
 
 #### 5. **Memoization**
+
 ```typescript
 const expensiveCalculation = computed(() => {
   // Cache result until dependencies change
-  return complexAnalytics(payments.value);
-});
+  return complexAnalytics(payments.value)
+})
 ```
 
 ### Bundle Size Optimization
@@ -617,42 +654,50 @@ Total:          ~230 KB (gzipped)
 ### Potential Features
 
 #### 1. **Data Import/Export**
+
 - CSV import for vendors
 - JSON export for full backup
 - Integration with accounting software
 
 #### 2. **Advanced Analytics**
+
 - Forecasting and predictions
 - Budget tracking
 - Spending categories
 - Visual dashboards
 
 #### 3. **Multi-Currency Support**
+
 - International check formats
 - Currency conversion
 - Localized number formatting
 
 #### 4. **Template System**
+
 - Multiple check templates
 - Custom layouts
 - Template marketplace
 
 #### 5. **Encryption** (Planned)
+
 - Optional client-side encryption
 - Password-protected data
 - Secure data storage options
 
 #### 6. **Cloud Sync (Optional)**
+
 - End-to-end encrypted sync
 - Multi-device support
 - Backup to cloud storage
 
 #### 7. **Mobile Support**
+
 - Progressive Web App (PWA)
 - Mobile-optimized UI
 - Touch-friendly interactions
 
 #### 8. **Batch Operations**
+
 - Print multiple checks
 - Bulk vendor imports
 - Mass updates
@@ -731,4 +776,4 @@ Total:          ~230 KB (gzipped)
 
 ---
 
-*Last updated: December 2024*
+_Last updated: December 2024_

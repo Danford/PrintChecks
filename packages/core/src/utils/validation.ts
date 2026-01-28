@@ -17,7 +17,7 @@ export function validateEmail(email: string): boolean {
  */
 export function validatePhone(phone: string): boolean {
   // Remove formatting characters
-  const cleaned = phone.replace(/[\s\-\(\)\.]/g, '')
+  const cleaned = phone.replace(/[\s().-]/g, '')
   // Accept 10-15 digits, optionally starting with +
   return /^\+?\d{10,15}$/.test(cleaned)
 }
@@ -32,15 +32,15 @@ export function validateRoutingNumber(routing: string): boolean {
   if (!/^\d{9}$/.test(routing)) {
     return false
   }
-  
+
   // Apply checksum algorithm
   const digits = routing.split('').map(Number)
-  const checksum = (
-    3 * (digits[0] + digits[3] + digits[6]) +
-    7 * (digits[1] + digits[4] + digits[7]) +
-    1 * (digits[2] + digits[5] + digits[8])
-  ) % 10
-  
+  const checksum =
+    (3 * (digits[0] + digits[3] + digits[6]) +
+      7 * (digits[1] + digits[4] + digits[7]) +
+      1 * (digits[2] + digits[5] + digits[8])) %
+    10
+
   return checksum === 0
 }
 
@@ -109,7 +109,7 @@ export function validateCheckNumber(checkNumber: string): boolean {
 /**
  * Validate required field
  */
-export function validateRequired(value: any): boolean {
+export function validateRequired(value: unknown): boolean {
   if (value === null || value === undefined) {
     return false
   }
@@ -128,21 +128,21 @@ export function validateLength(
   max?: number
 ): { isValid: boolean; error?: string } {
   const length = value.length
-  
+
   if (min !== undefined && length < min) {
     return {
       isValid: false,
-      error: `Must be at least ${min} characters`
+      error: `Must be at least ${min} characters`,
     }
   }
-  
+
   if (max !== undefined && length > max) {
     return {
       isValid: false,
-      error: `Must be no more than ${max} characters`
+      error: `Must be no more than ${max} characters`,
     }
   }
-  
+
   return { isValid: true }
 }
 
@@ -157,17 +157,17 @@ export function validateRange(
   if (min !== undefined && value < min) {
     return {
       isValid: false,
-      error: `Must be at least ${min}`
+      error: `Must be at least ${min}`,
     }
   }
-  
+
   if (max !== undefined && value > max) {
     return {
       isValid: false,
-      error: `Must be no more than ${max}`
+      error: `Must be no more than ${max}`,
     }
   }
-  
+
   return { isValid: true }
 }
 
@@ -185,7 +185,7 @@ export function validatePostalCode(postalCode: string, country: string = 'US'): 
       return /^[A-Z]{1,2}\d{1,2} ?\d[A-Z]{2}$/.test(postalCode)
     default:
       // Generic: alphanumeric with optional spaces/hyphens
-      return /^[A-Z0-9\s\-]{3,10}$/.test(postalCode)
+      return /^[A-Z0-9\s-]{3,10}$/.test(postalCode)
   }
 }
 
@@ -194,12 +194,62 @@ export function validatePostalCode(postalCode: string, country: string = 'US'): 
  */
 export function validateStateCode(state: string): boolean {
   const validStates = [
-    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
-    'DC', 'PR', 'VI', 'GU', 'AS', 'MP'
+    'AL',
+    'AK',
+    'AZ',
+    'AR',
+    'CA',
+    'CO',
+    'CT',
+    'DE',
+    'FL',
+    'GA',
+    'HI',
+    'ID',
+    'IL',
+    'IN',
+    'IA',
+    'KS',
+    'KY',
+    'LA',
+    'ME',
+    'MD',
+    'MA',
+    'MI',
+    'MN',
+    'MS',
+    'MO',
+    'MT',
+    'NE',
+    'NV',
+    'NH',
+    'NJ',
+    'NM',
+    'NY',
+    'NC',
+    'ND',
+    'OH',
+    'OK',
+    'OR',
+    'PA',
+    'RI',
+    'SC',
+    'SD',
+    'TN',
+    'TX',
+    'UT',
+    'VT',
+    'VA',
+    'WA',
+    'WV',
+    'WI',
+    'WY',
+    'DC',
+    'PR',
+    'VI',
+    'GU',
+    'AS',
+    'MP',
   ]
   return validStates.includes(state.toUpperCase())
 }
@@ -222,7 +272,7 @@ export function combineValidationResults(...results: ValidationResult[]): Valida
   const allErrors: string[] = []
   const allWarnings: string[] = []
   let isValid = true
-  
+
   for (const result of results) {
     if (!result.isValid) {
       isValid = false
@@ -232,10 +282,10 @@ export function combineValidationResults(...results: ValidationResult[]): Valida
       allWarnings.push(...result.warnings)
     }
   }
-  
+
   return {
     isValid,
     errors: allErrors,
-    warnings: allWarnings.length > 0 ? allWarnings : undefined
+    warnings: allWarnings.length > 0 ? allWarnings : undefined,
   }
 }

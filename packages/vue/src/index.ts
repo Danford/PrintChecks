@@ -16,13 +16,9 @@ export type {
   BankAccountData,
   Receipt,
   ReceiptData,
-  LineItemData
+  LineItemData,
 } from '@printchecks/core/models'
 
-export type {
-  StorageAdapter
-} from '@printchecks/core/storage'
+export type { StorageAdapter } from '@printchecks/core/storage'
 
-export type {
-  PrintChecksCoreConfig
-} from '@printchecks/core'
+export type { PrintChecksCoreConfig } from '@printchecks/core'

@@ -20,11 +20,7 @@ const SENSITIVE_KEYS = [
 ]
 
 // Metadata keys (not encrypted)
-const METADATA_KEYS = [
-  'encryption_enabled',
-  'encryption_test',
-  'encryption_migration_complete'
-]
+const METADATA_KEYS = ['encryption_enabled', 'encryption_test', 'encryption_migration_complete']
 
 class SecureStorage {
   private password: string | null = null
@@ -57,7 +53,7 @@ class SecureStorage {
   /**
    * Get data from localStorage, automatically decrypting if needed
    */
-  async get(key: string): Promise<any> {
+  async get(key: string): Promise<string | null> {
     try {
       const rawValue = localStorage.getItem(key)
       if (!rawValue) {
@@ -78,7 +74,7 @@ class SecureStorage {
 
         try {
           const decrypted = await decrypt(rawValue, this.password)
-          return decrypted
+          return typeof decrypted === 'string' ? decrypted : JSON.stringify(decrypted)
         } catch (error) {
           console.error('[SecureStorage] Decryption failed for key:', key, error)
           throw new Error(`Failed to decrypt ${key}. Wrong password or corrupted data.`)
@@ -96,11 +92,11 @@ class SecureStorage {
   /**
    * Set data in localStorage, automatically encrypting if needed
    */
-  async set(key: string, value: any): Promise<void> {
+  async set(key: string, value: unknown): Promise<void> {
     try {
       // Metadata keys are never encrypted
       if (METADATA_KEYS.includes(key)) {
-        localStorage.setItem(key, value)
+        localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value))
         return
       }
 
@@ -116,7 +112,7 @@ class SecureStorage {
         }
       } else {
         // Store as plain text
-        localStorage.setItem(key, value)
+        localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value))
       }
     } catch (error) {
       console.error('[SecureStorage] Error setting key:', key, error)
@@ -147,7 +143,7 @@ class SecureStorage {
     }
 
     console.log('[SecureStorage] Starting migration to encrypted storage...')
-    
+
     const migrationErrors: string[] = []
 
     for (const key of SENSITIVE_KEYS) {
@@ -193,7 +189,7 @@ class SecureStorage {
     }
 
     console.log('[SecureStorage] Starting migration to plain text storage...')
-    
+
     const migrationErrors: string[] = []
 
     for (const key of SENSITIVE_KEYS) {
@@ -236,7 +232,7 @@ class SecureStorage {
    */
   async reencryptWithNewPassword(oldPassword: string, newPassword: string): Promise<void> {
     console.log('[SecureStorage] Starting re-encryption with new password...')
-    
+
     const reencryptErrors: string[] = []
 
     for (const key of SENSITIVE_KEYS) {
@@ -254,7 +250,7 @@ class SecureStorage {
         // Decrypt with old password
         console.log(`[SecureStorage] Re-encrypting ${key}...`)
         const decrypted = await decrypt(rawValue, oldPassword)
-        
+
         // Encrypt with new password
         const encrypted = await encrypt(decrypted, newPassword)
         localStorage.setItem(key, encrypted)
@@ -278,7 +274,7 @@ class SecureStorage {
   needsMigration(): boolean {
     const encryptionEnabled = localStorage.getItem('encryption_enabled') === 'true'
     const migrationComplete = localStorage.getItem('encryption_migration_complete') === 'true'
-    
+
     if (!encryptionEnabled) {
       return false
     }
@@ -320,4 +316,3 @@ class SecureStorage {
 
 // Export singleton instance
 export const secureStorage = new SecureStorage()
-

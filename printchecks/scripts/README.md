@@ -11,6 +11,7 @@ npm run dev:clear
 ```
 
 This command will:
+
 1. Inject a script into `index.html` that clears localStorage on page load
 2. Start the Vite dev server normally
 3. Automatically cleanup when you stop the server (Ctrl+C)
@@ -39,4 +40,3 @@ For normal development without clearing history:
 ```bash
 npm run dev
 ```
-

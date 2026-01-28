@@ -19,11 +19,11 @@ export interface UseBankAccountsReturn {
   accounts: Ref<BankAccount[]>
   isLoading: Ref<boolean>
   error: Ref<string | null>
-  
+
   // Computed
   defaultAccount: Ref<BankAccount | null>
   accountCount: Ref<number>
-  
+
   // Actions
   createAccount: (data: BankAccountData) => Promise<BankAccount>
   updateAccount: (id: string, updates: Partial<BankAccountData>) => Promise<BankAccount>
@@ -39,27 +39,25 @@ export interface UseBankAccountsReturn {
  */
 export function useBankAccounts(options: UseBankAccountsOptions): UseBankAccountsReturn {
   const service = new BankAccountService({
-    storage: options.storage
+    storage: options.storage,
   })
-  
+
   // State
   const currentAccount = ref<BankAccount | null>(null)
   const accounts = ref<BankAccount[]>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
-  
+
   // Computed
-  const defaultAccount = computed(() => 
-    accounts.value.find(a => a.isDefault) || null
-  )
-  
+  const defaultAccount = computed(() => accounts.value.find((a) => a.isDefault) || null)
+
   const accountCount = computed(() => accounts.value.length)
-  
+
   // Actions
   async function createAccount(data: BankAccountData): Promise<BankAccount> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       const account = await service.createBankAccount(data)
       currentAccount.value = account
@@ -72,11 +70,14 @@ export function useBankAccounts(options: UseBankAccountsOptions): UseBankAccount
       isLoading.value = false
     }
   }
-  
-  async function updateAccount(id: string, updates: Partial<BankAccountData>): Promise<BankAccount> {
+
+  async function updateAccount(
+    id: string,
+    updates: Partial<BankAccountData>
+  ): Promise<BankAccount> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       const account = await service.updateBankAccount(id, updates)
       if (currentAccount.value?.id === id) {
@@ -91,11 +92,11 @@ export function useBankAccounts(options: UseBankAccountsOptions): UseBankAccount
       isLoading.value = false
     }
   }
-  
+
   async function deleteAccount(id: string): Promise<void> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       await service.deleteBankAccount(id)
       if (currentAccount.value?.id === id) {
@@ -109,11 +110,11 @@ export function useBankAccounts(options: UseBankAccountsOptions): UseBankAccount
       isLoading.value = false
     }
   }
-  
+
   async function loadAccount(id: string): Promise<void> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       const account = await service.getBankAccount(id)
       if (!account) {
@@ -127,11 +128,11 @@ export function useBankAccounts(options: UseBankAccountsOptions): UseBankAccount
       isLoading.value = false
     }
   }
-  
+
   async function loadAccounts(filters?: BankAccountFilters): Promise<void> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       accounts.value = await service.getBankAccounts(filters)
     } catch (e) {
@@ -141,11 +142,11 @@ export function useBankAccounts(options: UseBankAccountsOptions): UseBankAccount
       isLoading.value = false
     }
   }
-  
+
   async function setDefaultAccount(id: string): Promise<void> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       const account = await service.setDefaultBankAccount(id)
       if (currentAccount.value?.id === id) {
@@ -159,28 +160,28 @@ export function useBankAccounts(options: UseBankAccountsOptions): UseBankAccount
       isLoading.value = false
     }
   }
-  
+
   function clearCurrentAccount(): void {
     currentAccount.value = null
     error.value = null
   }
-  
+
   // Auto-load accounts if requested
   if (options.autoLoad) {
     loadAccounts()
   }
-  
+
   return {
     // State
     currentAccount: currentAccount as Ref<BankAccount | null>,
     accounts: accounts as Ref<BankAccount[]>,
     isLoading,
     error,
-    
+
     // Computed
     defaultAccount: defaultAccount as unknown as Ref<BankAccount | null>,
     accountCount,
-    
+
     // Actions
     createAccount,
     updateAccount,
@@ -188,6 +189,6 @@ export function useBankAccounts(options: UseBankAccountsOptions): UseBankAccount
     loadAccount,
     loadAccounts,
     setDefaultAccount,
-    clearCurrentAccount
+    clearCurrentAccount,
   }
 }

@@ -20,4 +20,4 @@ Thumbs.db
 npm-debug.log*
 
 # Lock files (optional - some prefer to commit these)
-pnpm-lock.yaml
+# pnpm-lock.yaml

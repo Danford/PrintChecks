@@ -20,7 +20,7 @@ import { PrintChecksCore } from '@printchecks/core'
 // Initialize the library
 const printChecks = new PrintChecksCore({
   autoIncrementCheckNumber: true,
-  defaultCurrency: 'USD'
+  defaultCurrency: 'USD',
 })
 
 // Create a check
@@ -35,10 +35,10 @@ const check = await printChecks.createCheck({
   bankAccountNumber: '9876543210',
   checkNumber: '1001',
   date: '12/25/2023',
-  amount: 500.00,
+  amount: 500.0,
   payTo: 'ACME Corporation',
   memo: 'Invoice #12345',
-  signature: 'John Doe'
+  signature: 'John Doe',
 })
 
 console.log(check.amountInWords) // "Five Hundred Dollars"
@@ -78,14 +78,16 @@ const core = new PrintChecksCore({
 
 ```typescript
 // Create a check
-const check = await core.createCheck({ /* CheckData */ })
+const check = await core.createCheck({
+  /* CheckData */
+})
 
 // Get checks
 const allChecks = await core.getChecks()
 const filtered = await core.getChecks({ status: 'printed', vendorId: '123' })
 
 // Update a check
-await core.updateCheck(checkId, { amount: 600.00 })
+await core.updateCheck(checkId, { amount: 600.0 })
 
 // Mark as printed
 await core.markCheckAsPrinted(checkId)
@@ -108,7 +110,7 @@ const vendor = await core.createVendor({
   state: 'IL',
   zip: '60601',
   email: 'billing@acme.com',
-  phone: '555-1234'
+  phone: '555-1234',
 })
 
 // Get vendors
@@ -130,7 +132,7 @@ const account = await core.createBankAccount({
   bankName: 'First National Bank',
   routingNumber: '123456789',
   accountNumber: '9876543210',
-  isDefault: true
+  isDefault: true,
 })
 
 // Get default account
@@ -149,32 +151,32 @@ const receipt = await core.createReceipt({
     address: '456 Business Ave',
     city: 'Chicago',
     state: 'IL',
-    zip: '60601'
+    zip: '60601',
   },
   lineItems: [
     {
       description: 'Product A',
       quantity: 2,
-      unitPrice: 150.00,
-      totalPrice: 300.00,
-      taxable: true
-    }
+      unitPrice: 150.0,
+      totalPrice: 300.0,
+      taxable: true,
+    },
   ],
   paymentInfo: {
     method: 'check',
     checkNumber: '1001',
-    amount: 300.00,
-    currency: 'USD'
-  }
+    amount: 300.0,
+    currency: 'USD',
+  },
 })
 
 // Add line item
 await core.addLineItem(receipt.id, {
   description: 'Product B',
   quantity: 1,
-  unitPrice: 200.00,
-  totalPrice: 200.00,
-  taxable: true
+  unitPrice: 200.0,
+  totalPrice: 200.0,
+  taxable: true,
 })
 ```
 
@@ -186,7 +188,7 @@ await core.addLineItem(receipt.id, {
 import { LocalStorageAdapter } from '@printchecks/core'
 
 const storage = new LocalStorageAdapter({
-  prefix: 'myapp_'
+  prefix: 'myapp_',
 })
 
 const core = new PrintChecksCore({ storage })
@@ -200,7 +202,7 @@ import { LocalStorageAdapter, SecureStorageAdapter } from '@printchecks/core'
 const baseStorage = new LocalStorageAdapter()
 const secureStorage = new SecureStorageAdapter(baseStorage, {
   encryption: true,
-  password: 'your-secure-password'
+  password: 'your-secure-password',
 })
 
 await secureStorage.initialize('your-secure-password')
@@ -216,14 +218,30 @@ Implement the `StorageAdapter` interface:
 import { StorageAdapter } from '@printchecks/core'
 
 class MyCustomStorage implements StorageAdapter {
-  async get<T>(key: string): Promise<T | null> { /* ... */ }
-  async set<T>(key: string, value: T): Promise<void> { /* ... */ }
-  async remove(key: string): Promise<void> { /* ... */ }
-  async clear(): Promise<void> { /* ... */ }
-  async keys(): Promise<string[]> { /* ... */ }
-  async has(key: string): Promise<boolean> { /* ... */ }
-  async getMany<T>(keys: string[]): Promise<Map<string, T | null>> { /* ... */ }
-  async setMany(entries: Map<string, any>): Promise<void> { /* ... */ }
+  async get<T>(key: string): Promise<T | null> {
+    /* ... */
+  }
+  async set<T>(key: string, value: T): Promise<void> {
+    /* ... */
+  }
+  async remove(key: string): Promise<void> {
+    /* ... */
+  }
+  async clear(): Promise<void> {
+    /* ... */
+  }
+  async keys(): Promise<string[]> {
+    /* ... */
+  }
+  async has(key: string): Promise<boolean> {
+    /* ... */
+  }
+  async getMany<T>(keys: string[]): Promise<Map<string, T | null>> {
+    /* ... */
+  }
+  async setMany(entries: Map<string, any>): Promise<void> {
+    /* ... */
+  }
 }
 ```
 
@@ -242,15 +260,11 @@ amountToWords(1234.56) // "One Thousand Two Hundred Thirty Four Dollars and Fift
 ### Validation
 
 ```typescript
-import { 
-  validateEmail, 
-  validateRoutingNumber,
-  validateAmount 
-} from '@printchecks/core'
+import { validateEmail, validateRoutingNumber, validateAmount } from '@printchecks/core'
 
 validateEmail('test@example.com') // true
 validateRoutingNumber('123456789') // true (with checksum validation)
-validateAmount(100.00) // true
+validateAmount(100.0) // true
 ```
 
 ## Data Export/Import

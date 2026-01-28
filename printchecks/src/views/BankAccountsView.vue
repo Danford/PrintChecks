@@ -14,18 +14,22 @@
           <div class="card-body">
             <h5 class="card-title">{{ bank.name }}</h5>
             <p class="card-text">
-              <strong>Account Holder:</strong> {{ bank.accountHolderName }}<br>
-              <strong>Address:</strong> {{ bank.accountHolderAddress }}, {{ bank.accountHolderCity }}, {{ bank.accountHolderState }} {{ bank.accountHolderZip }}<br>
-              <strong>Account:</strong> ****{{ bank.accountNumber.slice(-4) }}<br>
-              <strong>Routing:</strong> {{ bank.routingNumber }}<br>
-              <strong>Type:</strong> {{ bank.accountType }}<br>
-              <strong>Starting Check #:</strong> {{ bank.startingCheckNumber || '1001' }}<br>
+              <strong>Account Holder:</strong> {{ bank.accountHolderName }}<br />
+              <strong>Address:</strong> {{ bank.accountHolderAddress }},
+              {{ bank.accountHolderCity }}, {{ bank.accountHolderState }} {{ bank.accountHolderZip
+              }}<br />
+              <strong>Account:</strong> ****{{ bank.accountNumber.slice(-4) }}<br />
+              <strong>Routing:</strong> {{ bank.routingNumber }}<br />
+              <strong>Type:</strong> {{ bank.accountType }}<br />
+              <strong>Starting Check #:</strong> {{ bank.startingCheckNumber || '1001' }}<br />
               <strong>Signature:</strong> {{ bank.signature || 'Not set' }}
             </p>
             <div class="btn-group">
               <button class="btn btn-primary btn-sm" @click="editBank(bank)">Edit</button>
-              <button class="btn btn-outline-danger btn-sm" @click="deleteBank(bank.id)">Delete</button>
-              <button class="btn btn-outline-success btn-sm" @click="setDefaultBank(bank.id)">
+              <button class="btn btn-outline-danger btn-sm" @click="deleteBank(bank.id!)">
+                Delete
+              </button>
+              <button class="btn btn-outline-success btn-sm" @click="setDefaultBank(bank.id!)">
                 {{ bank.isDefault ? '✓ Default' : 'Set Default' }}
               </button>
             </div>
@@ -35,8 +39,8 @@
     </div>
 
     <!-- Add/Edit Bank Modal -->
-    <BankAccountModal 
-      v-model="showAddBankModal" 
+    <BankAccountModal
+      v-model="showAddBankModal"
       :editing-bank="editingBank"
       @save="saveBankAccount"
       @cancel="cancelBankEdit"
@@ -47,12 +51,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import BankAccountModal from '../components/BankAccountModal.vue'
-import { secureStorage } from '../services/secureStorage.ts'
+import { secureStorage } from '../services/secureStorage'
+import type { BankAccount } from '@/types'
 
 // Bank Account Management
-const bankAccounts = ref<any[]>([])
+const bankAccounts = ref<BankAccount[]>([])
 const showAddBankModal = ref(false)
-const editingBank = ref(null)
+const editingBank = ref<BankAccount | null>(null)
 
 // Load bank accounts from encrypted storage
 onMounted(async () => {
@@ -66,10 +71,10 @@ onMounted(async () => {
   }
 })
 
-async function saveBankAccount(bankData) {
+async function saveBankAccount(bankData: BankAccount) {
   if (editingBank.value) {
     // Update existing bank
-    const index = bankAccounts.value.findIndex(b => b.id === editingBank.value.id)
+    const index = bankAccounts.value.findIndex((b) => b.id === editingBank.value!.id)
     if (index !== -1) {
       bankAccounts.value[index] = { ...bankData }
     }
@@ -81,25 +86,25 @@ async function saveBankAccount(bankData) {
     }
     bankAccounts.value.push(newBank)
   }
-  
+
   await secureStorage.set('bankAccounts', JSON.stringify(bankAccounts.value))
   cancelBankEdit()
 }
 
-function editBank(bank) {
+function editBank(bank: BankAccount) {
   editingBank.value = bank
   showAddBankModal.value = true
 }
 
-async function deleteBank(bankId) {
+async function deleteBank(bankId: string) {
   if (confirm('Are you sure you want to delete this bank account?')) {
-    bankAccounts.value = bankAccounts.value.filter(b => b.id !== bankId)
+    bankAccounts.value = bankAccounts.value.filter((b) => b.id !== bankId)
     await secureStorage.set('bankAccounts', JSON.stringify(bankAccounts.value))
   }
 }
 
-async function setDefaultBank(bankId) {
-  bankAccounts.value.forEach(bank => {
+async function setDefaultBank(bankId: string) {
+  bankAccounts.value.forEach((bank) => {
     bank.isDefault = bank.id === bankId
   })
   await secureStorage.set('bankAccounts', JSON.stringify(bankAccounts.value))
@@ -114,7 +119,9 @@ function cancelBankEdit() {
 <style scoped>
 /* Bank card styling */
 .card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .card:hover {

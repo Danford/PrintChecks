@@ -19,11 +19,11 @@ export interface UseVendorsReturn {
   vendors: Ref<Vendor[]>
   isLoading: Ref<boolean>
   error: Ref<string | null>
-  
+
   // Computed
   favoriteVendors: Ref<Vendor[]>
   vendorCount: Ref<number>
-  
+
   // Actions
   createVendor: (data: VendorData) => Promise<Vendor>
   updateVendor: (id: string, updates: Partial<VendorData>) => Promise<Vendor>
@@ -42,27 +42,25 @@ export interface UseVendorsReturn {
  */
 export function useVendors(options: UseVendorsOptions): UseVendorsReturn {
   const service = new VendorService({
-    storage: options.storage
+    storage: options.storage,
   })
-  
+
   // State
   const currentVendor = ref<Vendor | null>(null)
   const vendors = ref<Vendor[]>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
-  
+
   // Computed
-  const favoriteVendors = computed(() => 
-    vendors.value.filter(v => v.isFavorite)
-  )
-  
+  const favoriteVendors = computed(() => vendors.value.filter((v) => v.isFavorite))
+
   const vendorCount = computed(() => vendors.value.length)
-  
+
   // Actions
   async function createVendor(data: VendorData): Promise<Vendor> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       const vendor = await service.createVendor(data)
       currentVendor.value = vendor
@@ -75,11 +73,11 @@ export function useVendors(options: UseVendorsOptions): UseVendorsReturn {
       isLoading.value = false
     }
   }
-  
+
   async function updateVendor(id: string, updates: Partial<VendorData>): Promise<Vendor> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       const vendor = await service.updateVendor(id, updates)
       if (currentVendor.value?.id === id) {
@@ -94,11 +92,11 @@ export function useVendors(options: UseVendorsOptions): UseVendorsReturn {
       isLoading.value = false
     }
   }
-  
+
   async function deleteVendor(id: string): Promise<void> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       await service.deleteVendor(id)
       if (currentVendor.value?.id === id) {
@@ -112,11 +110,11 @@ export function useVendors(options: UseVendorsOptions): UseVendorsReturn {
       isLoading.value = false
     }
   }
-  
+
   async function loadVendor(id: string): Promise<void> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       const vendor = await service.getVendor(id)
       if (!vendor) {
@@ -130,11 +128,11 @@ export function useVendors(options: UseVendorsOptions): UseVendorsReturn {
       isLoading.value = false
     }
   }
-  
+
   async function loadVendors(filters?: VendorFilters): Promise<void> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       vendors.value = await service.getVendors(filters)
     } catch (e) {
@@ -144,11 +142,11 @@ export function useVendors(options: UseVendorsOptions): UseVendorsReturn {
       isLoading.value = false
     }
   }
-  
+
   async function searchVendors(searchTerm: string): Promise<Vendor[]> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       return await service.searchVendors(searchTerm)
     } catch (e) {
@@ -158,11 +156,11 @@ export function useVendors(options: UseVendorsOptions): UseVendorsReturn {
       isLoading.value = false
     }
   }
-  
+
   async function toggleFavorite(id: string): Promise<void> {
     isLoading.value = true
     error.value = null
-    
+
     try {
       const vendor = await service.toggleFavorite(id)
       if (currentVendor.value?.id === id) {
@@ -176,44 +174,44 @@ export function useVendors(options: UseVendorsOptions): UseVendorsReturn {
       isLoading.value = false
     }
   }
-  
+
   async function addTag(id: string, tag: string): Promise<void> {
     const vendor = await service.getVendor(id)
     if (!vendor) throw new Error('Vendor not found')
-    
+
     vendor.addTag(tag)
     await updateVendor(id, { tags: vendor.tags })
   }
-  
+
   async function removeTag(id: string, tag: string): Promise<void> {
     const vendor = await service.getVendor(id)
     if (!vendor) throw new Error('Vendor not found')
-    
+
     vendor.removeTag(tag)
     await updateVendor(id, { tags: vendor.tags })
   }
-  
+
   function clearCurrentVendor(): void {
     currentVendor.value = null
     error.value = null
   }
-  
+
   // Auto-load vendors if requested
   if (options.autoLoad) {
     loadVendors()
   }
-  
+
   return {
     // State
     currentVendor: currentVendor as Ref<Vendor | null>,
     vendors: vendors as Ref<Vendor[]>,
     isLoading,
     error,
-    
+
     // Computed
     favoriteVendors: favoriteVendors as unknown as Ref<Vendor[]>,
     vendorCount,
-    
+
     // Actions
     createVendor,
     updateVendor,
@@ -224,6 +222,6 @@ export function useVendors(options: UseVendorsOptions): UseVendorsReturn {
     toggleFavorite,
     addTag,
     removeTag,
-    clearCurrentVendor
+    clearCurrentVendor,
   }
 }

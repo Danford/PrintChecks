@@ -18,22 +18,18 @@ const DEFAULT_SENSITIVE_KEYS = [
   'templates',
   'customization',
   'presets',
-  'settings'
+  'settings',
 ]
 
 // Metadata keys (never encrypted)
-const METADATA_KEYS = [
-  'encryption_enabled',
-  'encryption_test',
-  'encryption_migration_complete'
-]
+const METADATA_KEYS = ['encryption_enabled', 'encryption_test', 'encryption_migration_complete']
 
 export interface SecureStorageOptions extends StorageOptions {
   /**
    * List of keys that should be encrypted (default: common sensitive data keys)
    */
   sensitiveKeys?: string[]
-  
+
   /**
    * Whether to automatically migrate plain text data to encrypted format
    */
@@ -66,7 +62,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
     }
 
     this.password = password
-    
+
     // Check if encryption is enabled in storage
     const encryptionFlag = await this.baseAdapter.get<string>('encryption_enabled')
     this.encryptionEnabled = encryptionFlag === 'true'
@@ -97,16 +93,16 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
   /**
    * Get a value from storage, automatically decrypting if needed
    */
-  async get<T = any>(key: string): Promise<T | null> {
+  async get<T = unknown>(key: string): Promise<T | null> {
     try {
-      const rawValue = await this.baseAdapter.get<any>(key)
+      const rawValue = await this.baseAdapter.get<unknown>(key)
       if (rawValue === null) {
         return null
       }
 
       // Metadata keys are never encrypted
       if (METADATA_KEYS.includes(key)) {
-        return rawValue
+        return rawValue as T
       }
 
       // Check if the data is encrypted
@@ -133,17 +129,14 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
       if (error instanceof EncryptionError) {
         throw error
       }
-      throw new StorageError(
-        `Failed to get key "${key}"`,
-        error as Error
-      )
+      throw new StorageError(`Failed to get key "${key}"`, error as Error)
     }
   }
 
   /**
    * Set a value in storage, automatically encrypting if needed
    */
-  async set<T = any>(key: string, value: T): Promise<void> {
+  async set<T = unknown>(key: string, value: T): Promise<void> {
     try {
       // Metadata keys are never encrypted
       if (METADATA_KEYS.includes(key)) {
@@ -157,10 +150,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
           const encrypted = await encrypt(value, this.password)
           await this.baseAdapter.set(key, encrypted)
         } catch (error) {
-          throw new EncryptionError(
-            `Failed to encrypt key "${key}"`,
-            error as Error
-          )
+          throw new EncryptionError(`Failed to encrypt key "${key}"`, error as Error)
         }
       } else {
         // Store as plain value
@@ -170,10 +160,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
       if (error instanceof EncryptionError) {
         throw error
       }
-      throw new StorageError(
-        `Failed to set key "${key}"`,
-        error as Error
-      )
+      throw new StorageError(`Failed to set key "${key}"`, error as Error)
     }
   }
 
@@ -193,18 +180,18 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
     return this.baseAdapter.has(key)
   }
 
-  async getMany<T = any>(keys: string[]): Promise<Map<string, T | null>> {
+  async getMany<T = unknown>(keys: string[]): Promise<Map<string, T | null>> {
     const results = new Map<string, T | null>()
-    
+
     for (const key of keys) {
       const value = await this.get<T>(key)
       results.set(key, value)
     }
-    
+
     return results
   }
 
-  async setMany(entries: Map<string, any>): Promise<void> {
+  async setMany(entries: Map<string, unknown>): Promise<void> {
     for (const [key, value] of entries) {
       await this.set(key, value)
     }
@@ -224,7 +211,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
     this.encryptionEnabled = true
 
     // Store backup data for rollback
-    const backup = new Map<string, any>()
+    const backup = new Map<string, unknown>()
     const migrationErrors: string[] = []
     const allKeys = await this.baseAdapter.keys()
 
@@ -235,7 +222,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
           continue
         }
 
-        const rawValue = await this.baseAdapter.get<any>(key)
+        const rawValue = await this.baseAdapter.get<unknown>(key)
         if (!rawValue) {
           continue
         }
@@ -269,7 +256,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
       // Rollback on failure
       this.password = oldPassword
       this.encryptionEnabled = oldEncryptionState
-      
+
       // Restore backup data
       for (const [key, value] of backup) {
         try {
@@ -278,7 +265,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
           console.error(`Failed to restore key "${key}" during rollback:`, restoreError)
         }
       }
-      
+
       throw new EncryptionError(
         `Migration failed and rolled back. Failed keys: ${migrationErrors.join(', ')}`,
         error as Error
@@ -304,7 +291,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
       }
 
       try {
-        const rawValue = await this.baseAdapter.get<any>(key)
+        const rawValue = await this.baseAdapter.get<unknown>(key)
         if (!rawValue) {
           continue
         }
@@ -325,9 +312,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
     }
 
     if (migrationErrors.length > 0) {
-      throw new EncryptionError(
-        `Migration failed for keys: ${migrationErrors.join(', ')}`
-      )
+      throw new EncryptionError(`Migration failed for keys: ${migrationErrors.join(', ')}`)
     }
 
     // Clear encryption flags
@@ -356,7 +341,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
       }
 
       try {
-        const rawValue = await this.baseAdapter.get<any>(key)
+        const rawValue = await this.baseAdapter.get<unknown>(key)
         if (!rawValue) {
           continue
         }
@@ -369,7 +354,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
 
         // Decrypt with old password
         const decrypted = await decrypt(rawString, oldPassword)
-        
+
         // Encrypt with new password
         const encrypted = await encrypt(decrypted, newPassword)
         await this.baseAdapter.set(key, encrypted)
@@ -380,9 +365,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
     }
 
     if (reencryptErrors.length > 0) {
-      throw new EncryptionError(
-        `Re-encryption failed for keys: ${reencryptErrors.join(', ')}`
-      )
+      throw new EncryptionError(`Re-encryption failed for keys: ${reencryptErrors.join(', ')}`)
     }
 
     // Update password and test data
@@ -395,14 +378,14 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
    */
   private async needsMigration(): Promise<boolean> {
     const migrationComplete = await this.baseAdapter.get<string>('encryption_migration_complete')
-    
+
     if (migrationComplete === 'true') {
       return false
     }
 
     // Check if any sensitive keys exist in plain text
     for (const key of this.sensitiveKeys) {
-      const rawValue = await this.baseAdapter.get<any>(key)
+      const rawValue = await this.baseAdapter.get<unknown>(key)
       if (rawValue) {
         const rawString = typeof rawValue === 'string' ? rawValue : JSON.stringify(rawValue)
         if (!isEncrypted(rawString)) {
@@ -426,7 +409,7 @@ export class SecureStorageAdapter implements EncryptedStorageAdapter {
 
     for (const key of allKeys) {
       if (this.shouldEncrypt(key)) {
-        const rawValue = await this.baseAdapter.get<any>(key)
+        const rawValue = await this.baseAdapter.get<unknown>(key)
         if (rawValue) {
           total++
           const rawString = typeof rawValue === 'string' ? rawValue : JSON.stringify(rawValue)

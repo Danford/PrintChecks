@@ -11,18 +11,24 @@ const currencyFormatters = new Map<string, Intl.NumberFormat>()
 /**
  * Get or create a currency formatter for a locale and currency
  */
-function getCurrencyFormatter(currency: Currency = 'USD', locale: string = 'en-US'): Intl.NumberFormat {
+function getCurrencyFormatter(
+  currency: Currency = 'USD',
+  locale: string = 'en-US'
+): Intl.NumberFormat {
   const key = `${locale}-${currency}`
-  
+
   if (!currencyFormatters.has(key)) {
-    currencyFormatters.set(key, new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }))
+    currencyFormatters.set(
+      key,
+      new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    )
   }
-  
+
   return currencyFormatters.get(key)!
 }
 
@@ -35,11 +41,11 @@ export function formatCurrency(
   locale: string = 'en-US'
 ): string {
   const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount
-  
+
   if (isNaN(numericAmount)) {
     return '$0.00'
   }
-  
+
   const formatter = getCurrencyFormatter(currency, locale)
   return formatter.format(numericAmount)
 }
@@ -47,13 +53,16 @@ export function formatCurrency(
 /**
  * Format a date
  */
-export function formatDate(date: string | Date, format: 'short' | 'long' | 'iso' = 'short'): string {
+export function formatDate(
+  date: string | Date,
+  format: 'short' | 'long' | 'iso' = 'short'
+): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date
-  
+
   if (isNaN(dateObj.getTime())) {
     return ''
   }
-  
+
   switch (format) {
     case 'short':
       return dateObj.toLocaleDateString('en-US')
@@ -61,7 +70,7 @@ export function formatDate(date: string | Date, format: 'short' | 'long' | 'iso'
       return dateObj.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
       })
     case 'iso':
       return dateObj.toISOString().split('T')[0]
@@ -76,7 +85,7 @@ export function formatDate(date: string | Date, format: 'short' | 'long' | 'iso'
 export function formatPhoneNumber(phone: string, format: 'us' | 'international' = 'us'): string {
   // Remove all non-numeric characters
   const cleaned = phone.replace(/\D/g, '')
-  
+
   if (format === 'us') {
     // US format: (555) 123-4567
     if (cleaned.length === 10) {
@@ -85,7 +94,7 @@ export function formatPhoneNumber(phone: string, format: 'us' | 'international' 
       return `+1 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`
     }
   }
-  
+
   return phone // Return original if format doesn't match
 }
 
@@ -115,34 +124,34 @@ export function formatAccountNumber(accountNumber: string, maskChar: string = '*
  */
 export function amountToWords(amount: number | string, currency: Currency = 'USD'): string {
   const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount
-  
+
   if (isNaN(numericAmount)) {
     return 'Zero Dollars'
   }
-  
+
   // Map currency codes to locale codes for proper conversion
   const currencyLocaleMap: Record<Currency, string> = {
-    'USD': 'en-US',
-    'EUR': 'en-GB',
-    'GBP': 'en-GB',
-    'CAD': 'en-US',
-    'AUD': 'en-AU',
-    'JPY': 'ja-JP',
-    'CNY': 'zh-CN'
+    USD: 'en-US',
+    EUR: 'en-GB',
+    GBP: 'en-GB',
+    CAD: 'en-US',
+    AUD: 'en-AU',
+    JPY: 'ja-JP',
+    CNY: 'zh-CN',
   }
-  
+
   const localeCode = currencyLocaleMap[currency] || 'en-US'
-  
+
   const toWords = new ToWords({
     localeCode,
     converterOptions: {
       currency: true,
       ignoreDecimal: false,
       ignoreZeroCurrency: false,
-      doNotAddOnly: true
-    }
+      doNotAddOnly: true,
+    },
   })
-  
+
   try {
     return toWords.convert(numericAmount)
   } catch (error) {
@@ -161,14 +170,10 @@ export function formatAddress(address: {
   zip?: string
   country?: string
 }): string {
-  const parts = [
-    address.street,
-    address.city,
-    address.state,
-    address.zip,
-    address.country
-  ].filter(Boolean)
-  
+  const parts = [address.street, address.city, address.state, address.zip, address.country].filter(
+    Boolean
+  )
+
   return parts.join(', ')
 }
 
@@ -183,23 +188,21 @@ export function formatAddressMultiline(address: {
   country?: string
 }): string[] {
   const lines: string[] = []
-  
+
   if (address.street) {
     lines.push(address.street)
   }
-  
-  const cityStateZip = [address.city, address.state, address.zip]
-    .filter(Boolean)
-    .join(', ')
-  
+
+  const cityStateZip = [address.city, address.state, address.zip].filter(Boolean).join(', ')
+
   if (cityStateZip) {
     lines.push(cityStateZip)
   }
-  
+
   if (address.country) {
     lines.push(address.country)
   }
-  
+
   return lines
 }
 
@@ -217,7 +220,7 @@ export function truncate(text: string, maxLength: number, suffix: string = '...'
  * Capitalize first letter of each word
  */
 export function titleCase(text: string): string {
-  return text.replace(/\b\w/g, char => char.toUpperCase())
+  return text.replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
 /**

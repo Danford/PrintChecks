@@ -11,7 +11,7 @@ import type { CheckData, PaymentRecord } from '@/types'
  * @returns Array of active (non-voided) checks
  */
 export function filterActiveChecks(checks: CheckData[]): CheckData[] {
-  return checks.filter(check => !check.isVoid)
+  return checks.filter((check) => !check.isVoid)
 }
 
 /**
@@ -37,4 +37,3 @@ export function filterActivePaymentData(checks: CheckData[], payments: PaymentRe
     payments: filterActivePayments(payments)
   }
 }
-
