@@ -55,6 +55,7 @@ export interface PrintChecksCoreConfig {
 export class PrintChecksCore {
   private storage: StorageAdapter
   private debug: boolean
+  private initializationPromise: Promise<void> | null = null
   
   // Services
   public checks: CheckService
@@ -108,23 +109,35 @@ export class PrintChecksCore {
     if (config.storageOptions?.encryption && config.storageOptions?.password) {
       const secureStorage = new SecureStorageAdapter(baseStorage, {
         encryption: true,
-        password: config.storageOptions.password,
         autoMigrate: true
       })
       
-      // Initialize encryption synchronously to prevent race condition
-      // Services will need to wait for initialization before accessing storage
-      secureStorage.initialize(config.storageOptions.password).then(() => {
-        this.log('Encryption initialized successfully')
-      }).catch(error => {
-        console.error('Failed to initialize encryption:', error)
-        throw new Error('Encryption initialization failed: ' + error.message)
-      })
+      // Store initialization promise to prevent race condition
+      // Services should await waitForInitialization() before accessing storage
+      this.initializationPromise = secureStorage.initialize(config.storageOptions.password)
+        .then(() => {
+          this.log('Encryption initialized successfully')
+        })
+        .catch(error => {
+          console.error('Failed to initialize encryption:', error)
+          throw new Error('Encryption initialization failed: ' + error.message)
+        })
       
       return secureStorage
     }
     
     return baseStorage
+  }
+
+  /**
+   * Wait for storage initialization to complete (required when using encryption)
+   * Call this method after constructing PrintChecksCore with encryption enabled
+   * before performing any storage operations.
+   */
+  async waitForInitialization(): Promise<void> {
+    if (this.initializationPromise) {
+      await this.initializationPromise
+    }
   }
 
   // ===================

@@ -323,18 +323,6 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
     const taxId = formData.get('taxId') as string
     if (taxId) data.taxId = taxId
     
-    const address = formData.get('address') as string
-    if (address) data.address = address
-    
-    const city = formData.get('city') as string
-    if (city) data.city = city
-    
-    const state = formData.get('state') as string
-    if (state) data.state = state
-    
-    const zip = formData.get('zip') as string
-    if (zip) data.zip = zip
-    
     const notes = formData.get('notes') as string
     if (notes) data.notes = notes
     

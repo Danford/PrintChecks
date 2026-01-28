@@ -24,6 +24,9 @@ export function validatePhone(phone: string): boolean {
 
 /**
  * Validate US routing number (9 digits)
+ * Note: This validates the format and checksum only, not whether the routing
+ * number corresponds to an actual valid US bank. Use a banking API for full
+ * validation of routing numbers against actual bank records.
  */
 export function validateRoutingNumber(routing: string): boolean {
   if (!/^\d{9}$/.test(routing)) {
