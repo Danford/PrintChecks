@@ -494,7 +494,8 @@ const dynamicTextPositions = computed(() => {
   return positions
 })
 
-const checkStyles = computed(() => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const checkStyles = computed<Record<string, any>>(() => {
   if (!props.settings || !props.settings.fonts) return {}
 
   const fonts = props.settings.fonts

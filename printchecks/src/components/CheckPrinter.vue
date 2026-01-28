@@ -118,7 +118,7 @@
               <input
                 type="number"
                 class="form-control"
-                v-model.number="newLineItem.rate"
+                v-model.number="newLineItem.unitPrice"
                 min="0"
                 step="0.01"
               />
@@ -128,7 +128,7 @@
               <input
                 type="text"
                 class="form-control"
-                :value="'$' + (newLineItem.quantity * newLineItem.rate).toFixed(2)"
+                :value="'$' + (newLineItem.quantity * newLineItem.unitPrice).toFixed(2)"
                 readonly
                 style="background: #e9ecef"
               />
@@ -139,7 +139,7 @@
                 class="btn btn-primary w-100"
                 @click="addLineItem"
                 :disabled="
-                  !newLineItem.description || newLineItem.quantity <= 0 || newLineItem.rate <= 0
+                  !newLineItem.description || newLineItem.quantity <= 0 || newLineItem.unitPrice <= 0
                 "
               >
                 ✓
@@ -164,8 +164,8 @@
               <tr v-for="(item, index) in currentLineItems" :key="item.id">
                 <td>{{ item.description }}</td>
                 <td class="text-center">{{ item.quantity }}</td>
-                <td class="text-end">${{ item.rate.toFixed(2) }}</td>
-                <td class="text-end">${{ (item.quantity * item.rate).toFixed(2) }}</td>
+                <td class="text-end">${{ item.unitPrice.toFixed(2) }}</td>
+                <td class="text-end">${{ (item.quantity * item.unitPrice).toFixed(2) }}</td>
                 <td class="text-center">
                   <button
                     type="button"
@@ -626,9 +626,9 @@
               >
                 <td style="padding: 10px 12px">{{ item.description }}</td>
                 <td style="text-align: center; padding: 10px 12px">{{ item.quantity }}</td>
-                <td style="text-align: right; padding: 10px 12px">${{ item.rate.toFixed(2) }}</td>
+                <td style="text-align: right; padding: 10px 12px">${{ item.unitPrice.toFixed(2) }}</td>
                 <td style="text-align: right; padding: 10px 12px">
-                  ${{ (item.quantity * item.rate).toFixed(2) }}
+                  ${{ (item.quantity * item.unitPrice).toFixed(2) }}
                 </td>
               </tr>
               <tr v-if="currentLineItems.length === 0">
@@ -931,7 +931,8 @@ import type { RouteLocationRaw } from 'vue-router'
 import BankAccountModal from './BankAccountModal.vue'
 import VendorModal from './VendorModal.vue'
 import { secureStorage } from '../services/secureStorage'
-import type { Vendor, BankAccount, PaymentRecord } from '@/types'
+import type { Vendor, BankAccount, PaymentRecord, FontSettings, LineItem } from '@/types'
+
 
 const state = useAppStore()
 const customizationStore = useCustomizationStore()
@@ -1037,27 +1038,28 @@ const showVendorModal = ref(false)
 
 // Line Items Management
 const showLineItemForm = ref(false)
-const currentLineItems = ref<{ id: number; description: string; quantity: number; rate: number }[]>([])
+const currentLineItems = ref<LineItem[]>([])
 const newLineItem = reactive({
   description: '',
   quantity: 1,
-  rate: 0
+  unitPrice: 0
 })
 
 // Computed line items total
 const lineItemsTotal = computed(() => {
-  return currentLineItems.value.reduce((sum, item) => sum + item.quantity * item.rate, 0)
+  return currentLineItems.value.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
 })
 
-// Add line item
 function addLineItem() {
-  if (!newLineItem.description || newLineItem.quantity <= 0 || newLineItem.rate <= 0) return
+  if (!newLineItem.description || newLineItem.quantity <= 0 || newLineItem.unitPrice <= 0) return
 
-  const item = {
-    id: Date.now(),
+  const item: LineItem = {
+    id: String(Date.now()),
     description: newLineItem.description,
     quantity: newLineItem.quantity,
-    rate: newLineItem.rate
+    unitPrice: newLineItem.unitPrice,
+    totalPrice: newLineItem.quantity * newLineItem.unitPrice,
+    taxable: false
   }
 
   currentLineItems.value.push(item)
@@ -1065,7 +1067,7 @@ function addLineItem() {
   // Reset form
   newLineItem.description = ''
   newLineItem.quantity = 1
-  newLineItem.rate = 0
+  newLineItem.unitPrice = 0
 }
 
 // Remove line item
@@ -1372,7 +1374,8 @@ const enhancedPaymentStats = computed(() => {
 })
 
 // Dynamic styles based on customization
-const checkStyles = computed(() => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const checkStyles = computed<Record<string, any>>(() => {
   if (!currentSettings.value || !currentSettings.value.fonts) return {}
 
   const settings = currentSettings.value

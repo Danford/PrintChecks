@@ -58,7 +58,7 @@ export async function encrypt(data: unknown, password: string): Promise<string> 
 
     // Convert data to string and then to array buffer
     const encoder = new TextEncoder()
-    const dataString = JSON.stringify(data)
+    const dataString = typeof data === 'string' ? data : JSON.stringify(data)
     const dataBuffer = encoder.encode(dataString)
 
     // Encrypt the data

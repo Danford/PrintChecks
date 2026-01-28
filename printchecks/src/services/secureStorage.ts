@@ -53,7 +53,7 @@ class SecureStorage {
   /**
    * Get data from localStorage, automatically decrypting if needed
    */
-  async get(key: string): Promise<unknown> {
+  async get(key: string): Promise<string | null> {
     try {
       const rawValue = localStorage.getItem(key)
       if (!rawValue) {
@@ -74,7 +74,7 @@ class SecureStorage {
 
         try {
           const decrypted = await decrypt(rawValue, this.password)
-          return decrypted
+          return typeof decrypted === 'string' ? decrypted : JSON.stringify(decrypted)
         } catch (error) {
           console.error('[SecureStorage] Decryption failed for key:', key, error)
           throw new Error(`Failed to decrypt ${key}. Wrong password or corrupted data.`)

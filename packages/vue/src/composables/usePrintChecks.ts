@@ -73,7 +73,8 @@ export function usePrintChecks(config: PrintChecksCoreConfig = {}): UsePrintChec
   }
 
   async function importData(data: unknown) {
-    return core.importData(data)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return core.importData(data as any)
   }
 
   async function clearAllData() {
