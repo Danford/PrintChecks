@@ -23,27 +23,27 @@ async function handlePasswordSubmit() {
     }, 2000)
     return
   }
-  
+
   if (!passwordInput.value) {
     passwordError.value = 'Please enter your password'
     return
   }
-  
+
   isValidating.value = true
   passwordError.value = ''
-  
+
   // Validate password by attempting to decrypt test data
   const isValid = await verifyPassword(encryptionTest, passwordInput.value)
-  
+
   if (isValid) {
     sessionStorage.setItem('encryption_password', passwordInput.value)
     // Initialize secure storage with the password
     secureStorage.initialize(passwordInput.value)
-    
+
     // Trigger events to notify components
     window.dispatchEvent(new CustomEvent('encryption-password-set'))
     window.dispatchEvent(new CustomEvent('password-initialized'))
-    
+
     // Close modal
     showPasswordModal.value = false
     passwordInput.value = ''
@@ -57,7 +57,7 @@ onMounted(async () => {
   // Check if encryption is enabled
   const encryptionEnabled = localStorage.getItem('encryption_enabled') === 'true'
   const hasPassword = !!sessionStorage.getItem('encryption_password')
-  
+
   if (encryptionEnabled) {
     if (!hasPassword) {
       // No password in session - show modal
@@ -77,105 +77,121 @@ onMounted(async () => {
 </script>
 
 <template>
-    <!-- Password Modal -->
-    <div v-if="showPasswordModal" class="password-overlay">
-      <div class="password-modal">
-        <div class="password-header">
-          <div class="lock-icon">🔐</div>
-          <h2>Welcome Back!</h2>
-          <p>Your data is encrypted. Please enter your password to continue.</p>
-        </div>
-        
-        <form @submit.prevent="handlePasswordSubmit" class="password-form">
-          <div class="form-group">
-            <label for="password-input">Password</label>
-            <input
-              id="password-input"
-              v-model="passwordInput"
-              type="password"
-              class="form-control"
-              :class="{ 'is-invalid': passwordError }"
-              placeholder="Enter your password"
-              :disabled="isValidating"
-              autocomplete="current-password"
-              autofocus
-            />
-            <div v-if="passwordError" class="error-message">
-              {{ passwordError }}
-            </div>
-          </div>
-          
-          <button 
-            type="submit" 
-            class="btn btn-primary btn-block btn-lg"
+  <!-- Password Modal -->
+  <div v-if="showPasswordModal" class="password-overlay">
+    <div class="password-modal">
+      <div class="password-header">
+        <div class="lock-icon">🔐</div>
+        <h2>Welcome Back!</h2>
+        <p>Your data is encrypted. Please enter your password to continue.</p>
+      </div>
+
+      <form @submit.prevent="handlePasswordSubmit" class="password-form">
+        <div class="form-group">
+          <label for="password-input">Password</label>
+          <input
+            id="password-input"
+            v-model="passwordInput"
+            type="password"
+            class="form-control"
+            :class="{ 'is-invalid': passwordError }"
+            placeholder="Enter your password"
             :disabled="isValidating"
-          >
-            <span v-if="!isValidating">🔓 Unlock</span>
-            <span v-else>🔄 Validating...</span>
-          </button>
-        </form>
-        
-        <div class="password-footer">
-          <p>🔒 Your data is secured with AES-256 encryption</p>
+            autocomplete="current-password"
+            autofocus
+          />
+          <div v-if="passwordError" class="error-message">
+            {{ passwordError }}
+          </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Session Timeout Warning Modal -->
-    <div v-if="showWarning" class="session-warning-overlay">
-      <div class="session-warning-modal">
-        <div class="warning-icon">⏱️</div>
-        <h3>Session Expiring Soon</h3>
-        <p>You've been inactive for a while. Your session will expire in:</p>
-        <div class="countdown">{{ countdown }} seconds</div>
-        <button class="btn btn-primary btn-lg" @click="keepSessionActive">
-          🔄 Keep Session Active
+        <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="isValidating">
+          <span v-if="!isValidating">🔓 Unlock</span>
+          <span v-else>🔄 Validating...</span>
         </button>
-        <p class="text-muted mt-3" style="font-size: 0.875rem;">
-          Click the button to extend your session for another 5 minutes
-        </p>
+      </form>
+
+      <div class="password-footer">
+        <p>🔒 Your data is secured with AES-256 encryption</p>
       </div>
     </div>
+  </div>
 
-    <div class="container">
-        <div style="padding-bottom: 20px; padding-top: 20px; text-align: center;">
-            <h1 style="color: #007bff; margin: 0; font-weight: bold;">
-                🏦 PrintChecks
-            </h1>
-            <p style="color: #6c757d; margin: 5px 0 0 0; font-size: 14px;">
-                Professional Check Printing & Payment Documentation
-            </p>
-        </div>
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <RouterLink to="/" class="nav-link" :class="{'active': $route.path == '/'}">✅ Check</RouterLink>
-            </li>
-            <li class="nav-item">
-                <RouterLink to="/customization" class="nav-link" :class="{'active': $route.path == '/customization'}">🎨 Customization</RouterLink>
-            </li>
-            <li class="nav-item">
-                <RouterLink to="/history" class="nav-link" :class="{'active': $route.path == '/history'}">📚 History</RouterLink>
-            </li>
-            <li class="nav-item">
-                <RouterLink to="/banks" class="nav-link" :class="{'active': $route.path == '/banks'}">🏦 Bank Accounts</RouterLink>
-            </li>
-            <li class="nav-item">
-                <RouterLink to="/vendors" class="nav-link" :class="{'active': $route.path == '/vendors'}">👥 Vendors</RouterLink>
-            </li>
-            <li class="nav-item">
-                <RouterLink to="/analytics" class="nav-link" :class="{'active': $route.path == '/analytics'}">📊 Analytics</RouterLink>
-            </li>
-            <li class="nav-item">
-                <RouterLink to="/import-export" class="nav-link" :class="{'active': $route.path == '/import-export'}">💾 Import/Export</RouterLink>
-            </li>
-        </ul>
-      <nav>
-      </nav>
+  <!-- Session Timeout Warning Modal -->
+  <div v-if="showWarning" class="session-warning-overlay">
+    <div class="session-warning-modal">
+      <div class="warning-icon">⏱️</div>
+      <h3>Session Expiring Soon</h3>
+      <p>You've been inactive for a while. Your session will expire in:</p>
+      <div class="countdown">{{ countdown }} seconds</div>
+      <button class="btn btn-primary btn-lg" @click="keepSessionActive">
+        🔄 Keep Session Active
+      </button>
+      <p class="text-muted mt-3" style="font-size: 0.875rem">
+        Click the button to extend your session for another 5 minutes
+      </p>
     </div>
+  </div>
 
-    <div class="container">
-      <RouterView />
+  <div class="container">
+    <div style="padding-bottom: 20px; padding-top: 20px; text-align: center">
+      <h1 style="color: #007bff; margin: 0; font-weight: bold">🏦 PrintChecks</h1>
+      <p style="color: #6c757d; margin: 5px 0 0 0; font-size: 14px">
+        Professional Check Printing & Payment Documentation
+      </p>
     </div>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <RouterLink to="/" class="nav-link" :class="{ active: $route.path == '/' }"
+          >✅ Check</RouterLink
+        >
+      </li>
+      <li class="nav-item">
+        <RouterLink
+          to="/customization"
+          class="nav-link"
+          :class="{ active: $route.path == '/customization' }"
+          >🎨 Customization</RouterLink
+        >
+      </li>
+      <li class="nav-item">
+        <RouterLink to="/history" class="nav-link" :class="{ active: $route.path == '/history' }"
+          >📚 History</RouterLink
+        >
+      </li>
+      <li class="nav-item">
+        <RouterLink to="/banks" class="nav-link" :class="{ active: $route.path == '/banks' }"
+          >🏦 Bank Accounts</RouterLink
+        >
+      </li>
+      <li class="nav-item">
+        <RouterLink to="/vendors" class="nav-link" :class="{ active: $route.path == '/vendors' }"
+          >👥 Vendors</RouterLink
+        >
+      </li>
+      <li class="nav-item">
+        <RouterLink
+          to="/analytics"
+          class="nav-link"
+          :class="{ active: $route.path == '/analytics' }"
+          >📊 Analytics</RouterLink
+        >
+      </li>
+      <li class="nav-item">
+        <RouterLink
+          to="/import-export"
+          class="nav-link"
+          :class="{ active: $route.path == '/import-export' }"
+          >💾 Import/Export</RouterLink
+        >
+      </li>
+    </ul>
+    <nav></nav>
+  </div>
+
+  <div class="container">
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
@@ -392,7 +408,8 @@ onMounted(async () => {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -424,5 +441,4 @@ nav a {
 nav a:first-of-type {
   border: 0;
 }
-
 </style>

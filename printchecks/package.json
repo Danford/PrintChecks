@@ -1,5 +1,5 @@
 {
-  "name": "printchecks",
+  "name": "@printchecks/app",
   "version": "1.0.0",
   "description": "Professional check printing and payment documentation system that runs locally in your browser",
   "private": true,

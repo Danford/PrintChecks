@@ -1,12 +1,12 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import type { AppSettings, PrintOptions } from '@/types'
+import type { AppSettings, CheckData } from '@/types'
 import { secureStorage } from '@/services/secureStorage'
 
 export const useAppStore = defineStore('useAppStore', () => {
   // Legacy check reference for backward compatibility
-  const check = ref(null)
-  
+  const check = ref<CheckData | null>(null)
+
   // App-wide settings
   const settings = ref<AppSettings>({
     theme: 'light',
@@ -25,45 +25,45 @@ export const useAppStore = defineStore('useAppStore', () => {
     },
     language: 'en'
   })
-  
+
   // Loading states
   const isLoading = ref(false)
   const loadingMessage = ref('')
-  
+
   // Error handling
   const error = ref<string | null>(null)
   const errors = ref<string[]>([])
-  
+
   // Navigation state
   const currentView = ref('check')
   const sidebarOpen = ref(false)
-  
+
   // Computed properties
   const isDarkMode = computed(() => settings.value.theme === 'dark')
   const hasErrors = computed(() => errors.value.length > 0)
-  
+
   // Actions
   function setLoading(loading: boolean, message = '') {
     isLoading.value = loading
     loadingMessage.value = message
   }
-  
+
   function addError(errorMessage: string) {
     errors.value.push(errorMessage)
     error.value = errorMessage
   }
-  
+
   function clearErrors() {
     errors.value = []
     error.value = null
   }
-  
+
   async function updateSettings(newSettings: Partial<AppSettings>) {
     settings.value = { ...settings.value, ...newSettings }
     // Persist to secureStorage
     await secureStorage.set('printchecks_settings', JSON.stringify(settings.value))
   }
-  
+
   async function loadSettings() {
     const saved = await secureStorage.get('printchecks_settings')
     if (saved) {
@@ -74,19 +74,19 @@ export const useAppStore = defineStore('useAppStore', () => {
       }
     }
   }
-  
+
   function setCurrentView(view: string) {
     currentView.value = view
   }
-  
+
   function toggleSidebar() {
     sidebarOpen.value = !sidebarOpen.value
   }
 
-  return { 
+  return {
     // Legacy
     check,
-    
+
     // State
     settings,
     isLoading,
@@ -95,11 +95,11 @@ export const useAppStore = defineStore('useAppStore', () => {
     errors,
     currentView,
     sidebarOpen,
-    
+
     // Computed
     isDarkMode,
     hasErrors,
-    
+
     // Actions
     setLoading,
     addError,

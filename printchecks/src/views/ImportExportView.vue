@@ -21,13 +21,15 @@
             <strong>Enable Data Encryption</strong>
           </label>
           <small class="d-block text-muted mt-1">
-            When enabled, your session will lock after 5 minutes of inactivity. You'll have 60 seconds to keep your session active.
+            When enabled, your session will lock after 5 minutes of inactivity. You'll have 60
+            seconds to keep your session active.
           </small>
         </div>
 
         <div v-if="encryptionEnabled" class="alert alert-info">
           <strong>🔒 Encryption Active</strong><br />
-          After 5 minutes of inactivity, you'll be prompted to keep your session active (60 second timeout).
+          After 5 minutes of inactivity, you'll be prompted to keep your session active (60 second
+          timeout).
           <br /><br />
           <button class="btn btn-sm btn-warning" @click="changePassword">
             Change Encryption Password
@@ -99,7 +101,9 @@
                 v-model="exportPassword"
                 placeholder="Enter password for export file"
               />
-              <small class="text-muted">This password will be required to import the data later</small>
+              <small class="text-muted"
+                >This password will be required to import the data later</small
+              >
             </div>
 
             <div class="alert alert-info">
@@ -136,8 +140,8 @@
             <p>Restore data from a previous export file.</p>
 
             <div class="alert alert-warning">
-              <strong>⚠️ Warning:</strong> Importing will replace ALL existing data.
-              Consider exporting your current data first as a backup.
+              <strong>⚠️ Warning:</strong> Importing will replace ALL existing data. Consider
+              exporting your current data first as a backup.
             </div>
 
             <div class="mb-3">
@@ -190,9 +194,7 @@
               ✅ Data imported successfully! Refresh the page to see your imported data.
             </div>
 
-            <div v-if="importError" class="alert alert-danger mt-3">
-              ❌ {{ importError }}
-            </div>
+            <div v-if="importError" class="alert alert-danger mt-3">❌ {{ importError }}</div>
           </div>
         </div>
       </div>
@@ -202,8 +204,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { encrypt, decrypt, isEncrypted } from '@/services/encryption.ts'
+import { encrypt, decrypt, isEncrypted } from '@/services/encryption'
 import { secureStorage } from '@/services/secureStorage'
+import type { CheckData, ReceiptData, PaymentRecord, Vendor, BankAccount } from '@/types'
 
 // Encryption state
 const encryptionEnabled = ref(false)
@@ -221,14 +224,21 @@ const importPassword = ref('')
 const importing = ref(false)
 const importSuccess = ref(false)
 const importError = ref('')
-const importPreview = ref<any>(null)
+interface ImportPreview {
+  checks: number
+  receipts: number
+  payments: number
+  vendors: number
+  bankAccounts: number
+}
+const importPreview = ref<ImportPreview | null>(null)
 
 // Data storage refs
-const checks = ref<any[]>([])
-const receipts = ref<any[]>([])
-const payments = ref<any[]>([])
-const vendors = ref<any[]>([])
-const bankAccounts = ref<any[]>([])
+const checks = ref<CheckData[]>([])
+const receipts = ref<ReceiptData[]>([])
+const payments = ref<PaymentRecord[]>([])
+const vendors = ref<Vendor[]>([])
+const bankAccounts = ref<BankAccount[]>([])
 
 // Data counts for export preview
 const checksCount = computed(() => checks.value.length)
@@ -240,21 +250,21 @@ const bankAccountsCount = computed(() => bankAccounts.value.length)
 onMounted(async () => {
   // Check if encryption is enabled
   encryptionEnabled.value = localStorage.getItem('encryption_enabled') === 'true'
-  
+
   // Load all data from secure storage
   try {
     const checksData = await secureStorage.get('checkList')
     if (checksData) checks.value = JSON.parse(checksData)
-    
+
     const receiptsData = await secureStorage.get('printchecks_receipts')
     if (receiptsData) receipts.value = JSON.parse(receiptsData)
-    
+
     const paymentsData = await secureStorage.get('printchecks_payments')
     if (paymentsData) payments.value = JSON.parse(paymentsData)
-    
+
     const vendorsData = await secureStorage.get('vendors')
     if (vendorsData) vendors.value = JSON.parse(vendorsData)
-    
+
     const banksData = await secureStorage.get('bankAccounts')
     if (banksData) bankAccounts.value = JSON.parse(banksData)
   } catch (e) {
@@ -276,7 +286,7 @@ async function onEncryptionToggle() {
       encryptionEnabled.value = false
       return
     }
-    
+
     try {
       // Create a test encrypted value to validate passwords against
       const testValue = 'printchecks_password_test'
@@ -284,20 +294,24 @@ async function onEncryptionToggle() {
       localStorage.setItem('encryption_test', encryptedTest)
       localStorage.setItem('encryption_enabled', 'true')
       sessionStorage.setItem('encryption_password', password)
-      
+
       // Initialize secure storage with password
       secureStorage.initialize(password)
-      
+
       // Migrate existing data to encrypted format
       alert('Encrypting your existing data... This may take a moment.')
       try {
         await secureStorage.migrateToEncrypted()
-        alert('✓ Encryption enabled! All your data is now encrypted.\n\nAfter 5 minutes of inactivity, you\'ll be prompted to keep your session active.')
+        alert(
+          "✓ Encryption enabled! All your data is now encrypted.\n\nAfter 5 minutes of inactivity, you'll be prompted to keep your session active."
+        )
       } catch (migrationError) {
         console.error('Migration error:', migrationError)
-        alert('⚠️ Encryption enabled but some data failed to encrypt. Please check the console for details.')
+        alert(
+          '⚠️ Encryption enabled but some data failed to encrypt. Please check the console for details.'
+        )
       }
-      
+
       // Trigger custom events to notify session timeout composable
       window.dispatchEvent(new CustomEvent('encryption-password-set'))
       window.dispatchEvent(new CustomEvent('encryption-toggled', { detail: { enabled: true } }))
@@ -308,25 +322,28 @@ async function onEncryptionToggle() {
       window.dispatchEvent(new CustomEvent('encryption-toggled', { detail: { enabled: false } }))
     }
   } else {
-    if (confirm('Are you sure you want to disable encryption? Your data will be decrypted and stored in plain text.')) {
+    if (
+      confirm(
+        'Are you sure you want to disable encryption? Your data will be decrypted and stored in plain text.'
+      )
+    ) {
       try {
         const password = sessionStorage.getItem('encryption_password')
-        const encryptionTest = localStorage.getItem('encryption_test') // Backup for error recovery
-        
+
         // Set localStorage FIRST before reinitializing secureStorage
         localStorage.setItem('encryption_enabled', 'false')
-        
+
         if (password) {
           // Decrypt all data back to plain text
           secureStorage.initialize(password)
           await secureStorage.migrateToPlainText()
         }
-        
+
         // Only remove encryption_test after successful migration
         localStorage.removeItem('encryption_test')
         sessionStorage.removeItem('encryption_password')
         alert('✓ Encryption disabled. Your data is now stored in plain text.')
-        
+
         // Notify session timeout that encryption is disabled
         window.dispatchEvent(new CustomEvent('encryption-toggled', { detail: { enabled: false } }))
       } catch (error) {
@@ -362,23 +379,27 @@ async function changePassword() {
 
   try {
     alert('Re-encrypting all your data with the new password... This may take a moment.')
-    
+
     // Re-encrypt all data with new password
     await secureStorage.reencryptWithNewPassword(currentPassword, newPassword)
-    
+
     // Update the encryption test value
     const testValue = 'printchecks_password_test'
     const encryptedTest = await encrypt(testValue, newPassword)
     localStorage.setItem('encryption_test', encryptedTest)
-    
+
     // Update password in storage
     sessionStorage.setItem('encryption_password', newPassword)
     secureStorage.updatePassword(newPassword)
-    
-    alert('✓ Password changed successfully! All your data has been re-encrypted with the new password.')
+
+    alert(
+      '✓ Password changed successfully! All your data has been re-encrypted with the new password.'
+    )
   } catch (error) {
     console.error('Failed to change password:', error)
-    alert('⚠️ Failed to change password. Your data remains encrypted with the old password. Please try again.')
+    alert(
+      '⚠️ Failed to change password. Your data remains encrypted with the old password. Please try again.'
+    )
   }
 }
 
@@ -457,7 +478,7 @@ async function onFileSelected(event: Event) {
         bankAccounts: data.bankAccounts?.length || 0
       }
     }
-  } catch (error) {
+  } catch (_error) {
     importError.value = 'Invalid import file format'
   }
 }
@@ -492,12 +513,16 @@ async function importData() {
     if (!importedData.checks || !importedData.receipts || !importedData.payments) {
       throw new Error('Invalid import file structure: missing required fields')
     }
-    
+
     // Validate that required fields are arrays
-    if (!Array.isArray(importedData.checks) || !Array.isArray(importedData.receipts) || !Array.isArray(importedData.payments)) {
+    if (
+      !Array.isArray(importedData.checks) ||
+      !Array.isArray(importedData.receipts) ||
+      !Array.isArray(importedData.payments)
+    ) {
       throw new Error('Invalid import file format: checks, receipts, and payments must be arrays')
     }
-    
+
     // Validate optional fields are arrays if present
     if (importedData.vendors && !Array.isArray(importedData.vendors)) {
       throw new Error('Invalid import file format: vendors must be an array')
@@ -520,10 +545,10 @@ async function importData() {
     setTimeout(() => {
       window.location.reload()
     }, 2000)
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Import error:', error)
     importing.value = false
-    if (error.message === 'Incorrect password') {
+    if (error instanceof Error && error.message === 'Incorrect password') {
       importError.value = 'Incorrect password'
     } else {
       importError.value = 'Failed to import data. Please check the file and try again.'

@@ -25,7 +25,7 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
 
   protected render(): void {
     const showActions = this.getBooleanAttribute('show-actions')
-    
+
     const html = `
       <style>${baseStyles}</style>
       <style>
@@ -164,21 +164,29 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
             id="searchInput"
             value="${this.searchTerm}"
           />
-          ${showActions ? `
+          ${
+            showActions
+              ? `
             <button type="button" class="btn btn-primary" id="addAccountBtn">
               Add Account
             </button>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
         
-        ${this.isLoading ? `
+        ${
+          this.isLoading
+            ? `
           <div class="text-center">
             <span class="spinner"></span> Loading accounts...
           </div>
-        ` : this.renderAccountGrid()}
+        `
+            : this.renderAccountGrid()
+        }
       </div>
     `
-    
+
     this.setInnerHTML(html)
     this.attachEventListeners()
   }
@@ -189,19 +197,23 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
         <div class="empty-state">
           <div class="empty-state-icon">🏦</div>
           <div>
-            ${this.searchTerm 
-              ? `No accounts found matching "${this.searchTerm}"` 
-              : 'No bank accounts yet. Add your first account to get started.'}
+            ${
+              this.searchTerm
+                ? `No accounts found matching "${this.searchTerm}"`
+                : 'No bank accounts yet. Add your first account to get started.'
+            }
           </div>
         </div>
       `
     }
-    
+
     const showActions = this.getBooleanAttribute('show-actions')
-    
+
     return `
       <div class="account-grid">
-        ${this.filteredAccounts.map(account => `
+        ${this.filteredAccounts
+          .map(
+            (account) => `
           <div class="account-card" data-account-id="${account.id}">
             <div class="account-header">
               <div class="account-name">${this.escapeHtml(account.accountHolderName)}</div>
@@ -219,7 +231,9 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
               </div>
             </div>
             
-            ${showActions ? `
+            ${
+              showActions
+                ? `
               <div class="account-actions">
                 <button 
                   type="button" 
@@ -236,9 +250,13 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
                   Delete
                 </button>
               </div>
-            ` : ''}
+            `
+                : ''
+            }
           </div>
-        `).join('')}
+        `
+          )
+          .join('')}
       </div>
     `
   }
@@ -249,50 +267,53 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
     const accountCards = this.querySelectorAll('.account-card')
     const editBtns = this.querySelectorAll('.edit-account-btn')
     const deleteBtns = this.querySelectorAll('.delete-account-btn')
-    
+
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         this.searchTerm = (e.target as HTMLInputElement).value
         this.filterAccounts()
       })
     }
-    
+
     if (addAccountBtn) {
       addAccountBtn.addEventListener('click', () => {
         this.emit('add-account-clicked')
       })
     }
-    
-    accountCards.forEach(card => {
+
+    accountCards.forEach((card) => {
       card.addEventListener('click', (e) => {
         // Don't trigger if clicking action buttons
         if ((e.target as HTMLElement).closest('.account-actions')) return
-        
+
         const accountId = card.getAttribute('data-account-id')
-        const account = this.accounts.find(a => a.id === accountId)
+        const account = this.accounts.find((a) => a.id === accountId)
         if (account) {
           this.selectAccount(account)
         }
       })
     })
-    
-    editBtns.forEach(btn => {
+
+    editBtns.forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation()
         const accountId = btn.getAttribute('data-account-id')
-        const account = this.accounts.find(a => a.id === accountId)
+        const account = this.accounts.find((a) => a.id === accountId)
         if (account) {
           this.emit('edit-account', { account })
         }
       })
     })
-    
-    deleteBtns.forEach(btn => {
+
+    deleteBtns.forEach((btn) => {
       btn.addEventListener('click', async (e) => {
         e.stopPropagation()
         const accountId = btn.getAttribute('data-account-id')
-        const account = this.accounts.find(a => a.id === accountId)
-        if (account && confirm(`Are you sure you want to delete ${account.accountHolderName}'s account?`)) {
+        const account = this.accounts.find((a) => a.id === accountId)
+        if (
+          account &&
+          confirm(`Are you sure you want to delete ${account.accountHolderName}'s account?`)
+        ) {
           await this.deleteAccount(account.id!)
         }
       })
@@ -304,10 +325,10 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
       this.isLoading = true
       this.errorMessage = null
       this.render()
-      
+
       this.accounts = await this.core.bankAccounts.getBankAccounts()
       this.filteredAccounts = [...this.accounts]
-      
+
       this.isLoading = false
       this.render()
       this.emit('accounts-loaded', { accounts: this.accounts })
@@ -321,27 +342,28 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
 
   private filterAccounts(): void {
     const term = this.searchTerm.toLowerCase()
-    this.filteredAccounts = this.accounts.filter(account => 
-      account.accountHolderName.toLowerCase().includes(term) ||
-      account.bankName.toLowerCase().includes(term) ||
-      account.routingNumber.includes(term) ||
-      account.accountNumber.includes(term)
+    this.filteredAccounts = this.accounts.filter(
+      (account) =>
+        account.accountHolderName.toLowerCase().includes(term) ||
+        account.bankName.toLowerCase().includes(term) ||
+        account.routingNumber.includes(term) ||
+        account.accountNumber.includes(term)
     )
     this.render()
   }
 
   private selectAccount(account: BankAccount): void {
     // Remove active class from all cards
-    this.querySelectorAll('.account-card').forEach(card => {
+    this.querySelectorAll('.account-card').forEach((card) => {
       card.classList.remove('active')
     })
-    
+
     // Add active class to selected card
     const selectedCard = this.querySelector(`.account-card[data-account-id="${account.id}"]`)
     if (selectedCard) {
       selectedCard.classList.add('active')
     }
-    
+
     this.emit('account-selected', { account })
   }
 

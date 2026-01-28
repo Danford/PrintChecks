@@ -13,45 +13,46 @@
   --pc-info-color: #17a2b8;
   --pc-light-color: #f8f9fa;
   --pc-dark-color: #343a40;
-  
+
   /* Text colors */
   --pc-text-primary: #212529;
   --pc-text-secondary: #6c757d;
   --pc-text-muted: #868e96;
   --pc-text-light: #ffffff;
-  
+
   /* Background colors */
   --pc-bg-primary: #ffffff;
   --pc-bg-secondary: #f8f9fa;
   --pc-bg-dark: #343a40;
-  
+
   /* Border colors */
   --pc-border-color: #dee2e6;
   --pc-border-radius: 4px;
-  
+
   /* Spacing */
   --pc-spacing-xs: 0.25rem;
   --pc-spacing-sm: 0.5rem;
   --pc-spacing-md: 1rem;
   --pc-spacing-lg: 1.5rem;
   --pc-spacing-xl: 2rem;
-  
+
   /* Typography */
-  --pc-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --pc-font-family:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --pc-font-size-sm: 0.875rem;
   --pc-font-size-base: 1rem;
   --pc-font-size-lg: 1.25rem;
   --pc-font-size-xl: 1.5rem;
   --pc-line-height: 1.5;
-  
+
   /* Shadows */
   --pc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --pc-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --pc-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
-  
+
   /* Transitions */
   --pc-transition: all 0.2s ease-in-out;
-  
+
   /* Display */
   display: block;
   box-sizing: border-box;

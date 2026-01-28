@@ -20,7 +20,7 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
   connectedCallback() {
     this.render()
     this.attachEventListeners()
-    
+
     // Load account if account-id is provided
     const accountId = this.getAttribute('account-id')
     if (accountId) {
@@ -40,7 +40,7 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
 
   protected render(): void {
     const readonly = this.getBooleanAttribute('readonly')
-    
+
     const html = `
       <style>${baseStyles}</style>
       <style>
@@ -250,7 +250,9 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
               ></textarea>
             </div>
             
-            ${!readonly ? `
+            ${
+              !readonly
+                ? `
               <div class="form-actions">
                 <button type="button" class="btn btn-secondary" part="reset-button" id="resetBtn">
                   Reset
@@ -259,14 +261,16 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
                   ${this.currentAccount ? 'Update Account' : 'Create Account'}
                 </button>
               </div>
-            ` : ''}
+            `
+                : ''
+            }
           </form>
         </div>
       </div>
     `
-    
+
     this.setInnerHTML(html)
-    
+
     // Populate form if we have a current account
     if (this.currentAccount) {
       this.populateForm(this.currentAccount)
@@ -277,11 +281,11 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
     const form = this.querySelector<HTMLFormElement>('#accountForm')
     const submitBtn = this.querySelector('#submitBtn')
     const resetBtn = this.querySelector('#resetBtn')
-    
+
     if (form && submitBtn) {
       form.addEventListener('submit', (e) => this.handleSubmit(e))
     }
-    
+
     if (resetBtn) {
       resetBtn.addEventListener('click', () => this.handleReset())
     }
@@ -289,15 +293,15 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
 
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault()
-    
+
     const formData = this.getFormData()
     if (!formData) return
-    
+
     try {
       this.errorMessage = null
       this.isLoading = true
       this.render()
-      
+
       let account: BankAccount
       if (this.currentAccount) {
         // Update existing account
@@ -308,11 +312,11 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
         account = await this.core.bankAccounts.createBankAccount(formData as BankAccountData)
         this.emit('account-created', { account })
       }
-      
+
       this.currentAccount = account
       this.isLoading = false
       this.render()
-      
+
       // Optionally reset form after creation
       if (!this.currentAccount.id) {
         setTimeout(() => this.handleReset(), 1000)
@@ -338,10 +342,10 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
   private getFormData(): Partial<BankAccountData> | null {
     const form = this.querySelector<HTMLFormElement>('#accountForm')
     if (!form) return null
-    
+
     const formData = new FormData(form)
     const data: Partial<BankAccountData> = {}
-    
+
     // Required fields
     data.accountHolderName = formData.get('accountHolderName') as string
     data.bankName = formData.get('bankName') as string
@@ -352,18 +356,18 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
     data.accountHolderCity = formData.get('city') as string
     data.accountHolderState = formData.get('state') as string
     data.accountHolderZip = formData.get('zip') as string
-    
+
     // Optional fields
     const notes = formData.get('notes') as string
     if (notes) data.notes = notes
-    
+
     return data
   }
 
   private populateForm(account: BankAccount): void {
     const form = this.querySelector<HTMLFormElement>('#accountForm')
     if (!form) return
-    
+
     // Populate all fields
     this.setInputValue('accountHolderName', account.accountHolderName)
     this.setInputValue('bankName', account.bankName)
@@ -378,7 +382,9 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
   }
 
   private setInputValue(id: string, value: string): void {
-    const input = this.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(`#${id}`)
+    const input = this.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
+      `#${id}`
+    )
     if (input) {
       input.value = value
     }
@@ -389,7 +395,7 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
       this.isLoading = true
       this.errorMessage = null
       this.render()
-      
+
       const account = await this.core.bankAccounts.getBankAccount(accountId)
       if (account) {
         this.currentAccount = account
@@ -397,7 +403,7 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
       } else {
         this.errorMessage = 'Account not found'
       }
-      
+
       this.isLoading = false
       this.render()
     } catch (error) {
@@ -412,7 +418,7 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
   public async save(): Promise<BankAccount | null> {
     const formData = this.getFormData()
     if (!formData) return null
-    
+
     try {
       if (this.currentAccount) {
         return await this.core.bankAccounts.updateBankAccount(this.currentAccount.id!, formData)

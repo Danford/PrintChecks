@@ -106,14 +106,19 @@ export async function decrypt(encryptedString: string, password: string): Promis
     const encryptedData: EncryptedData = JSON.parse(encryptedString)
 
     // Validate encrypted data structure
-    if (!encryptedData.encrypted || !encryptedData.salt || !encryptedData.iv || !encryptedData.data) {
+    if (
+      !encryptedData.encrypted ||
+      !encryptedData.salt ||
+      !encryptedData.iv ||
+      !encryptedData.data
+    ) {
       throw new Error('Invalid encrypted data format')
     }
 
     // Convert base64 strings back to Uint8Arrays
-    const salt = Uint8Array.from(atob(encryptedData.salt), c => c.charCodeAt(0))
-    const iv = Uint8Array.from(atob(encryptedData.iv), c => c.charCodeAt(0))
-    const encryptedBuffer = Uint8Array.from(atob(encryptedData.data), c => c.charCodeAt(0))
+    const salt = Uint8Array.from(atob(encryptedData.salt), (c) => c.charCodeAt(0))
+    const iv = Uint8Array.from(atob(encryptedData.iv), (c) => c.charCodeAt(0))
+    const encryptedBuffer = Uint8Array.from(atob(encryptedData.data), (c) => c.charCodeAt(0))
 
     // Derive key from password
     const key = await deriveKey(password, salt)

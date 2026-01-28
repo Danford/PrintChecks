@@ -6,7 +6,7 @@ export default defineConfig({
     'models/index': 'src/models/index.ts',
     'services/index': 'src/services/index.ts',
     'storage/index': 'src/storage/index.ts',
-    'utils/index': 'src/utils/index.ts'
+    'utils/index': 'src/utils/index.ts',
   },
   format: ['cjs', 'esm'],
   dts: true,
@@ -15,5 +15,5 @@ export default defineConfig({
   splitting: false,
   treeshake: true,
   minify: false,
-  external: ['to-words']
+  external: ['to-words'],
 })

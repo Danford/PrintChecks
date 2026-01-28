@@ -1,5 +1,5 @@
-// Check-related type definitions
-import type { BaseEntity, Money } from './common'
+import type { BaseEntity, PrintOptions } from './common'
+import type { LineItem } from './receipt'
 
 export interface CheckData extends BaseEntity {
   // Account holder information
@@ -8,12 +8,12 @@ export interface CheckData extends BaseEntity {
   accountHolderCity: string
   accountHolderState: string
   accountHolderZip: string
-  
+
   // Bank information
   bankName: string
   routingNumber: string
   bankAccountNumber: string
-  
+
   // Check details
   checkNumber: string
   date: string
@@ -21,19 +21,21 @@ export interface CheckData extends BaseEntity {
   payTo: string
   memo: string
   signature: string
-  
+
   // Enhanced fields
   currency?: string
   amountInWords?: string
-  
+
   // Metadata
   isVoid?: boolean
   isPrinted?: boolean
   printedAt?: Date
-  
+
   // Relationships
   receiptId?: string
   customizationId?: string
+  lineItems?: LineItem[]
+  isSaved?: boolean
 }
 
 // Legacy check data for backward compatibility
@@ -86,7 +88,7 @@ export type CheckStatus = 'draft' | 'ready' | 'printed' | 'void' | 'cancelled'
 export interface CheckPrintJob extends BaseEntity {
   checkId: string
   status: CheckStatus
-  printOptions: any // Will reference PrintOptions from common
+  printOptions: PrintOptions
   printedAt?: Date
   errorMessage?: string
 }

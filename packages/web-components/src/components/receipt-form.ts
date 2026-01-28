@@ -28,16 +28,18 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
       this.loadReceipt(receiptId)
     } else {
       // Initialize with one empty line item
-      this.lineItems = [{
-        description: '',
-        quantity: 1,
-        unitPrice: 0,
-        totalPrice: 0,
-        taxable: false,
-        taxRate: 0,
-        taxAmount: 0,
-        discountAmount: 0
-      }]
+      this.lineItems = [
+        {
+          description: '',
+          quantity: 1,
+          unitPrice: 0,
+          totalPrice: 0,
+          taxable: false,
+          taxRate: 0,
+          taxAmount: 0,
+          discountAmount: 0,
+        },
+      ]
     }
   }
 
@@ -229,11 +231,15 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
             <div class="line-items-section">
               <div class="line-items-header">
                 <h4 class="mb-0">Line Items</h4>
-                ${!readonly ? `
+                ${
+                  !readonly
+                    ? `
                   <button type="button" class="btn btn-sm btn-primary" id="addLineItemBtn">
                     Add Item
                   </button>
-                ` : ''}
+                `
+                    : ''
+                }
               </div>
               
               <div id="lineItemsContainer">
@@ -288,7 +294,9 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
               ></textarea>
             </div>
             
-            ${!readonly ? `
+            ${
+              !readonly
+                ? `
               <div class="form-actions">
                 <button type="button" class="btn btn-secondary" part="reset-button" id="resetBtn">
                   Reset
@@ -300,7 +308,9 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
                   ${this.currentReceipt ? 'Update Receipt' : 'Create Receipt'}
                 </button>
               </div>
-            ` : ''}
+            `
+                : ''
+            }
           </form>
         </div>
       </div>
@@ -325,9 +335,10 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
       return '<div class="text-muted">No line items yet</div>'
     }
 
-    return this.lineItems.map((item, index) => {
-      const total = (item.quantity || 0) * (item.unitPrice || 0)
-      return `
+    return this.lineItems
+      .map((item, index) => {
+        const total = (item.quantity || 0) * (item.unitPrice || 0)
+        return `
         <div class="line-item" data-index="${index}">
           <div class="form-group mb-0">
             ${index === 0 ? '<label class="form-label">Description *</label>' : ''}
@@ -377,7 +388,9 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
             $${total.toFixed(2)}
           </div>
           
-          ${!readonly && this.lineItems.length > 1 ? `
+          ${
+            !readonly && this.lineItems.length > 1
+              ? `
             <button 
               type="button" 
               class="btn-remove remove-line-item" 
@@ -385,16 +398,19 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
             >
               ✕
             </button>
-          ` : '<div></div>'}
+          `
+              : '<div></div>'
+          }
         </div>
       `
-    }).join('')
+      })
+      .join('')
   }
 
   private renderTotals(): string {
     const subtotal = this.calculateSubtotal()
-    const taxRate = parseFloat((this.querySelector<HTMLInputElement>('#taxRate')?.value || '0'))
-    const discount = parseFloat((this.querySelector<HTMLInputElement>('#discount')?.value || '0'))
+    const taxRate = parseFloat(this.querySelector<HTMLInputElement>('#taxRate')?.value || '0')
+    const discount = parseFloat(this.querySelector<HTMLInputElement>('#discount')?.value || '0')
     const tax = (subtotal - discount) * (taxRate / 100)
     const total = subtotal - discount + tax
 
@@ -422,7 +438,7 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
 
   private calculateSubtotal(): number {
     return this.lineItems.reduce((sum, item) => {
-      return sum + ((item.quantity || 0) * (item.unitPrice || 0))
+      return sum + (item.quantity || 0) * (item.unitPrice || 0)
     }, 0)
   }
 
@@ -467,7 +483,7 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
 
   private attachLineItemListeners(): void {
     // Description inputs
-    this.querySelectorAll('.line-item-description').forEach(input => {
+    this.querySelectorAll('.line-item-description').forEach((input) => {
       input.addEventListener('input', (e) => {
         const index = parseInt((e.target as HTMLElement).getAttribute('data-index') || '0')
         this.lineItems[index].description = (e.target as HTMLInputElement).value
@@ -475,7 +491,7 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
     })
 
     // Quantity inputs
-    this.querySelectorAll('.line-item-quantity').forEach(input => {
+    this.querySelectorAll('.line-item-quantity').forEach((input) => {
       input.addEventListener('input', (e) => {
         const index = parseInt((e.target as HTMLElement).getAttribute('data-index') || '0')
         this.lineItems[index].quantity = parseFloat((e.target as HTMLInputElement).value) || 0
@@ -484,7 +500,7 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
     })
 
     // Price inputs
-    this.querySelectorAll('.line-item-price').forEach(input => {
+    this.querySelectorAll('.line-item-price').forEach((input) => {
       input.addEventListener('input', (e) => {
         const index = parseInt((e.target as HTMLElement).getAttribute('data-index') || '0')
         this.lineItems[index].unitPrice = parseFloat((e.target as HTMLInputElement).value) || 0
@@ -493,7 +509,7 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
     })
 
     // Remove buttons
-    this.querySelectorAll('.remove-line-item').forEach(btn => {
+    this.querySelectorAll('.remove-line-item').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const index = parseInt((e.target as HTMLElement).getAttribute('data-index') || '0')
         this.removeLineItem(index)
@@ -510,7 +526,7 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
       taxable: false,
       taxRate: 0,
       taxAmount: 0,
-      discountAmount: 0
+      discountAmount: 0,
     })
     this.render()
     this.attachEventListeners()
@@ -597,16 +613,18 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
     }
     this.currentReceipt = null
     this.errorMessage = null
-    this.lineItems = [{
-      description: '',
-      quantity: 1,
-      unitPrice: 0,
-      totalPrice: 0,
-      taxable: false,
-      taxRate: 0,
-      taxAmount: 0,
-      discountAmount: 0
-    }]
+    this.lineItems = [
+      {
+        description: '',
+        quantity: 1,
+        unitPrice: 0,
+        totalPrice: 0,
+        taxable: false,
+        taxRate: 0,
+        taxAmount: 0,
+        discountAmount: 0,
+      },
+    ]
     this.render()
   }
 
@@ -624,11 +642,11 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
     // Bill To Info
     data.billTo = {
       name: formData.get('customerName') as string,
-      email: formData.get('customerEmail') as string || undefined,
+      email: (formData.get('customerEmail') as string) || undefined,
       address: '', // Default empty as form doesn't have it yet
       city: '',
       state: '',
-      zip: ''
+      zip: '',
     }
 
     const notes = formData.get('notes') as string
@@ -651,14 +669,14 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
       totalDiscount: discount,
       grandTotal: total,
       shippingAmount: 0,
-      handlingAmount: 0
+      handlingAmount: 0,
     }
 
     // Payment Info (Default placeholder)
     data.paymentInfo = {
       method: 'other',
       amount: total,
-      currency: 'USD'
+      currency: 'USD',
     }
 
     return data

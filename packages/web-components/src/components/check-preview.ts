@@ -19,7 +19,7 @@ export class PrintChecksCheckPreview extends PrintChecksComponent {
 
   connectedCallback() {
     this.render()
-    
+
     // Load check if check-id is provided
     const checkId = this.getAttribute('check-id')
     if (checkId) {
@@ -39,7 +39,7 @@ export class PrintChecksCheckPreview extends PrintChecksComponent {
 
   protected render(): void {
     const scale = this.getAttribute('scale') || '1'
-    
+
     const html = `
       <style>${baseStyles}</style>
       <style>
@@ -254,7 +254,9 @@ export class PrintChecksCheckPreview extends PrintChecksComponent {
         
         ${this.currentCheck ? this.renderCheck() : '<div class="text-muted">No check to preview</div>'}
         
-        ${this.currentCheck ? `
+        ${
+          this.currentCheck
+            ? `
           <div class="actions">
             <button type="button" class="btn btn-primary" id="printBtn">
               Print Check
@@ -263,20 +265,22 @@ export class PrintChecksCheckPreview extends PrintChecksComponent {
               Download PDF
             </button>
           </div>
-        ` : ''}
+        `
+            : ''
+        }
       </div>
     `
-    
+
     this.setInnerHTML(html)
     this.attachEventListeners()
   }
 
   private renderCheck(): string {
     if (!this.currentCheck) return ''
-    
+
     const check = this.currentCheck
     const amountWords = this.numberToWords(parseFloat(check.amount.toString()))
-    
+
     return `
       <div class="check-preview">
         <div class="watermark">VOID</div>
@@ -331,11 +335,11 @@ export class PrintChecksCheckPreview extends PrintChecksComponent {
   private attachEventListeners(): void {
     const printBtn = this.querySelector('#printBtn')
     const downloadBtn = this.querySelector('#downloadBtn')
-    
+
     if (printBtn) {
       printBtn.addEventListener('click', () => this.handlePrint())
     }
-    
+
     if (downloadBtn) {
       downloadBtn.addEventListener('click', () => this.handleDownload())
     }
@@ -348,12 +352,12 @@ export class PrintChecksCheckPreview extends PrintChecksComponent {
 
   private async handleDownload(): Promise<void> {
     if (!this.currentCheck) return
-    
+
     try {
       // In a real implementation, you'd use a library like jsPDF
       // For now, we'll emit an event that can be handled by the parent app
       this.emit('download-requested', { check: this.currentCheck })
-      
+
       // Alternative: open print dialog and let user "print to PDF"
       this.handlePrint()
     } catch (error) {
@@ -368,7 +372,7 @@ export class PrintChecksCheckPreview extends PrintChecksComponent {
       this.isLoading = true
       this.errorMessage = null
       this.render()
-      
+
       const check = await this.core.checks.getCheck(checkId)
       if (check) {
         this.currentCheck = check
@@ -376,7 +380,7 @@ export class PrintChecksCheckPreview extends PrintChecksComponent {
       } else {
         this.errorMessage = 'Check not found'
       }
-      
+
       this.isLoading = false
       this.render()
     } catch (error) {
@@ -395,28 +399,58 @@ export class PrintChecksCheckPreview extends PrintChecksComponent {
 
   private numberToWords(num: number): string {
     if (num === 0) return 'Zero'
-    
+
     const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
-    const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen']
-    const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety']
-    
+    const teens = [
+      'Ten',
+      'Eleven',
+      'Twelve',
+      'Thirteen',
+      'Fourteen',
+      'Fifteen',
+      'Sixteen',
+      'Seventeen',
+      'Eighteen',
+      'Nineteen',
+    ]
+    const tens = [
+      '',
+      '',
+      'Twenty',
+      'Thirty',
+      'Forty',
+      'Fifty',
+      'Sixty',
+      'Seventy',
+      'Eighty',
+      'Ninety',
+    ]
+
     const convert = (n: number): string => {
       if (n < 10) return ones[n]
       if (n < 20) return teens[n - 10]
       if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? ' ' + ones[n % 10] : '')
-      if (n < 1000) return ones[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' ' + convert(n % 100) : '')
-      if (n < 1000000) return convert(Math.floor(n / 1000)) + ' Thousand' + (n % 1000 ? ' ' + convert(n % 1000) : '')
-      return convert(Math.floor(n / 1000000)) + ' Million' + (n % 1000000 ? ' ' + convert(n % 1000000) : '')
+      if (n < 1000)
+        return ones[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' ' + convert(n % 100) : '')
+      if (n < 1000000)
+        return (
+          convert(Math.floor(n / 1000)) + ' Thousand' + (n % 1000 ? ' ' + convert(n % 1000) : '')
+        )
+      return (
+        convert(Math.floor(n / 1000000)) +
+        ' Million' +
+        (n % 1000000 ? ' ' + convert(n % 1000000) : '')
+      )
     }
-    
+
     const dollars = Math.floor(num)
     const cents = Math.round((num - dollars) * 100)
-    
+
     let result = convert(dollars)
     if (cents > 0) {
       result += ` and ${cents}/100`
     }
-    
+
     return result
   }
 

@@ -20,7 +20,7 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
   connectedCallback() {
     this.render()
     this.attachEventListeners()
-    
+
     // Load vendor if vendor-id is provided
     const vendorId = this.getAttribute('vendor-id')
     if (vendorId) {
@@ -40,7 +40,7 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
 
   protected render(): void {
     const readonly = this.getBooleanAttribute('readonly')
-    
+
     const html = `
       <style>${baseStyles}</style>
       <style>
@@ -211,7 +211,9 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
               ></textarea>
             </div>
             
-            ${!readonly ? `
+            ${
+              !readonly
+                ? `
               <div class="form-actions">
                 <button type="button" class="btn btn-secondary" part="reset-button" id="resetBtn">
                   Reset
@@ -220,14 +222,16 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
                   ${this.currentVendor ? 'Update Vendor' : 'Create Vendor'}
                 </button>
               </div>
-            ` : ''}
+            `
+                : ''
+            }
           </form>
         </div>
       </div>
     `
-    
+
     this.setInnerHTML(html)
-    
+
     // Populate form if we have a current vendor
     if (this.currentVendor) {
       this.populateForm(this.currentVendor)
@@ -238,11 +242,11 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
     const form = this.querySelector<HTMLFormElement>('#vendorForm')
     const submitBtn = this.querySelector('#submitBtn')
     const resetBtn = this.querySelector('#resetBtn')
-    
+
     if (form && submitBtn) {
       form.addEventListener('submit', (e) => this.handleSubmit(e))
     }
-    
+
     if (resetBtn) {
       resetBtn.addEventListener('click', () => this.handleReset())
     }
@@ -250,15 +254,15 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
 
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault()
-    
+
     const formData = this.getFormData()
     if (!formData) return
-    
+
     try {
       this.errorMessage = null
       this.isLoading = true
       this.render()
-      
+
       let vendor: Vendor
       if (this.currentVendor) {
         // Update existing vendor
@@ -269,11 +273,11 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
         vendor = await this.core.vendors.createVendor(formData as VendorData)
         this.emit('vendor-created', { vendor })
       }
-      
+
       this.currentVendor = vendor
       this.isLoading = false
       this.render()
-      
+
       // Optionally reset form after creation
       if (!this.currentVendor.id) {
         setTimeout(() => this.handleReset(), 1000)
@@ -299,52 +303,52 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
   private getFormData(): Partial<VendorData> | null {
     const form = this.querySelector<HTMLFormElement>('#vendorForm')
     if (!form) return null
-    
+
     const formData = new FormData(form)
     const data: Partial<VendorData> = {}
-    
+
     // Required fields
     data.name = formData.get('name') as string
     data.address = formData.get('address') as string
     data.city = formData.get('city') as string
     data.state = formData.get('state') as string
     data.zip = formData.get('zip') as string
-    
+
     // Optional fields
     const displayName = formData.get('displayName') as string
     if (displayName) data.displayName = displayName
-    
+
     const email = formData.get('email') as string
     if (email) data.email = email
-    
+
     const phone = formData.get('phone') as string
     if (phone) data.phone = phone
-    
+
     const taxId = formData.get('taxId') as string
     if (taxId) data.taxId = taxId
-    
+
     const address = formData.get('address') as string
     if (address) data.address = address
-    
+
     const city = formData.get('city') as string
     if (city) data.city = city
-    
+
     const state = formData.get('state') as string
     if (state) data.state = state
-    
+
     const zip = formData.get('zip') as string
     if (zip) data.zip = zip
-    
+
     const notes = formData.get('notes') as string
     if (notes) data.notes = notes
-    
+
     return data
   }
 
   private populateForm(vendor: Vendor): void {
     const form = this.querySelector<HTMLFormElement>('#vendorForm')
     if (!form) return
-    
+
     // Populate all fields
     this.setInputValue('name', vendor.name)
     this.setInputValue('displayName', vendor.displayName || '')
@@ -370,7 +374,7 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
       this.isLoading = true
       this.errorMessage = null
       this.render()
-      
+
       const vendor = await this.core.vendors.getVendor(vendorId)
       if (vendor) {
         this.currentVendor = vendor
@@ -378,7 +382,7 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
       } else {
         this.errorMessage = 'Vendor not found'
       }
-      
+
       this.isLoading = false
       this.render()
     } catch (error) {
@@ -393,7 +397,7 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
   public async save(): Promise<Vendor | null> {
     const formData = this.getFormData()
     if (!formData) return null
-    
+
     try {
       if (this.currentVendor) {
         return await this.core.vendors.updateVendor(this.currentVendor.id!, formData)

@@ -1,9 +1,11 @@
 # Phase 3: Web Components - PLAN 📋
 
 ## Overview
+
 Create framework-agnostic Web Components (Custom Elements) that can be used in any web application, regardless of framework. These components will use the `@printchecks/core` library internally and provide a simple, declarative API.
 
 ## Goals
+
 - ✅ Framework-agnostic - Works with React, Angular, vanilla JS, or any framework
 - ✅ Standard Web Components API
 - ✅ Shadow DOM for style encapsulation
@@ -41,148 +43,188 @@ packages/web-components/
 ## Web Components to Build
 
 ### 1. `<printchecks-check-form>`
+
 **Purpose**: Interactive form for creating/editing checks
 
 **Attributes**:
+
 - `check-id` - ID of check to edit (optional)
 - `bank-account-id` - Pre-select bank account
 - `vendor-id` - Pre-select vendor
 - `readonly` - Make form read-only
 
 **Properties**:
+
 - `check` - Check data object
 - `bankAccount` - Bank account object
 - `vendor` - Vendor object
 
 **Events**:
+
 - `check-created` - Fired when check is created
 - `check-updated` - Fired when check is updated
 - `check-validated` - Fired after validation
 - `error` - Fired on error
 
 **Methods**:
+
 - `validate()` - Validate form
 - `save()` - Save check
 - `reset()` - Reset form
 
 ### 2. `<printchecks-check-preview>`
+
 **Purpose**: Display check in print-ready format
 
 **Attributes**:
+
 - `check-id` - ID of check to preview
 - `show-micr` - Show MICR line
 - `show-signature` - Show signature
 
 **Properties**:
+
 - `check` - Check data object
 
 **Events**:
+
 - `print-requested` - Fired when print button clicked
 
 **Methods**:
+
 - `print()` - Trigger print dialog
 
 ### 3. `<printchecks-vendor-list>`
+
 **Purpose**: Display list of vendors with search/filter
 
 **Attributes**:
+
 - `show-favorites` - Show only favorites
 - `category` - Filter by category
 - `selectable` - Make vendors selectable
 
 **Properties**:
+
 - `vendors` - Array of vendors
 
 **Events**:
+
 - `vendor-selected` - Fired when vendor is selected
 - `vendor-deleted` - Fired when vendor is deleted
 
 **Methods**:
+
 - `search(term)` - Search vendors
 - `refresh()` - Reload vendors
 
 ### 4. `<printchecks-vendor-form>`
+
 **Purpose**: Form for creating/editing vendors
 
 **Attributes**:
+
 - `vendor-id` - ID of vendor to edit
 
 **Properties**:
+
 - `vendor` - Vendor data object
 
 **Events**:
+
 - `vendor-created` - Fired when vendor is created
 - `vendor-updated` - Fired when vendor is updated
 
 **Methods**:
+
 - `validate()` - Validate form
 - `save()` - Save vendor
 
 ### 5. `<printchecks-bank-account-list>`
+
 **Purpose**: Display list of bank accounts
 
 **Attributes**:
+
 - `selectable` - Make accounts selectable
 
 **Properties**:
+
 - `accounts` - Array of bank accounts
 
 **Events**:
+
 - `account-selected` - Fired when account is selected
 - `default-changed` - Fired when default account changes
 
 **Methods**:
+
 - `refresh()` - Reload accounts
 
 ### 6. `<printchecks-bank-account-form>`
+
 **Purpose**: Form for creating/editing bank accounts
 
 **Attributes**:
+
 - `account-id` - ID of account to edit
 
 **Properties**:
+
 - `account` - Account data object
 
 **Events**:
+
 - `account-created` - Fired when account is created
 - `account-updated` - Fired when account is updated
 
 **Methods**:
+
 - `validate()` - Validate form
 - `save()` - Save account
 
 ### 7. `<printchecks-receipt-form>`
+
 **Purpose**: Form for creating receipts with line items
 
 **Attributes**:
+
 - `receipt-id` - ID of receipt to edit
 
 **Properties**:
+
 - `receipt` - Receipt data object
 
 **Events**:
+
 - `receipt-created` - Fired when receipt is created
 - `receipt-updated` - Fired when receipt is updated
 - `line-item-added` - Fired when line item is added
 
 **Methods**:
+
 - `addLineItem()` - Add line item
 - `removeLineItem(id)` - Remove line item
 - `save()` - Save receipt
 
 ### 8. `<printchecks-analytics-dashboard>`
+
 **Purpose**: Display payment analytics and statistics
 
 **Attributes**:
+
 - `date-range` - Date range for analytics (30d, 60d, 90d, 1y, all)
 
 **Properties**:
+
 - `statistics` - Statistics data object
 
 **Events**:
+
 - `refresh-requested` - Fired when refresh is requested
 
 **Methods**:
+
 - `refresh()` - Reload statistics
 
 ## Component Base Class
@@ -193,18 +235,18 @@ All components will extend a common base class:
 abstract class PrintChecksComponent extends HTMLElement {
   protected core: PrintChecksCore
   protected shadow: ShadowRoot
-  
+
   constructor() {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
     this.core = this.getOrCreateCoreInstance()
   }
-  
+
   // Lifecycle hooks
   abstract render(): void
   abstract connectedCallback(): void
   abstract disconnectedCallback(): void
-  
+
   // Utility methods
   protected emit(eventName: string, detail: any): void
   protected getOrCreateCoreInstance(): PrintChecksCore
@@ -215,10 +257,12 @@ abstract class PrintChecksComponent extends HTMLElement {
 ## Styling Strategy
 
 ### 1. Shadow DOM Encapsulation
+
 - Each component uses Shadow DOM for style isolation
 - Prevents style conflicts with host application
 
 ### 2. CSS Custom Properties (CSS Variables)
+
 Expose themeable properties:
 
 ```css
@@ -235,6 +279,7 @@ Expose themeable properties:
 ```
 
 ### 3. Part Attribute for External Styling
+
 Use `part` attribute for specific elements:
 
 ```html
@@ -242,6 +287,7 @@ Use `part` attribute for specific elements:
 ```
 
 External styling:
+
 ```css
 printchecks-check-form::part(submit-button) {
   background: custom-color;
@@ -251,48 +297,49 @@ printchecks-check-form::part(submit-button) {
 ## Configuration & Initialization
 
 ### Global Configuration
+
 ```javascript
 // Set global configuration for all components
 PrintChecks.configure({
   storage: new LocalStorageAdapter({ prefix: 'myapp_' }),
   encryption: true,
   password: 'secure-password',
-  autoIncrementCheckNumber: true
+  autoIncrementCheckNumber: true,
 })
 ```
 
 ### Per-Component Configuration
+
 ```html
-<printchecks-check-form
-  storage-prefix="custom_"
-  auto-increment="true">
-</printchecks-check-form>
+<printchecks-check-form storage-prefix="custom_" auto-increment="true"> </printchecks-check-form>
 ```
 
 ## Usage Examples
 
 ### Vanilla JavaScript
+
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <script type="module" src="https://unpkg.com/@printchecks/web-components"></script>
-</head>
-<body>
-  <printchecks-check-form id="checkForm"></printchecks-check-form>
-  
-  <script>
-    const form = document.getElementById('checkForm')
-    
-    form.addEventListener('check-created', (e) => {
-      console.log('Check created:', e.detail)
-    })
-  </script>
-</body>
+  <head>
+    <script type="module" src="https://unpkg.com/@printchecks/web-components"></script>
+  </head>
+  <body>
+    <printchecks-check-form id="checkForm"></printchecks-check-form>
+
+    <script>
+      const form = document.getElementById('checkForm')
+
+      form.addEventListener('check-created', (e) => {
+        console.log('Check created:', e.detail)
+      })
+    </script>
+  </body>
 </html>
 ```
 
 ### React
+
 ```jsx
 import '@printchecks/web-components'
 
@@ -300,21 +347,16 @@ function App() {
   const handleCheckCreated = (e) => {
     console.log('Check created:', e.detail)
   }
-  
-  return (
-    <printchecks-check-form
-      oncheck-created={handleCheckCreated}
-    />
-  )
+
+  return <printchecks-check-form oncheck-created={handleCheckCreated} />
 }
 ```
 
 ### Vue 3
+
 ```vue
 <template>
-  <printchecks-check-form
-    @check-created="handleCheckCreated"
-  />
+  <printchecks-check-form @check-created="handleCheckCreated" />
 </template>
 
 <script setup>
@@ -327,6 +369,7 @@ const handleCheckCreated = (e) => {
 ```
 
 ### Angular
+
 ```typescript
 // app.component.ts
 import '@printchecks/web-components'
@@ -334,10 +377,8 @@ import '@printchecks/web-components'
 @Component({
   selector: 'app-root',
   template: `
-    <printchecks-check-form
-      (check-created)="handleCheckCreated($event)">
-    </printchecks-check-form>
-  `
+    <printchecks-check-form (check-created)="handleCheckCreated($event)"> </printchecks-check-form>
+  `,
 })
 export class AppComponent {
   handleCheckCreated(event: CustomEvent) {
@@ -349,6 +390,7 @@ export class AppComponent {
 ## Build Configuration
 
 ### Package.json
+
 ```json
 {
   "name": "@printchecks/web-components",
@@ -377,6 +419,7 @@ export class AppComponent {
 ```
 
 ### Custom Elements Manifest
+
 Generate `custom-elements.json` for IDE support:
 
 ```json
@@ -404,17 +447,20 @@ Generate `custom-elements.json` for IDE support:
 ## Testing Strategy
 
 ### 1. Unit Tests
+
 - Test each component in isolation
 - Mock core library dependencies
 - Test attribute/property changes
 - Test event firing
 
 ### 2. Integration Tests
+
 - Test components working together
 - Test with real core library
 - Test storage persistence
 
 ### 3. Browser Tests
+
 - Test in different browsers (Chrome, Firefox, Safari, Edge)
 - Test with different frameworks
 - Visual regression testing
@@ -422,16 +468,17 @@ Generate `custom-elements.json` for IDE support:
 ## TypeScript Support
 
 ### Type Declarations
+
 ```typescript
 // components/check-form.ts
 export class PrintChecksCheckForm extends PrintChecksComponent {
   // Properties with decorators
   @property({ type: String, attribute: 'check-id' })
   checkId?: string
-  
+
   @property({ type: Object })
   check?: Check
-  
+
   // Type-safe event details
   private dispatchCheckCreated(check: Check) {
     this.emit('check-created', { check })
@@ -449,6 +496,7 @@ declare global {
 ## Documentation Requirements
 
 ### 1. README.md
+
 - Installation instructions
 - Quick start guide
 - Component catalog
@@ -456,12 +504,14 @@ declare global {
 - Browser compatibility
 
 ### 2. Storybook
+
 - Interactive component documentation
 - Live examples
 - Props/attributes playground
 - Event logging
 
 ### 3. API Documentation
+
 - Generated from JSDoc comments
 - All components, properties, events, methods
 - Usage examples for each component
@@ -469,14 +519,17 @@ declare global {
 ## Performance Considerations
 
 ### 1. Lazy Loading
+
 - Load components only when used
 - Dynamic imports for large components
 
 ### 2. Virtual Scrolling
+
 - For list components with many items
 - Render only visible items
 
 ### 3. Efficient Updates
+
 - Use efficient DOM diffing
 - Avoid unnecessary re-renders
 - Batch updates where possible
@@ -484,6 +537,7 @@ declare global {
 ## Accessibility (a11y)
 
 ### Requirements
+
 - ✅ Keyboard navigation
 - ✅ ARIA labels and roles
 - ✅ Focus management
@@ -539,6 +593,7 @@ declare global {
 ---
 
 **Next Steps After Phase 3:**
+
 - **Phase 4**: Build & Distribution - CDN, npm publishing, version management
 - **Phase 5**: Documentation & Examples - Full API docs, tutorials, example applications
 - **Migration**: Migrate existing Vue app to use the packages
