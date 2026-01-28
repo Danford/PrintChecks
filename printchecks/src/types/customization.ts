@@ -25,7 +25,13 @@ export interface LogoSettings {
   enabled: boolean
   file?: FileUpload
   url?: string
-  position: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
+  position:
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right'
   size: {
     width: number
     height: number
@@ -37,6 +43,8 @@ export interface LogoSettings {
     bottom: number
     left: number
   }
+  objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down'
+  objectPosition?: string
 }
 
 export interface PositionAdjustment {
@@ -68,7 +76,7 @@ export interface CustomizationSettings extends BaseEntity {
   name: string
   description?: string
   isDefault?: boolean
-  
+
   // Font settings for different elements
   fonts: {
     accountHolder: FontSettings
@@ -80,10 +88,10 @@ export interface CustomizationSettings extends BaseEntity {
     bankInfo: FontSettings
     checkNumber: FontSettings
     date: FontSettings
-    fieldLabels: FontSettings  // For "Pay to the order of", "Date:", "Memo:", etc.
+    fieldLabels: FontSettings // For "Pay to the order of", "Date:", "Memo:", etc.
     bankName: FontSettings
   }
-  
+
   // Position adjustments for fine-tuning element positions
   adjustments?: {
     accountHolder?: PositionAdjustment
@@ -98,16 +106,16 @@ export interface CustomizationSettings extends BaseEntity {
     fieldLabels?: PositionAdjustment
     bankName?: PositionAdjustment
   }
-  
+
   // Color scheme
   colors: ColorScheme
-  
+
   // Logo settings
   logo: LogoSettings
-  
+
   // Layout settings
   layout: LayoutSettings
-  
+
   // Background settings
   background: {
     enabled: boolean
@@ -134,10 +142,19 @@ export interface CustomizationPreset extends BaseEntity {
 export interface FontFamily {
   name: string
   displayName: string
-  category: 'serif' | 'sans-serif' | 'monospace' | 'cursive' | 'fantasy'
+  category:
+    | 'serif'
+    | 'sans-serif'
+    | 'monospace'
+    | 'cursive'
+    | 'fantasy'
+    | 'banking'
+    | 'handwriting'
+    | 'display'
   variants: string[]
   isWebFont: boolean
   url?: string
+  description?: string
 }
 
 export interface ColorPalette {

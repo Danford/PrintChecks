@@ -46,7 +46,7 @@ async function deriveKey(password: string, salt: BufferSource): Promise<CryptoKe
       name: 'PBKDF2',
       salt,
       iterations: ITERATIONS,
-      hash: 'SHA-256'
+      hash: 'SHA-256',
     },
     passwordKey,
     { name: ALGORITHM, length: KEY_LENGTH },
@@ -73,7 +73,7 @@ function arrayToBase64(array: Uint8Array): string {
  */
 function base64ToArray(base64: string): Uint8Array {
   const binary = atob(base64)
-  return Uint8Array.from(binary, c => c.charCodeAt(0))
+  return Uint8Array.from(binary, (c) => c.charCodeAt(0))
 }
 
 /**
@@ -82,7 +82,7 @@ function base64ToArray(base64: string): Uint8Array {
  * @param password - Password for encryption
  * @returns Encrypted data as JSON string
  */
-export async function encrypt(data: any, password: string): Promise<string> {
+export async function encrypt(data: unknown, password: string): Promise<string> {
   if (!isCryptoAvailable()) {
     throw new Error('Web Crypto API is not available')
   }
@@ -108,7 +108,7 @@ export async function encrypt(data: any, password: string): Promise<string> {
     const encryptedBuffer = await crypto.subtle.encrypt(
       {
         name: ALGORITHM,
-        iv
+        iv,
       },
       key,
       dataBuffer
@@ -120,12 +120,14 @@ export async function encrypt(data: any, password: string): Promise<string> {
       version: '1.0',
       salt: arrayToBase64(salt),
       iv: arrayToBase64(iv),
-      data: arrayToBase64(new Uint8Array(encryptedBuffer))
+      data: arrayToBase64(new Uint8Array(encryptedBuffer)),
     }
 
     return JSON.stringify(encryptedData)
   } catch (error) {
-    throw new Error(`Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    throw new Error(
+      `Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+    )
   }
 }
 
@@ -135,7 +137,7 @@ export async function encrypt(data: any, password: string): Promise<string> {
  * @param password - Password for decryption
  * @returns Decrypted data
  */
-export async function decrypt(encryptedString: string, password: string): Promise<any> {
+export async function decrypt(encryptedString: string, password: string): Promise<unknown> {
   if (!isCryptoAvailable()) {
     throw new Error('Web Crypto API is not available')
   }
@@ -148,7 +150,12 @@ export async function decrypt(encryptedString: string, password: string): Promis
     const encryptedData: EncryptedData = JSON.parse(encryptedString)
 
     // Validate encrypted data structure
-    if (!encryptedData.encrypted || !encryptedData.salt || !encryptedData.iv || !encryptedData.data) {
+    if (
+      !encryptedData.encrypted ||
+      !encryptedData.salt ||
+      !encryptedData.iv ||
+      !encryptedData.data
+    ) {
       throw new Error('Invalid encrypted data format')
     }
 
@@ -164,7 +171,7 @@ export async function decrypt(encryptedString: string, password: string): Promis
     const decryptedBuffer = await crypto.subtle.decrypt(
       {
         name: ALGORITHM,
-        iv: iv as BufferSource
+        iv: iv as BufferSource,
       },
       key,
       encryptedBuffer as BufferSource
@@ -223,15 +230,15 @@ export function generatePassword(length: number = 16): string {
     }
     return password
   }
-  
+
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
   const array = new Uint8Array(length)
   crypto.getRandomValues(array)
-  
+
   let password = ''
   for (let i = 0; i < length; i++) {
     password += charset[array[i] % charset.length]
   }
-  
+
   return password
 }

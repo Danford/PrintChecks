@@ -33,7 +33,7 @@ async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey>
   return crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt,
+      salt: salt as BufferSource,
       iterations: ITERATIONS,
       hash: 'SHA-256'
     },
@@ -47,7 +47,7 @@ async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey>
 /**
  * Encrypts data with a password
  */
-export async function encrypt(data: any, password: string): Promise<string> {
+export async function encrypt(data: unknown, password: string): Promise<string> {
   try {
     // Generate random salt and IV
     const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH))
@@ -58,7 +58,7 @@ export async function encrypt(data: any, password: string): Promise<string> {
 
     // Convert data to string and then to array buffer
     const encoder = new TextEncoder()
-    const dataString = JSON.stringify(data)
+    const dataString = typeof data === 'string' ? data : JSON.stringify(data)
     const dataBuffer = encoder.encode(dataString)
 
     // Encrypt the data
@@ -101,19 +101,24 @@ export async function encrypt(data: any, password: string): Promise<string> {
 /**
  * Decrypts data with a password
  */
-export async function decrypt(encryptedString: string, password: string): Promise<any> {
+export async function decrypt(encryptedString: string, password: string): Promise<unknown> {
   try {
     const encryptedData: EncryptedData = JSON.parse(encryptedString)
 
     // Validate encrypted data structure
-    if (!encryptedData.encrypted || !encryptedData.salt || !encryptedData.iv || !encryptedData.data) {
+    if (
+      !encryptedData.encrypted ||
+      !encryptedData.salt ||
+      !encryptedData.iv ||
+      !encryptedData.data
+    ) {
       throw new Error('Invalid encrypted data format')
     }
 
     // Convert base64 strings back to Uint8Arrays
-    const salt = Uint8Array.from(atob(encryptedData.salt), c => c.charCodeAt(0))
-    const iv = Uint8Array.from(atob(encryptedData.iv), c => c.charCodeAt(0))
-    const encryptedBuffer = Uint8Array.from(atob(encryptedData.data), c => c.charCodeAt(0))
+    const salt = Uint8Array.from(atob(encryptedData.salt), (c) => c.charCodeAt(0))
+    const iv = Uint8Array.from(atob(encryptedData.iv), (c) => c.charCodeAt(0))
+    const encryptedBuffer = Uint8Array.from(atob(encryptedData.data), (c) => c.charCodeAt(0))
 
     // Derive key from password
     const key = await deriveKey(password, salt)

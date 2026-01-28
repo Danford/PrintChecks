@@ -64,11 +64,13 @@ Now you're ready to print your first check!
 ### Finding Your Routing and Account Numbers
 
 Your routing and account numbers can be found:
+
 - On the bottom of your paper checks
 - In your online banking portal
 - By calling your bank
 
 **Example check bottom:**
+
 ```
 |:064000017|: 123456789012 || 1001
    ^             ^              ^
@@ -141,16 +143,19 @@ If you've added the payee as a vendor:
 ### Printing Tips
 
 **Browser Settings:**
+
 - Enable "Background graphics"
 - Set margins to "None" or "Minimum"
 - Use 100% scale (no shrink-to-fit)
 
 **Paper:**
+
 - Use standard 8.5" x 11" blank check stock
 - Ensure your printer supports check stock thickness
 - MICR ink toner is recommended but not required
 
 **Printers:**
+
 - Laser printers work best
 - Inkjet printers are acceptable but may smudge
 - Ensure printer is properly calibrated
@@ -195,6 +200,7 @@ Vendors are payees you write checks to frequently. Storing vendor information sa
 ### Searching Vendors
 
 Use the search box at the top of the Vendors page:
+
 - Search by name, email, phone, or address
 - Results update as you type
 
@@ -273,6 +279,7 @@ Customize fonts for each check element:
 - **Signature**: Font for your signature (or upload an image)
 
 **Font Options:**
+
 - Arial
 - Times New Roman
 - Courier
@@ -283,6 +290,7 @@ Customize fonts for each check element:
 ### Color Customization
 
 Change colors for:
+
 - Check borders
 - Text colors
 - Background tints
@@ -296,6 +304,7 @@ Change colors for:
 4. Preview changes in real-time
 
 **Logo Tips:**
+
 - Use high-resolution images (300 DPI)
 - Transparent backgrounds work best (PNG)
 - Optimal size: 200x80 pixels
@@ -338,6 +347,7 @@ Navigate to **History** from the sidebar.
 ### Viewing All Payments
 
 The History page shows:
+
 - All checks written
 - All receipts generated
 - Payment amounts
@@ -349,28 +359,33 @@ The History page shows:
 ### Planned Features
 
 **Advanced Search**
+
 - Search by payee name
 - Search by memo text
 - Search by amount
 - Search by date
 
 **Filtering**
+
 - Date range filtering
 - Amount range filtering
 - Filter by specific vendors
 - Filter by payment type
 
 **Sorting & Organization**
+
 - Sort by date, amount, payee, or check number
 - Ascending and descending order
 - Custom column sorting
 
 **Pagination**
+
 - Navigate through pages
 - Adjustable items per page
 - Quick page jumping
 
 **Data Export**
+
 - Export to CSV format
 - Export to PDF format
 - Filtered export options
@@ -389,6 +404,7 @@ Navigate to **Analytics** from the sidebar.
 ### Overview Statistics
 
 See at-a-glance metrics:
+
 - **Total Checks Written**: Lifetime count
 - **Total Amount Paid**: Sum of all payments
 - **Average Check Amount**: Mean payment size
@@ -397,6 +413,7 @@ See at-a-glance metrics:
 ### Payment Trends Over Time
 
 **Line Chart** showing:
+
 - Payment volume by month
 - Spending patterns
 - Seasonal variations
@@ -405,6 +422,7 @@ See at-a-glance metrics:
 ### Top Vendors
 
 **Bar Chart** displaying:
+
 - Your top 10 vendors by payment amount
 - Total paid to each vendor
 - Percentage of total spending
@@ -412,6 +430,7 @@ See at-a-glance metrics:
 ### Monthly Breakdown
 
 **Table View** with:
+
 - Spending by month
 - Number of payments per month
 - Average payment amount per month
@@ -420,6 +439,7 @@ See at-a-glance metrics:
 ### Time Range Selection
 
 Filter analytics by:
+
 - Last 30 days
 - Last 90 days
 - Last 6 months
@@ -434,6 +454,7 @@ Filter analytics by:
 3. Download your analytics report
 
 **Uses for Analytics:**
+
 - Budget planning
 - Expense tracking
 - Vendor relationship management
@@ -518,6 +539,7 @@ Filter analytics by:
 #### Prints Are Misaligned
 
 **Solution:**
+
 1. Disable all scaling in print settings
 2. Set margins to "None"
 3. Verify paper is loaded correctly
@@ -527,6 +549,7 @@ Filter analytics by:
 #### MICR Font Doesn't Display
 
 **Solution:**
+
 1. Ensure you're using a modern browser (Chrome/Firefox)
 2. Clear browser cache
 3. Reload the page
@@ -535,6 +558,7 @@ Filter analytics by:
 #### Data Disappeared
 
 **Solution:**
+
 1. Check if you cleared browser data
 2. Verify you're using the same browser
 3. Check if you're in private/incognito mode
@@ -543,6 +567,7 @@ Filter analytics by:
 #### Can't Upload Logo
 
 **Solution:**
+
 1. Check file size (keep under 2MB)
 2. Use supported formats (PNG, JPG, SVG)
 3. Try a different image
@@ -555,6 +580,7 @@ Filter analytics by:
 If you need to completely clear all check history (useful for testing or starting fresh):
 
 **Method 1: Browser Console (Recommended for Production)**
+
 1. Open your browser's Developer Console:
    - Chrome/Edge: Press `F12` or `Ctrl+Shift+J` (Windows) / `Cmd+Option+J` (Mac)
    - Firefox: Press `F12` or `Ctrl+Shift+K` (Windows) / `Cmd+Option+K` (Mac)
@@ -569,6 +595,7 @@ If you need to completely clear all check history (useful for testing or startin
 
 **Method 2: Development Script**
 If you're running the app in development mode:
+
 ```bash
 npm run dev:clear
 ```
@@ -582,6 +609,7 @@ This will start the dev server with debug mode enabled, automatically clearing a
 #### Print Button Doesn't Work
 
 **Solution:**
+
 1. Allow pop-ups for the site
 2. Check browser's print permissions
 3. Try a different browser
@@ -590,6 +618,7 @@ This will start the dev server with debug mode enabled, automatically clearing a
 #### Browser Freezes or Crashes
 
 **Solution:**
+
 1. Clear browser cache
 2. Reduce history size (export and clear old entries)
 3. Use smaller logo files
@@ -598,6 +627,7 @@ This will start the dev server with debug mode enabled, automatically clearing a
 #### Check Numbers Out of Sequence
 
 **Solution:**
+
 1. Manually set the correct check number
 2. The system will auto-increment from there
 3. Export your history for records
@@ -605,6 +635,7 @@ This will start the dev server with debug mode enabled, automatically clearing a
 #### Amount Words Incorrect
 
 **Solution:**
+
 1. Verify you entered the amount correctly
 2. Use standard format (e.g., 125.50, not $125.5)
 3. Report if issue persists
@@ -639,4 +670,4 @@ We hope this guide helps you make the most of the application. Happy printing!
 
 ---
 
-*Last updated: December 2024*
+_Last updated: December 2024_

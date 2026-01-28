@@ -202,7 +202,7 @@ const expandedFonts = [
     variants: ['normal', 'bold'],
     isWebFont: true,
     url: 'https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;700&display=swap',
-    description: 'Adobe\'s first open source font'
+    description: "Adobe's first open source font"
   },
   {
     name: 'Nunito, sans-serif',
@@ -247,7 +247,7 @@ const expandedFonts = [
     variants: ['normal', 'bold'],
     isWebFont: true,
     url: 'https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;700&display=swap',
-    description: 'Mozilla\'s signature typeface'
+    description: "Mozilla's signature typeface"
   },
   {
     name: 'PT Sans, sans-serif',
@@ -283,7 +283,7 @@ const expandedFonts = [
     variants: ['normal', 'bold'],
     isWebFont: true,
     url: 'https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap',
-    description: 'Canonical\'s signature font'
+    description: "Canonical's signature font"
   },
   {
     name: 'Raleway, sans-serif',
@@ -330,7 +330,7 @@ const expandedFonts = [
     variants: ['normal', 'bold'],
     isWebFont: true,
     url: 'https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap',
-    description: 'Based on American Type Founder\'s Baskerville'
+    description: "Based on American Type Founder's Baskerville"
   },
   {
     name: 'Lora, serif',
@@ -357,7 +357,7 @@ const expandedFonts = [
     variants: ['normal', 'bold'],
     isWebFont: true,
     url: 'https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;700&display=swap',
-    description: 'Adobe\'s serif companion'
+    description: "Adobe's serif companion"
   },
   {
     name: 'Cormorant Garamond, serif',
@@ -550,7 +550,7 @@ const expandedFonts = [
     variants: ['normal', 'bold'],
     isWebFont: true,
     url: 'https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap',
-    description: 'Adobe\'s coding font'
+    description: "Adobe's coding font"
   },
   {
     name: 'Fira Code, monospace',
@@ -626,7 +626,6 @@ const expandedFonts = [
     url: 'https://fonts.googleapis.com/css2?family=Righteous&display=swap',
     description: 'Retro display font'
   }
-];
+]
 
-export default expandedFonts;
-
+export default expandedFonts

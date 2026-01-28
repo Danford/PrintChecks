@@ -12,22 +12,22 @@ export interface BankAccountData extends BaseEntity {
   accountHolderState: string
   accountHolderZip: string
   accountHolderCountry?: string
-  
+
   // Bank information
   bankName: string
   routingNumber: string
   accountNumber: string
   accountType?: 'checking' | 'savings' | 'business'
-  
+
   // Additional information
   branchName?: string
   branchAddress?: string
   swiftCode?: string
   ibanNumber?: string
-  
+
   // Logo/branding
   bankLogo?: FileUpload
-  
+
   // Metadata
   nickname?: string
   notes?: string
@@ -39,26 +39,26 @@ export class BankAccount implements BankAccountData {
   id?: string
   createdAt?: Date
   updatedAt?: Date
-  
+
   accountHolderName: string
   accountHolderAddress: string
   accountHolderCity: string
   accountHolderState: string
   accountHolderZip: string
   accountHolderCountry?: string
-  
+
   bankName: string
   routingNumber: string
   accountNumber: string
   accountType?: 'checking' | 'savings' | 'business'
-  
+
   branchName?: string
   branchAddress?: string
   swiftCode?: string
   ibanNumber?: string
-  
+
   bankLogo?: FileUpload
-  
+
   nickname?: string
   notes?: string
   isDefault?: boolean
@@ -97,7 +97,7 @@ export class BankAccount implements BankAccountData {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     }
   }
 
@@ -127,9 +127,9 @@ export class BankAccount implements BankAccountData {
       this.accountHolderCity,
       this.accountHolderState,
       this.accountHolderZip,
-      this.accountHolderCountry
+      this.accountHolderCountry,
     ].filter(Boolean)
-    
+
     return parts.join(', ')
   }
 
@@ -159,7 +159,7 @@ export class BankAccount implements BankAccountData {
       nickname: this.nickname,
       notes: this.notes,
       isDefault: this.isDefault,
-      isActive: this.isActive
+      isActive: this.isActive,
     }
   }
 

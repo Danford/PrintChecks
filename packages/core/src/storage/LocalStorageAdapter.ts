@@ -7,14 +7,14 @@ import { StorageError } from './StorageAdapter'
 
 export class LocalStorageAdapter implements StorageAdapter {
   private prefix: string
-  private serialize: (value: any) => string
-  private deserialize: (value: string) => any
+  private serialize: (value: unknown) => string
+  private deserialize: (value: string) => unknown
 
   constructor(options: StorageOptions = {}) {
     this.prefix = options.prefix || 'printchecks_'
     this.serialize = options.serialization?.serialize || JSON.stringify
     this.deserialize = options.serialization?.deserialize || JSON.parse
-    
+
     // Check if localStorage is available
     if (typeof localStorage === 'undefined') {
       throw new StorageError('localStorage is not available in this environment')
@@ -25,25 +25,22 @@ export class LocalStorageAdapter implements StorageAdapter {
     return `${this.prefix}${key}`
   }
 
-  async get<T = any>(key: string): Promise<T | null> {
+  async get<T = unknown>(key: string): Promise<T | null> {
     try {
       const fullKey = this.getFullKey(key)
       const value = localStorage.getItem(fullKey)
-      
+
       if (value === null) {
         return null
       }
-      
+
       return this.deserialize(value) as T
     } catch (error) {
-      throw new StorageError(
-        `Failed to get key "${key}" from localStorage`,
-        error as Error
-      )
+      throw new StorageError(`Failed to get key "${key}" from localStorage`, error as Error)
     }
   }
 
-  async set<T = any>(key: string, value: T): Promise<void> {
+  async set<T = unknown>(key: string, value: T): Promise<void> {
     try {
       const fullKey = this.getFullKey(key)
       const serialized = this.serialize(value)
@@ -53,10 +50,7 @@ export class LocalStorageAdapter implements StorageAdapter {
       if (error instanceof DOMException && error.name === 'QuotaExceededError') {
         throw new StorageError('Storage quota exceeded', error)
       }
-      throw new StorageError(
-        `Failed to set key "${key}" in localStorage`,
-        error as Error
-      )
+      throw new StorageError(`Failed to set key "${key}" in localStorage`, error as Error)
     }
   }
 
@@ -65,10 +59,7 @@ export class LocalStorageAdapter implements StorageAdapter {
       const fullKey = this.getFullKey(key)
       localStorage.removeItem(fullKey)
     } catch (error) {
-      throw new StorageError(
-        `Failed to remove key "${key}" from localStorage`,
-        error as Error
-      )
+      throw new StorageError(`Failed to remove key "${key}" from localStorage`, error as Error)
     }
   }
 
@@ -110,25 +101,25 @@ export class LocalStorageAdapter implements StorageAdapter {
     }
   }
 
-  async getMany<T = any>(keys: string[]): Promise<Map<string, T | null>> {
+  async getMany<T = unknown>(keys: string[]): Promise<Map<string, T | null>> {
     const results = new Map<string, T | null>()
-    
+
     for (const key of keys) {
       try {
         const value = await this.get<T>(key)
         results.set(key, value)
-      } catch (error) {
+      } catch (_error) {
         // Continue with other keys if one fails
         results.set(key, null)
       }
     }
-    
+
     return results
   }
 
-  async setMany(entries: Map<string, any>): Promise<void> {
+  async setMany(entries: Map<string, unknown>): Promise<void> {
     const errors: Array<{ key: string; error: Error }> = []
-    
+
     for (const [key, value] of entries) {
       try {
         await this.set(key, value)
@@ -136,10 +127,10 @@ export class LocalStorageAdapter implements StorageAdapter {
         errors.push({ key, error: error as Error })
       }
     }
-    
+
     if (errors.length > 0) {
       throw new StorageError(
-        `Failed to set ${errors.length} keys: ${errors.map(e => e.key).join(', ')}`
+        `Failed to set ${errors.length} keys: ${errors.map((e) => e.key).join(', ')}`
       )
     }
   }
@@ -149,7 +140,7 @@ export class LocalStorageAdapter implements StorageAdapter {
    */
   getStorageStats(): { used: number; available?: number; percentage?: number } {
     let used = 0
-    
+
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i)
       if (key && key.startsWith(this.prefix)) {
@@ -159,14 +150,14 @@ export class LocalStorageAdapter implements StorageAdapter {
         }
       }
     }
-    
+
     // Most browsers limit localStorage to 5-10MB
     const estimated = 5 * 1024 * 1024 // 5MB
-    
+
     return {
       used,
       available: estimated,
-      percentage: (used / estimated) * 100
+      percentage: (used / estimated) * 100,
     }
   }
 }

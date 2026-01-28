@@ -49,7 +49,7 @@ export class VendorService {
    */
   async getVendor(id: string): Promise<Vendor | null> {
     const vendors = await this.getAllVendors()
-    const vendorData = vendors.find(v => v.id === id)
+    const vendorData = vendors.find((v) => v.id === id)
     return vendorData ? Vendor.fromJSON(vendorData) : null
   }
 
@@ -59,7 +59,7 @@ export class VendorService {
   async getAllVendors(): Promise<VendorData[]> {
     const data = await this.storage.get<string>(STORAGE_KEY)
     if (!data) return []
-    
+
     try {
       const parsed = typeof data === 'string' ? JSON.parse(data) : data
       return Array.isArray(parsed) ? parsed : []
@@ -77,7 +77,7 @@ export class VendorService {
     let filtered = allVendors
 
     if (filters) {
-      filtered = allVendors.filter(vendorData => {
+      filtered = allVendors.filter((vendorData) => {
         // Category filter
         if (filters.category && vendorData.category !== filters.category) {
           return false
@@ -85,7 +85,7 @@ export class VendorService {
 
         // Tags filter (vendor must have ALL specified tags)
         if (filters.tags && filters.tags.length > 0) {
-          if (!vendorData.tags || !filters.tags.every(tag => vendorData.tags?.includes(tag))) {
+          if (!vendorData.tags || !filters.tags.every((tag) => vendorData.tags?.includes(tag))) {
             return false
           }
         }
@@ -116,7 +116,7 @@ export class VendorService {
       })
     }
 
-    return filtered.map(data => Vendor.fromJSON(data))
+    return filtered.map((data) => Vendor.fromJSON(data))
   }
 
   /**
@@ -154,8 +154,8 @@ export class VendorService {
    */
   async deleteVendor(id: string): Promise<void> {
     const vendors = await this.getAllVendors()
-    const filtered = vendors.filter(v => v.id !== id)
-    
+    const filtered = vendors.filter((v) => v.id !== id)
+
     await this.storage.set(STORAGE_KEY, JSON.stringify(filtered))
   }
 
@@ -193,13 +193,13 @@ export class VendorService {
   async getCategories(): Promise<string[]> {
     const vendors = await this.getAllVendors()
     const categories = new Set<string>()
-    
+
     for (const vendor of vendors) {
       if (vendor.category) {
         categories.add(vendor.category)
       }
     }
-    
+
     return Array.from(categories).sort()
   }
 
@@ -209,13 +209,13 @@ export class VendorService {
   async getTags(): Promise<string[]> {
     const vendors = await this.getAllVendors()
     const tags = new Set<string>()
-    
+
     for (const vendor of vendors) {
       if (vendor.tags) {
-        vendor.tags.forEach(tag => tags.add(tag))
+        vendor.tags.forEach((tag) => tags.add(tag))
       }
     }
-    
+
     return Array.from(tags).sort()
   }
 
@@ -230,7 +230,7 @@ export class VendorService {
 
     vendor.isFavorite = !vendor.isFavorite
     vendor.updatedAt = new Date()
-    
+
     await this.saveVendor(vendor)
     return vendor
   }
@@ -246,7 +246,7 @@ export class VendorService {
 
     vendor.isActive = !vendor.isActive
     vendor.updatedAt = new Date()
-    
+
     await this.saveVendor(vendor)
     return vendor
   }
@@ -296,15 +296,15 @@ export class VendorService {
       active: 0,
       inactive: 0,
       favorites: 0,
-      byCategory: {} as Record<string, number>
+      byCategory: {} as Record<string, number>,
     }
 
     for (const vendor of vendors) {
       if (vendor.isActive) stats.active++
       else stats.inactive++
-      
+
       if (vendor.isFavorite) stats.favorites++
-      
+
       if (vendor.category) {
         stats.byCategory[vendor.category] = (stats.byCategory[vendor.category] || 0) + 1
       }
@@ -318,7 +318,7 @@ export class VendorService {
    */
   private async saveVendor(vendor: Vendor): Promise<void> {
     const vendors = await this.getAllVendors()
-    const index = vendors.findIndex(v => v.id === vendor.id)
+    const index = vendors.findIndex((v) => v.id === vendor.id)
 
     if (index >= 0) {
       vendors[index] = vendor.toJSON()

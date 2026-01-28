@@ -3,7 +3,7 @@
  * Provides common functionality and utilities
  */
 
-import { PrintChecksCore } from '@printchecks/core'
+import { PrintChecksCore, type PrintChecksCoreConfig } from '@printchecks/core'
 
 // Global store for shared PrintChecksCore instance
 let globalCore: PrintChecksCore | null = null
@@ -35,7 +35,7 @@ export abstract class PrintChecksComponent extends HTMLElement {
   /**
    * Emit a custom event
    */
-  protected emit(eventName: string, detail: any = {}): void {
+  protected emit(eventName: string, detail: unknown = {}): void {
     this.dispatchEvent(
       new CustomEvent(eventName, {
         detail,
@@ -129,8 +129,8 @@ export abstract class PrintChecksComponent extends HTMLElement {
  * Global configuration for PrintChecks components
  */
 export class PrintChecksConfig {
-  static configure(config: any): void {
-    globalCore = new PrintChecksCore(config as any)
+  static configure(config: unknown): void {
+    globalCore = new PrintChecksCore(config as PrintChecksCoreConfig)
   }
 
   static getCore(): PrintChecksCore | null {

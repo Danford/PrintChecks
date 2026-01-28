@@ -4,7 +4,7 @@
       <h3>🎨 Customization</h3>
       <p>Personalize your checks with custom fonts, colors, and layouts</p>
     </div>
-    
+
     <div class="panel-content">
       <!-- Template Selection -->
       <div class="section collapsible-section" :class="{ collapsed: !sectionsExpanded.templates }">
@@ -15,60 +15,69 @@
           </h4>
         </div>
         <div v-show="sectionsExpanded.templates" class="section-content">
-        <div class="preset-grid">
-          <div 
-            v-for="preset in presets" 
-            :key="preset.id"
-            class="preset-card"
-            :class="{ 
-              active: currentPreset?.id === preset.id,
-              'is-builtin': preset.isBuiltIn,
-              'is-editing': !preset.isBuiltIn && currentPreset?.id === preset.id
-            }"
-            @click="applyPreset(preset)"
-          >
-            <div class="preset-status-badge" v-if="currentPreset?.id === preset.id">
-              <span class="badge-text">{{ preset.isBuiltIn ? '✓ Active (Read-Only)' : '✓ Editing' }}</span>
+          <div class="preset-grid">
+            <div
+              v-for="preset in presets"
+              :key="preset.id"
+              class="preset-card"
+              :class="{
+                active: currentPreset?.id === preset.id,
+                'is-builtin': preset.isBuiltIn,
+                'is-editing': !preset.isBuiltIn && currentPreset?.id === preset.id
+              }"
+              @click="applyPreset(preset)"
+            >
+              <div class="preset-status-badge" v-if="currentPreset?.id === preset.id">
+                <span class="badge-text">{{
+                  preset.isBuiltIn ? '✓ Active (Read-Only)' : '✓ Editing'
+                }}</span>
+              </div>
+              <div class="preset-preview-container">
+                <CheckTemplatePreview
+                  :settings="
+                    currentPreset?.id === preset.id && currentSettings
+                      ? currentSettings
+                      : preset.settings
+                  "
+                  :scale="0.2"
+                />
+              </div>
+              <div class="preset-info">
+                <h5>{{ preset.name }}</h5>
+                <p>{{ preset.description }}</p>
+              </div>
+              <div v-if="!preset.isBuiltIn" class="preset-actions">
+                <button
+                  class="action-btn rename-btn"
+                  @click.stop="openRenameDialog(preset)"
+                  title="Rename Template"
+                >
+                  ✏️
+                </button>
+                <button
+                  class="action-btn delete-btn"
+                  @click.stop="confirmDeletePreset(preset)"
+                  title="Delete Template"
+                >
+                  🗑️
+                </button>
+              </div>
             </div>
-            <div class="preset-preview-container">
-              <CheckTemplatePreview 
-                :settings="currentPreset?.id === preset.id && currentSettings ? currentSettings : preset.settings" 
-                :scale="0.2" 
+          </div>
+
+          <!-- Larger Preview of Selected Template -->
+          <div v-if="currentPreset" class="selected-template-preview">
+            <h5>📋 {{ currentPreset.name }} Preview</h5>
+            <div class="large-preview-container">
+              <CheckTemplatePreview
+                :settings="currentSettings || currentPreset.settings"
+                :scale="0.5"
               />
             </div>
-            <div class="preset-info">
-              <h5>{{ preset.name }}</h5>
-              <p>{{ preset.description }}</p>
-            </div>
-            <div v-if="!preset.isBuiltIn" class="preset-actions">
-              <button 
-                class="action-btn rename-btn" 
-                @click.stop="openRenameDialog(preset)"
-                title="Rename Template"
-              >
-                ✏️
-              </button>
-              <button 
-                class="action-btn delete-btn" 
-                @click.stop="confirmDeletePreset(preset)"
-                title="Delete Template"
-              >
-                🗑️
-              </button>
-            </div>
           </div>
-        </div>
-        
-        <!-- Larger Preview of Selected Template -->
-        <div v-if="currentPreset" class="selected-template-preview">
-          <h5>📋 {{ currentPreset.name }} Preview</h5>
-          <div class="large-preview-container">
-            <CheckTemplatePreview :settings="currentSettings || currentPreset.settings" :scale="0.5" />
-          </div>
-        </div>
         </div>
       </div>
-      
+
       <!-- Font Customization -->
       <div class="section collapsible-section" :class="{ collapsed: !sectionsExpanded.fonts }">
         <div class="section-header" @click="toggleSection('fonts')">
@@ -78,154 +87,212 @@
           </h4>
         </div>
         <div v-show="sectionsExpanded.fonts" class="section-content">
-        <div class="font-controls-modern">
-          <div class="font-element-compact" v-for="(fontKey, index) in fontElements" :key="fontKey">
-            <!-- Compact Header with Icons -->
-            <div class="compact-header">
-              <div class="element-info">
-                <span class="element-name">{{ formatFontLabel(fontKey) }}</span>
-                <div class="element-preview" :style="getElementPreviewStyle(fontKey)">
-                  {{ getElementPreviewText(fontKey) }}
-                </div>
-              </div>
-              <div class="icon-controls">
-                <!-- Font Family Icon -->
-                <div class="icon-control font-control">
-                  <select 
-                    :value="currentSettings?.fonts[fontKey]?.family || ''"
-                    @change="updateFont(fontKey, 'family', $event.target.value)"
-                    class="font-select"
-                    :title="'Font: ' + getShortFontName(fontKey)"
-                  >
-                    <optgroup v-for="category in fontCategories" :key="category" :label="getCategoryLabel(category)">
-                      <option 
-                        v-for="font in getFontsByCategory(category)" 
-                        :key="font.name" 
-                        :value="font.name"
-                        :style="{ fontFamily: font.name }"
-                      >
-                        {{ font.displayName }}
-                      </option>
-                    </optgroup>
-                  </select>
-                  <div class="font-icon-overlay">
-                    <span class="icon-letter" :style="{ fontFamily: currentSettings?.fonts[fontKey]?.family }">A</span>
+          <div class="font-controls-modern">
+            <div class="font-element-compact" v-for="fontKey in fontElements" :key="fontKey">
+              <!-- Compact Header with Icons -->
+              <div class="compact-header">
+                <div class="element-info">
+                  <span class="element-name">{{ formatFontLabel(fontKey) }}</span>
+                  <div class="element-preview" :style="getElementPreviewStyle(fontKey)">
+                    {{ getElementPreviewText(fontKey) }}
                   </div>
                 </div>
-                
-                <!-- Size Icon -->
-                <div class="icon-control" :class="{ active: expandedControls[fontKey] === 'size' }">
-                  <button 
-                    class="icon-btn"
-                    @click="toggleControl(fontKey, 'size')"
-                    :title="'Size: ' + (currentSettings?.fonts[fontKey]?.size || 16) + 'px'"
-                  >
-                    <span class="icon-text">{{ currentSettings?.fonts[fontKey]?.size || 16 }}</span>
-                  </button>
-                  <div v-if="expandedControls[fontKey] === 'size'" class="control-dropdown size-dropdown">
-                    <input 
-                      type="range"
-                      :value="currentSettings?.fonts[fontKey]?.size || 16"
-                      @input="updateFont(fontKey, 'size', parseInt($event.target.value))"
-                      min="8" 
-                      max="72" 
-                      class="compact-slider"
-                    />
-                    <input 
-                      type="number" 
-                      :value="currentSettings?.fonts[fontKey]?.size || 16"
-                      @input="updateFont(fontKey, 'size', parseInt($event.target.value))"
-                      min="8" 
-                      max="72" 
-                      class="compact-number"
-                    />
-                  </div>
-                </div>
-                
-                <!-- Weight Icon -->
-                <div class="icon-control" :class="{ active: expandedControls[fontKey] === 'weight' }">
-                  <button 
-                    class="icon-btn"
-                    @click="toggleControl(fontKey, 'weight')"
-                    :title="'Weight: ' + (currentSettings?.fonts[fontKey]?.weight || 'normal')"
-                  >
-                    <span class="icon-text" :style="{ fontWeight: currentSettings?.fonts[fontKey]?.weight || 'normal' }">B</span>
-                  </button>
-                  <div v-if="expandedControls[fontKey] === 'weight'" class="control-dropdown">
-                    <select 
-                      :value="currentSettings?.fonts[fontKey]?.weight || 'normal'"
-                      @change="updateFont(fontKey, 'weight', $event.target.value)"
-                      class="compact-select"
+                <div class="icon-controls">
+                  <!-- Font Family Icon -->
+                  <div class="icon-control font-control">
+                    <select
+                      :value="currentSettings?.fonts[fontKey]?.family || ''"
+                      @change="
+                        updateFont(fontKey, 'family', ($event.target as HTMLSelectElement).value)
+                      "
+                      class="font-select"
+                      :title="'Font: ' + getShortFontName(fontKey)"
                     >
-                      <option value="normal">Normal</option>
-                      <option value="bold">Bold</option>
-                      <option value="lighter">Light</option>
-                      <option value="bolder">Extra Bold</option>
+                      <optgroup
+                        v-for="category in fontCategories"
+                        :key="category"
+                        :label="getCategoryLabel(category)"
+                      >
+                        <option
+                          v-for="font in getFontsByCategory(category)"
+                          :key="font.name"
+                          :value="font.name"
+                          :style="{ fontFamily: font.name }"
+                        >
+                          {{ font.displayName }}
+                        </option>
+                      </optgroup>
                     </select>
+                    <div class="font-icon-overlay">
+                      <span
+                        class="icon-letter"
+                        :style="{ fontFamily: currentSettings?.fonts[fontKey]?.family }"
+                        >A</span
+                      >
+                    </div>
                   </div>
-                </div>
-                
-                <!-- Color Icon -->
-                <div class="icon-control color-control-wrapper">
-                  <input 
-                    type="color" 
-                    :value="currentSettings?.fonts[fontKey]?.color || '#000000'"
-                    @input="updateFont(fontKey, 'color', $event.target.value)"
-                    class="hidden-color-input"
-                    :id="`color-input-${fontKey}`"
-                  />
-                  <label 
-                    :for="`color-input-${fontKey}`"
-                    class="icon-btn color-btn"
-                    :style="{ backgroundColor: currentSettings?.fonts[fontKey]?.color || '#000000' }"
-                    :title="'Color: ' + (currentSettings?.fonts[fontKey]?.color || '#000000')"
+
+                  <!-- Size Icon -->
+                  <div
+                    class="icon-control"
+                    :class="{ active: expandedControls[fontKey] === 'size' }"
                   >
-                  </label>
-                </div>
-                
-                <!-- Position Icon -->
-                <div class="icon-control" :class="{ active: expandedControls[fontKey] === 'position' }">
-                  <button 
-                    class="icon-btn"
-                    @click="toggleControl(fontKey, 'position')"
-                    title="Position adjustment"
-                  >
-                    <span class="icon-text">⊕</span>
-                  </button>
-                  <div v-if="expandedControls[fontKey] === 'position'" class="control-dropdown position-dropdown">
-                    <div class="position-grid">
-                      <label>X:</label>
-                      <input 
-                        type="number" 
-                        :value="getAdjustment(fontKey, 'x')"
-                        @input="updateAdjustmentValue(fontKey, 'x', parseInt($event.target.value) || 0)"
-                        class="compact-number"
-                        step="1"
+                    <button
+                      class="icon-btn"
+                      @click="toggleControl(fontKey, 'size')"
+                      :title="'Size: ' + (currentSettings?.fonts[fontKey]?.size || 16) + 'px'"
+                    >
+                      <span class="icon-text">{{
+                        currentSettings?.fonts[fontKey]?.size || 16
+                      }}</span>
+                    </button>
+                    <div
+                      v-if="expandedControls[fontKey] === 'size'"
+                      class="control-dropdown size-dropdown"
+                    >
+                      <input
+                        type="range"
+                        :value="currentSettings?.fonts[fontKey]?.size || 16"
+                        @input="
+                          updateFont(
+                            fontKey,
+                            'size',
+                            parseInt(($event.target as HTMLInputElement).value)
+                          )
+                        "
+                        min="8"
+                        max="72"
+                        class="compact-slider"
                       />
-                      <label>Y:</label>
-                      <input 
-                        type="number" 
-                        :value="getAdjustment(fontKey, 'y')"
-                        @input="updateAdjustmentValue(fontKey, 'y', parseInt($event.target.value) || 0)"
+                      <input
+                        type="number"
+                        :value="currentSettings?.fonts[fontKey]?.size || 16"
+                        @input="
+                          updateFont(
+                            fontKey,
+                            'size',
+                            parseInt(($event.target as HTMLInputElement).value)
+                          )
+                        "
+                        min="8"
+                        max="72"
                         class="compact-number"
-                        step="1"
                       />
                     </div>
-                    <button 
-                      @click="resetAdjustment(fontKey)" 
-                      class="compact-reset-btn"
+                  </div>
+
+                  <!-- Weight Icon -->
+                  <div
+                    class="icon-control"
+                    :class="{ active: expandedControls[fontKey] === 'weight' }"
+                  >
+                    <button
+                      class="icon-btn"
+                      @click="toggleControl(fontKey, 'weight')"
+                      :title="'Weight: ' + (currentSettings?.fonts[fontKey]?.weight || 'normal')"
                     >
-                      Reset
+                      <span
+                        class="icon-text"
+                        :style="{ fontWeight: currentSettings?.fonts[fontKey]?.weight || 'normal' }"
+                        >B</span
+                      >
                     </button>
+                    <div v-if="expandedControls[fontKey] === 'weight'" class="control-dropdown">
+                      <select
+                        :value="currentSettings?.fonts[fontKey]?.weight || 'normal'"
+                        @change="
+                          updateFont(fontKey, 'weight', ($event.target as HTMLSelectElement).value)
+                        "
+                        class="compact-select"
+                      >
+                        <option value="normal">Normal</option>
+                        <option value="bold">Bold</option>
+                        <option value="lighter">Light</option>
+                        <option value="bolder">Extra Bold</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Color Icon -->
+                  <div class="icon-control color-control-wrapper">
+                    <input
+                      type="color"
+                      :value="currentSettings?.fonts[fontKey]?.color || '#000000'"
+                      @input="
+                        updateFont(fontKey, 'color', ($event.target as HTMLInputElement).value)
+                      "
+                      class="hidden-color-input"
+                      :id="`color-input-${fontKey}`"
+                    />
+                    <label
+                      :for="`color-input-${fontKey}`"
+                      class="icon-btn color-btn"
+                      :style="{
+                        backgroundColor: currentSettings?.fonts[fontKey]?.color || '#000000'
+                      }"
+                      :title="'Color: ' + (currentSettings?.fonts[fontKey]?.color || '#000000')"
+                    >
+                    </label>
+                  </div>
+
+                  <!-- Position Icon -->
+                  <div
+                    class="icon-control"
+                    :class="{ active: expandedControls[fontKey] === 'position' }"
+                  >
+                    <button
+                      class="icon-btn"
+                      @click="toggleControl(fontKey, 'position')"
+                      title="Position adjustment"
+                    >
+                      <span class="icon-text">⊕</span>
+                    </button>
+                    <div
+                      v-if="expandedControls[fontKey] === 'position'"
+                      class="control-dropdown position-dropdown"
+                    >
+                      <div class="position-grid">
+                        <label>X:</label>
+                        <input
+                          type="number"
+                          :value="getAdjustment(fontKey, 'x')"
+                          @input="
+                            updateAdjustmentValue(
+                              fontKey,
+                              'x',
+                              parseInt(($event.target as HTMLInputElement).value) || 0
+                            )
+                          "
+                          class="compact-number"
+                          step="1"
+                        />
+                        <label>Y:</label>
+                        <input
+                          type="number"
+                          :value="getAdjustment(fontKey, 'y')"
+                          @input="
+                            updateAdjustmentValue(
+                              fontKey,
+                              'y',
+                              parseInt(($event.target as HTMLInputElement).value) || 0
+                            )
+                          "
+                          class="compact-number"
+                          step="1"
+                        />
+                      </div>
+                      <button @click="resetAdjustment(fontKey)" class="compact-reset-btn">
+                        Reset
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        </div>
       </div>
-      
+
       <!-- Logo Settings -->
       <div class="section collapsible-section" :class="{ collapsed: !sectionsExpanded.logo }">
         <div class="section-header" @click="toggleSection('logo')">
@@ -235,215 +302,241 @@
           </h4>
         </div>
         <div v-show="sectionsExpanded.logo" class="section-content">
-        <div class="logo-controls">
-          <div class="checkbox-row">
-            <input 
-              type="checkbox" 
-              id="enable-logo"
-              :checked="currentSettings?.logo.enabled || false"
-              @change="updateLogo('enabled', $event.target.checked)"
-            />
-            <label for="enable-logo">Enable Logo</label>
-          </div>
-          
-          <div v-if="currentSettings?.logo.enabled" class="logo-settings">
-            <div class="file-upload">
-              <input 
-                type="file" 
-                id="logo-upload"
-                accept="image/*"
-                @change="handleLogoUpload"
-                class="file-input"
+          <div class="logo-controls">
+            <div class="checkbox-row">
+              <input
+                type="checkbox"
+                id="enable-logo"
+                :checked="currentSettings?.logo.enabled || false"
+                @change="updateLogo('enabled', ($event.target as HTMLInputElement).checked)"
               />
-              <label for="logo-upload" class="file-label">
-                📁 Choose Logo File
-              </label>
+              <label for="enable-logo">Enable Logo</label>
             </div>
 
-            <!-- Logo Preview -->
-            <div v-if="hasLogoFile" class="logo-preview-section">
-              <label>Preview</label>
-              <div class="logo-preview-container">
-                <img 
-                  :src="logoPreviewSrc" 
-                  alt="Logo Preview"
-                  class="logo-preview-image"
-                  :style="logoPreviewStyle"
+            <div v-if="currentSettings?.logo.enabled" class="logo-settings">
+              <div class="file-upload">
+                <input
+                  type="file"
+                  id="logo-upload"
+                  accept="image/*"
+                  @change="handleLogoUpload"
+                  class="file-input"
                 />
-                <div class="preview-overlay">
-                  <span class="preview-dimensions">
-                    {{ currentSettings?.logo.size.width }}×{{ currentSettings?.logo.size.height }}px
-                  </span>
-                </div>
+                <label for="logo-upload" class="file-label"> 📁 Choose Logo File </label>
               </div>
-            </div>
-            
-            <div class="logo-position">
-              <label>Position</label>
-              <select 
-                :value="currentSettings?.logo.position || 'top-left'"
-                @change="updateLogo('position', $event.target.value)"
-              >
-                <option value="top-left">Top Left</option>
-                <option value="top-center">Top Center</option>
-                <option value="top-right">Top Right</option>
-                <option value="bottom-left">Bottom Left</option>
-                <option value="bottom-center">Bottom Center</option>
-                <option value="bottom-right">Bottom Right</option>
-              </select>
-            </div>
-            
-            <div class="logo-size">
-              <label>Size</label>
-              <div class="size-controls">
-                <div class="size-inputs">
-                  <input 
-                    type="number" 
-                    :value="currentSettings?.logo.size.width || 100"
-                    @input="updateLogoSize('width', parseInt($event.target.value))"
-                    placeholder="Width"
-                    min="10"
-                    max="500"
+
+              <!-- Logo Preview -->
+              <div v-if="hasLogoFile" class="logo-preview-section">
+                <label>Preview</label>
+                <div class="logo-preview-container">
+                  <img
+                    :src="logoPreviewSrc"
+                    alt="Logo Preview"
+                    class="logo-preview-image"
+                    :style="logoPreviewStyle"
                   />
-                  <span>×</span>
-                  <input 
-                    type="number" 
-                    :value="currentSettings?.logo.size.height || 50"
-                    @input="updateLogoSize('height', parseInt($event.target.value))"
-                    placeholder="Height"
-                    min="10"
-                    max="500"
-                  />
-                </div>
-                <div class="aspect-ratio-controls">
-                  <div class="checkbox-row">
-                    <input 
-                      type="checkbox" 
-                      id="maintain-aspect-ratio"
-                      :checked="maintainAspectRatio"
-                      @change="maintainAspectRatio = $event.target.checked"
-                    />
-                    <label for="maintain-aspect-ratio">Lock Aspect Ratio</label>
+                  <div class="preview-overlay">
+                    <span class="preview-dimensions">
+                      {{ currentSettings?.logo.size.width }}×{{
+                        currentSettings?.logo.size.height
+                      }}px
+                    </span>
                   </div>
-                  <button @click="resetToOriginalSize" class="btn btn-small">
-                    🔄 Original Size
-                  </button>
                 </div>
               </div>
-            </div>
 
-            <!-- Padding/Margin Controls -->
-            <div class="logo-spacing">
-              <label>Spacing & Position Fine-tuning</label>
-              <div class="spacing-grid">
-                <div class="spacing-input">
-                  <label>Top</label>
-                  <input 
-                    type="number" 
-                    :value="currentSettings?.logo.margin?.top || 10"
-                    @input="updateLogoMargin('top', parseInt($event.target.value))"
-                    min="0"
-                    max="100"
-                  />
-                </div>
-                <div class="spacing-input">
-                  <label>Right</label>
-                  <input 
-                    type="number" 
-                    :value="currentSettings?.logo.margin?.right || 10"
-                    @input="updateLogoMargin('right', parseInt($event.target.value))"
-                    min="0"
-                    max="100"
-                  />
-                </div>
-                <div class="spacing-input">
-                  <label>Bottom</label>
-                  <input 
-                    type="number" 
-                    :value="currentSettings?.logo.margin?.bottom || 10"
-                    @input="updateLogoMargin('bottom', parseInt($event.target.value))"
-                    min="0"
-                    max="100"
-                  />
-                </div>
-                <div class="spacing-input">
-                  <label>Left</label>
-                  <input 
-                    type="number" 
-                    :value="currentSettings?.logo.margin?.left || 10"
-                    @input="updateLogoMargin('left', parseInt($event.target.value))"
-                    min="0"
-                    max="100"
-                  />
+              <div class="logo-position">
+                <label>Position</label>
+                <select
+                  :value="currentSettings?.logo.position || 'top-left'"
+                  @change="updateLogo('position', ($event.target as HTMLSelectElement).value)"
+                >
+                  <option value="top-left">Top Left</option>
+                  <option value="top-center">Top Center</option>
+                  <option value="top-right">Top Right</option>
+                  <option value="bottom-left">Bottom Left</option>
+                  <option value="bottom-center">Bottom Center</option>
+                  <option value="bottom-right">Bottom Right</option>
+                </select>
+              </div>
+
+              <div class="logo-size">
+                <label>Size</label>
+                <div class="size-controls">
+                  <div class="size-inputs">
+                    <input
+                      type="number"
+                      :value="currentSettings?.logo.size.width || 100"
+                      @input="
+                        updateLogoSize('width', parseInt(($event.target as HTMLInputElement).value))
+                      "
+                      placeholder="Width"
+                      min="10"
+                      max="500"
+                    />
+                    <span>×</span>
+                    <input
+                      type="number"
+                      :value="currentSettings?.logo.size.height || 50"
+                      @input="
+                        updateLogoSize(
+                          'height',
+                          parseInt(($event.target as HTMLInputElement).value)
+                        )
+                      "
+                      placeholder="Height"
+                      min="10"
+                      max="500"
+                    />
+                  </div>
+                  <div class="aspect-ratio-controls">
+                    <div class="checkbox-row">
+                      <input
+                        type="checkbox"
+                        id="maintain-aspect-ratio"
+                        :checked="maintainAspectRatio"
+                        @change="maintainAspectRatio = ($event.target as HTMLInputElement).checked"
+                      />
+                      <label for="maintain-aspect-ratio">Lock Aspect Ratio</label>
+                    </div>
+                    <button @click="resetToOriginalSize" class="btn btn-small">
+                      🔄 Original Size
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Opacity Control -->
-            <div class="logo-opacity">
-              <label>Opacity: {{ Math.round((currentSettings?.logo.opacity || 1) * 100) }}%</label>
-              <input 
-                type="range" 
-                :value="currentSettings?.logo.opacity || 1"
-                @input="updateLogo('opacity', parseFloat($event.target.value))"
-                min="0.1"
-                max="1"
-                step="0.1"
-                class="opacity-slider"
-              />
-            </div>
-
-            <!-- Cropping Controls -->
-            <div v-if="hasLogoFile" class="logo-cropping">
-              <label>Image Adjustment</label>
-              <div class="cropping-controls">
-                <div class="object-fit-control">
-                  <label>Fit Mode</label>
-                  <select 
-                    :value="currentSettings?.logo.objectFit || 'contain'"
-                    @change="updateLogo('objectFit', $event.target.value)"
-                  >
-                    <option value="contain">Fit (Show All)</option>
-                    <option value="cover">Fill (Crop to Fit)</option>
-                    <option value="fill">Stretch</option>
-                    <option value="scale-down">Scale Down</option>
-                  </select>
+              <!-- Padding/Margin Controls -->
+              <div class="logo-spacing">
+                <label>Spacing & Position Fine-tuning</label>
+                <div class="spacing-grid">
+                  <div class="spacing-input">
+                    <label>Top</label>
+                    <input
+                      type="number"
+                      :value="currentSettings?.logo.margin?.top || 10"
+                      @input="
+                        updateLogoMargin('top', parseInt(($event.target as HTMLInputElement).value))
+                      "
+                      min="0"
+                      max="100"
+                    />
+                  </div>
+                  <div class="spacing-input">
+                    <label>Right</label>
+                    <input
+                      type="number"
+                      :value="currentSettings?.logo.margin?.right || 10"
+                      @input="
+                        updateLogoMargin(
+                          'right',
+                          parseInt(($event.target as HTMLInputElement).value)
+                        )
+                      "
+                      min="0"
+                      max="100"
+                    />
+                  </div>
+                  <div class="spacing-input">
+                    <label>Bottom</label>
+                    <input
+                      type="number"
+                      :value="currentSettings?.logo.margin?.bottom || 10"
+                      @input="
+                        updateLogoMargin(
+                          'bottom',
+                          parseInt(($event.target as HTMLInputElement).value)
+                        )
+                      "
+                      min="0"
+                      max="100"
+                    />
+                  </div>
+                  <div class="spacing-input">
+                    <label>Left</label>
+                    <input
+                      type="number"
+                      :value="currentSettings?.logo.margin?.left || 10"
+                      @input="
+                        updateLogoMargin(
+                          'left',
+                          parseInt(($event.target as HTMLInputElement).value)
+                        )
+                      "
+                      min="0"
+                      max="100"
+                    />
+                  </div>
                 </div>
-                <div class="object-position-control">
-                  <label>Image Position</label>
-                  <select 
-                    :value="currentSettings?.logo.objectPosition || 'center'"
-                    @change="updateLogo('objectPosition', $event.target.value)"
-                  >
-                    <option value="center">Center</option>
-                    <option value="top">Top</option>
-                    <option value="bottom">Bottom</option>
-                    <option value="left">Left</option>
-                    <option value="right">Right</option>
-                    <option value="top left">Top Left</option>
-                    <option value="top right">Top Right</option>
-                    <option value="bottom left">Bottom Left</option>
-                    <option value="bottom right">Bottom Right</option>
-                  </select>
+              </div>
+
+              <!-- Opacity Control -->
+              <div class="logo-opacity">
+                <label
+                  >Opacity: {{ Math.round((currentSettings?.logo.opacity || 1) * 100) }}%</label
+                >
+                <input
+                  type="range"
+                  :value="currentSettings?.logo.opacity || 1"
+                  @input="
+                    updateLogo('opacity', parseFloat(($event.target as HTMLInputElement).value))
+                  "
+                  min="0.1"
+                  max="1"
+                  step="0.1"
+                  class="opacity-slider"
+                />
+              </div>
+
+              <!-- Cropping Controls -->
+              <div v-if="hasLogoFile" class="logo-cropping">
+                <label>Image Adjustment</label>
+                <div class="cropping-controls">
+                  <div class="object-fit-control">
+                    <label>Fit Mode</label>
+                    <select
+                      :value="currentSettings?.logo.objectFit || 'contain'"
+                      @change="updateLogo('objectFit', ($event.target as HTMLSelectElement).value)"
+                    >
+                      <option value="contain">Fit (Show All)</option>
+                      <option value="cover">Fill (Crop to Fit)</option>
+                      <option value="fill">Stretch</option>
+                      <option value="scale-down">Scale Down</option>
+                    </select>
+                  </div>
+                  <div class="object-position-control">
+                    <label>Image Position</label>
+                    <select
+                      :value="currentSettings?.logo.objectPosition || 'center'"
+                      @change="
+                        updateLogo('objectPosition', ($event.target as HTMLSelectElement).value)
+                      "
+                    >
+                      <option value="center">Center</option>
+                      <option value="top">Top</option>
+                      <option value="bottom">Bottom</option>
+                      <option value="left">Left</option>
+                      <option value="right">Right</option>
+                      <option value="top left">Top Left</option>
+                      <option value="top right">Top Right</option>
+                      <option value="bottom left">Bottom Left</option>
+                      <option value="bottom right">Bottom Right</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
-      
+
       <!-- Actions -->
       <div class="section actions">
-        <button @click="resetToDefault" class="btn btn-secondary">
-          🔄 Reset to Default
-        </button>
-        <button @click="saveAsPreset" class="btn btn-primary">
-          💾 Save as Preset
-        </button>
+        <button @click="resetToDefault" class="btn btn-secondary">🔄 Reset to Default</button>
+        <button @click="saveAsPreset" class="btn btn-primary">💾 Save as Preset</button>
       </div>
     </div>
-    
+
     <!-- Rename Dialog -->
     <div v-if="renameDialogPreset" class="modal-overlay" @click="closeRenameDialog">
       <div class="modal-dialog" @click.stop>
@@ -454,10 +547,10 @@
         <div class="modal-body">
           <div class="form-group">
             <label for="rename-name">Template Name</label>
-            <input 
+            <input
               id="rename-name"
-              v-model="renameName" 
-              type="text" 
+              v-model="renameName"
+              type="text"
               class="form-input"
               placeholder="Enter template name"
               @keyup.enter="saveRename"
@@ -465,9 +558,9 @@
           </div>
           <div class="form-group">
             <label for="rename-description">Description (optional)</label>
-            <textarea 
+            <textarea
               id="rename-description"
-              v-model="renameDescription" 
+              v-model="renameDescription"
               class="form-textarea"
               placeholder="Enter description"
               rows="3"
@@ -476,7 +569,9 @@
         </div>
         <div class="modal-footer">
           <button @click="closeRenameDialog" class="btn btn-secondary">Cancel</button>
-          <button @click="saveRename" class="btn btn-primary" :disabled="!renameName.trim()">Save</button>
+          <button @click="saveRename" class="btn btn-primary" :disabled="!renameName.trim()">
+            Save
+          </button>
         </div>
       </div>
     </div>
@@ -485,6 +580,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, reactive } from 'vue'
+import type { CSSProperties } from 'vue'
 import { useCustomizationStore } from '@/stores/customization'
 import type { CustomizationPreset, FontSettings, CustomizationSettings } from '@/types'
 import CheckTemplatePreview from './CheckTemplatePreview.vue'
@@ -531,14 +627,14 @@ const logoPreviewSrc = computed(() => {
   return currentSettings.value.logo.file?.url || currentSettings.value.logo.url || ''
 })
 
-const logoPreviewStyle = computed(() => {
+const logoPreviewStyle = computed<CSSProperties>(() => {
   if (!currentSettings.value?.logo) return {}
-  
+
   const logo = currentSettings.value.logo
   return {
     width: `${Math.min(logo.size?.width || 100, 200)}px`,
     height: `${Math.min(logo.size?.height || 50, 100)}px`,
-    objectFit: logo.objectFit || 'contain',
+    objectFit: (logo.objectFit as CSSProperties['objectFit']) || 'contain',
     objectPosition: logo.objectPosition || 'center',
     opacity: logo.opacity || 1
   }
@@ -546,13 +642,22 @@ const logoPreviewStyle = computed(() => {
 
 // Font elements that can be customized
 const fontElements = [
-  'accountHolder', 'payTo', 'amount', 'amountWords', 
-  'memo', 'signature', 'bankInfo', 'bankName', 'checkNumber', 'date', 'fieldLabels'
+  'accountHolder',
+  'payTo',
+  'amount',
+  'amountWords',
+  'memo',
+  'signature',
+  'bankInfo',
+  'bankName',
+  'checkNumber',
+  'date',
+  'fieldLabels'
 ] as const
 
 // Font categories for organized display
 const fontCategories = computed(() => {
-  const categories = [...new Set(availableFonts.value.map(font => font.category))]
+  const categories = [...new Set(availableFonts.value.map((font) => font.category))]
   return categories.sort((a, b) => {
     const order = ['sans-serif', 'serif', 'handwriting', 'monospace', 'banking']
     return order.indexOf(a) - order.indexOf(b)
@@ -580,74 +685,34 @@ function formatFontLabel(key: string): string {
 function getCategoryLabel(category: string): string {
   const labels: Record<string, string> = {
     'sans-serif': '📝 Sans-Serif (Clean & Modern)',
-    'serif': '📖 Serif (Traditional & Formal)',
-    'handwriting': '✍️ Handwriting & Signatures',
-    'monospace': '💻 Monospace (Fixed Width)',
-    'banking': '🏦 Banking & MICR Fonts'
+    serif: '📖 Serif (Traditional & Formal)',
+    handwriting: '✍️ Handwriting & Signatures',
+    monospace: '💻 Monospace (Fixed Width)',
+    banking: '🏦 Banking & MICR Fonts'
   }
   return labels[category] || category
 }
 
 function getFontsByCategory(category: string) {
-  return availableFonts.value.filter(font => font.category === category)
+  return availableFonts.value.filter((font) => font.category === category)
 }
 
-function getSelectedFontDescription(fontKey: string): string {
-  const selectedFamily = currentSettings.value?.fonts[fontKey]?.family
-  if (!selectedFamily) return ''
-  
-  const font = availableFonts.value.find(f => f.name === selectedFamily)
-  return font?.description || ''
-}
 
-function getFontPreviewStyle(fontKey: string) {
-  const font = currentSettings.value?.fonts[fontKey]
-  if (!font) return {}
-  
-  return {
-    fontFamily: font.family,
-    fontSize: `${Math.min(font.size, 24)}px`,
-    fontWeight: font.weight,
-    color: font.color,
-    fontStyle: font.style || 'normal'
-  }
-}
-
-function getDropdownOptionStyle(fontName: string) {
-  // Use readable font for MICR banking font in dropdown options only
-  const dropdownFontFamily = fontName === 'banking, monospace' 
-    ? 'Courier New, monospace' 
-    : fontName
-  
-  return {
-    fontFamily: dropdownFontFamily
-  }
-}
-
-function getFontPreviewText(fontKey: string): string {
-  const previews: Record<string, string> = {
-    accountHolder: 'John Smith',
-    payTo: 'Michael Johnson',
-    amount: '$1,234.56',
-    amountWords: 'One Thousand Two Hundred Thirty-Four and 56/100',
-    memo: 'Rent Payment',
-    signature: 'John Smith',
-    bankInfo: 'a022303659a 000000000000c 100',
-    bankName: 'First National Bank',
-    checkNumber: '100',
-    date: '12/07/2025'
-  }
-  return previews[fontKey] || 'Sample Text'
-}
-
-function updateFont(element: keyof typeof currentSettings.value.fonts, property: keyof FontSettings, value: any) {
+function updateFont(
+  element: keyof CustomizationSettings['fonts'],
+  property: keyof FontSettings,
+  value: unknown
+) {
   // Check if we're editing a built-in template
   if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
     // Create a new custom template based on the built-in one (only once)
     hasCreatedCustomTemplate.value = true
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
-    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
-    
+    const newPreset = customizationStore.saveAsPreset(
+      newPresetName,
+      `Modified from ${currentPreset.value.name}`
+    )
+
     // Apply the new preset and then the font update immediately (no delays)
     if (newPreset) {
       customizationStore.applyPreset(newPreset)
@@ -658,13 +723,16 @@ function updateFont(element: keyof typeof currentSettings.value.fonts, property:
   }
 }
 
-function updateLogo(property: string, value: any) {
+function updateLogo(property: string, value: unknown) {
   // Check if we're editing a built-in template
   if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
     hasCreatedCustomTemplate.value = true
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
-    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
-    
+    const newPreset = customizationStore.saveAsPreset(
+      newPresetName,
+      `Modified from ${currentPreset.value.name}`
+    )
+
     if (newPreset) {
       customizationStore.applyPreset(newPreset)
       customizationStore.updateLogo({ [property]: value })
@@ -676,12 +744,12 @@ function updateLogo(property: string, value: any) {
 
 function updateLogoSize(dimension: 'width' | 'height', value: number) {
   if (!currentSettings.value) return
-  
+
   const newSize = { ...currentSettings.value.logo.size }
-  
+
   if (maintainAspectRatio.value && originalImageDimensions.value) {
     const aspectRatio = originalImageDimensions.value.width / originalImageDimensions.value.height
-    
+
     if (dimension === 'width') {
       newSize.width = value
       newSize.height = Math.round(value / aspectRatio)
@@ -692,13 +760,16 @@ function updateLogoSize(dimension: 'width' | 'height', value: number) {
   } else {
     newSize[dimension] = value
   }
-  
+
   // Check if we're editing a built-in template
   if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
     hasCreatedCustomTemplate.value = true
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
-    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
-    
+    const newPreset = customizationStore.saveAsPreset(
+      newPresetName,
+      `Modified from ${currentPreset.value.name}`
+    )
+
     if (newPreset) {
       customizationStore.applyPreset(newPreset)
       customizationStore.updateLogo({ size: newSize })
@@ -711,12 +782,12 @@ function updateLogoSize(dimension: 'width' | 'height', value: number) {
 function handleLogoUpload(event: Event) {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
-  
+
   if (file) {
     const reader = new FileReader()
     reader.onload = (e) => {
       const url = e.target?.result as string
-      
+
       // Create image to get dimensions
       const img = new Image()
       img.onload = () => {
@@ -725,13 +796,16 @@ function handleLogoUpload(event: Event) {
           width: img.width,
           height: img.height
         }
-        
+
         // Check if we're editing a built-in template
         if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
           hasCreatedCustomTemplate.value = true
           const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
-          const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
-          
+          const newPreset = customizationStore.saveAsPreset(
+            newPresetName,
+            `Modified from ${currentPreset.value.name}`
+          )
+
           if (newPreset) {
             customizationStore.applyPreset(newPreset)
             customizationStore.updateLogo({
@@ -768,22 +842,27 @@ function handleLogoUpload(event: Event) {
 // New logo enhancement functions
 function updateLogoMargin(side: 'top' | 'right' | 'bottom' | 'left', value: number) {
   if (!currentSettings.value) return
-  
-  const newMargin = { 
-    top: 10, 
-    right: 10, 
-    bottom: 10, 
-    left: 10,
-    ...currentSettings.value.logo.margin 
+
+  const currentMargin = currentSettings.value.logo.margin || {
+    top: 10,
+    right: 10,
+    bottom: 10,
+    left: 10
+  }
+  const newMargin = {
+    ...currentMargin
   }
   newMargin[side] = value
-  
+
   // Check if we're editing a built-in template
   if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
     hasCreatedCustomTemplate.value = true
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
-    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
-    
+    const newPreset = customizationStore.saveAsPreset(
+      newPresetName,
+      `Modified from ${currentPreset.value.name}`
+    )
+
     if (newPreset) {
       customizationStore.applyPreset(newPreset)
       customizationStore.updateLogo({ margin: newMargin })
@@ -795,13 +874,16 @@ function updateLogoMargin(side: 'top' | 'right' | 'bottom' | 'left', value: numb
 
 function resetToOriginalSize() {
   if (!originalImageDimensions.value) return
-  
+
   // Check if we're editing a built-in template
   if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
     hasCreatedCustomTemplate.value = true
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
-    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
-    
+    const newPreset = customizationStore.saveAsPreset(
+      newPresetName,
+      `Modified from ${currentPreset.value.name}`
+    )
+
     if (newPreset) {
       customizationStore.applyPreset(newPreset)
       customizationStore.updateLogo({
@@ -821,14 +903,6 @@ function resetToOriginalSize() {
   }
 }
 
-function getPresetPreviewStyle(preset: CustomizationPreset) {
-  return {
-    fontFamily: preset.settings.fonts.accountHolder.family,
-    fontSize: '14px',
-    color: preset.settings.colors.primary,
-    backgroundColor: preset.settings.colors.background
-  }
-}
 
 function applyPreset(preset: CustomizationPreset) {
   customizationStore.applyPreset(preset)
@@ -855,15 +929,13 @@ function toggleSection(sectionName: keyof typeof sectionsExpanded) {
 }
 
 // Toggle control dropdown for a font element
-function toggleControl(fontKey: string, controlType: string) {
+function toggleControl(fontKey: keyof CustomizationSettings['fonts'], controlType: string) {
   if (expandedControls[fontKey] === controlType) {
     expandedControls[fontKey] = null
   } else {
     expandedControls[fontKey] = controlType
   }
 }
-
-
 
 // Get short font name for display
 function getShortFontName(fontKey: keyof CustomizationSettings['fonts']): string {
@@ -875,7 +947,7 @@ function getShortFontName(fontKey: keyof CustomizationSettings['fonts']): string
 function getElementPreviewStyle(fontKey: keyof CustomizationSettings['fonts']) {
   const font = currentSettings.value?.fonts[fontKey]
   if (!font) return {}
-  
+
   return {
     fontFamily: font.family || 'Arial, sans-serif',
     fontSize: `${Math.min(font.size || 16, 24)}px`,
@@ -924,7 +996,7 @@ function closeRenameDialog() {
 
 function saveRename() {
   if (!renameDialogPreset.value || !renameName.value.trim()) return
-  
+
   customizationStore.renamePreset(
     renameDialogPreset.value.id!,
     renameName.value.trim(),
@@ -938,14 +1010,21 @@ function getAdjustment(fontKey: keyof CustomizationSettings['fonts'], axis: 'x' 
   return currentSettings.value?.adjustments?.[fontKey]?.[axis] || 0
 }
 
-function updateAdjustmentValue(fontKey: keyof CustomizationSettings['fonts'], axis: 'x' | 'y', value: number) {
+function updateAdjustmentValue(
+  fontKey: keyof CustomizationSettings['fonts'],
+  axis: 'x' | 'y',
+  value: number
+) {
   // Check if we're editing a built-in template
   if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
     // Create a new custom template based on the built-in one (only once)
     hasCreatedCustomTemplate.value = true
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
-    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
-    
+    const newPreset = customizationStore.saveAsPreset(
+      newPresetName,
+      `Modified from ${currentPreset.value.name}`
+    )
+
     // Apply the new preset and then the adjustment update immediately (no delays)
     if (newPreset) {
       customizationStore.applyPreset(newPreset)
@@ -962,8 +1041,11 @@ function resetAdjustment(fontKey: keyof CustomizationSettings['fonts']) {
     // Create a new custom template based on the built-in one (only once)
     hasCreatedCustomTemplate.value = true
     const newPresetName = `Custom ${currentPreset.value.name} ${Date.now()}`
-    const newPreset = customizationStore.saveAsPreset(newPresetName, `Modified from ${currentPreset.value.name}`)
-    
+    const newPreset = customizationStore.saveAsPreset(
+      newPresetName,
+      `Modified from ${currentPreset.value.name}`
+    )
+
     // Apply the new preset and then reset the adjustment
     if (newPreset) {
       customizationStore.applyPreset(newPreset)
@@ -1036,7 +1118,7 @@ onMounted(() => {
 .preset-card:hover {
   border-color: #007bff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .preset-card.active {
@@ -1122,7 +1204,7 @@ onMounted(() => {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .font-element-header {
@@ -1236,7 +1318,7 @@ onMounted(() => {
   border-radius: 50%;
   background: #007bff;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .font-size-slider::-moz-range-thumb {
@@ -1246,7 +1328,7 @@ onMounted(() => {
   background: #007bff;
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .font-size-input {
@@ -1305,8 +1387,6 @@ onMounted(() => {
   width: 60px;
   height: 60px;
 }
-
-
 
 .logo-controls {
   display: flex;
@@ -1426,14 +1506,14 @@ onMounted(() => {
   max-width: 200px;
   max-height: 100px;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .preview-overlay {
   position: absolute;
   bottom: 5px;
   right: 5px;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   color: white;
   padding: 2px 6px;
   border-radius: 3px;
@@ -1524,7 +1604,7 @@ onMounted(() => {
   border-radius: 50%;
   background: #007bff;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .opacity-slider::-moz-range-thumb {
@@ -1534,7 +1614,7 @@ onMounted(() => {
   background: #007bff;
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .logo-cropping {

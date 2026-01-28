@@ -19,7 +19,7 @@ import { LocalStorageAdapter } from '@printchecks/core/storage'
 const { checks, vendors, bankAccounts, receipts } = usePrintChecks({
   storage: new LocalStorageAdapter({ prefix: 'myapp_' }),
   autoIncrementCheckNumber: true,
-  defaultCurrency: 'USD'
+  defaultCurrency: 'USD',
 })
 
 // Load initial data
@@ -34,9 +34,9 @@ async function createNewCheck() {
     date: new Date().toISOString(),
     payee: 'John Doe',
     amount: '100.00',
-    memo: 'Payment for services'
+    memo: 'Payment for services',
   })
-  
+
   console.log('Check created:', check)
 }
 </script>
@@ -45,10 +45,10 @@ async function createNewCheck() {
   <div>
     <h1>Checks ({{ checks.checks.value.length }})</h1>
     <button @click="createNewCheck">Create Check</button>
-    
+
     <div v-if="checks.isLoading.value">Loading...</div>
     <div v-if="checks.error.value">Error: {{ checks.error.value }}</div>
-    
+
     <ul>
       <li v-for="check in checks.checks.value" :key="check.id">
         Check #{{ check.checkNumber }} - {{ check.payee }} - ${{ check.amount }}
@@ -66,18 +66,18 @@ Main composable that provides access to all services.
 
 ```typescript
 const {
-  core,              // Core PrintChecks instance
-  checks,            // Check management composable
-  vendors,           // Vendor management composable
-  bankAccounts,      // Bank account management composable
-  receipts,          // Receipt management composable
-  isInitialized,     // Initialization state
-  exportData,        // Export all data
-  importData,        // Import data
-  clearAllData,      // Clear all data
-  enableEncryption,  // Enable encryption
+  core, // Core PrintChecks instance
+  checks, // Check management composable
+  vendors, // Vendor management composable
+  bankAccounts, // Bank account management composable
+  receipts, // Receipt management composable
+  isInitialized, // Initialization state
+  exportData, // Export all data
+  importData, // Import data
+  clearAllData, // Clear all data
+  enableEncryption, // Enable encryption
   disableEncryption, // Disable encryption
-  changeEncryptionPassword // Change password
+  changeEncryptionPassword, // Change password
 } = usePrintChecks(config)
 ```
 
@@ -87,25 +87,25 @@ Composable for check management.
 
 ```typescript
 const {
-  currentCheck,      // Currently selected check
-  checks,            // List of all checks
-  isLoading,         // Loading state
-  error,             // Error message
+  currentCheck, // Currently selected check
+  checks, // List of all checks
+  isLoading, // Loading state
+  error, // Error message
   hasUnsavedChanges, // Unsaved changes flag
-  isValid,           // Validation state
-  amountInWords,     // Amount converted to words
-  nextCheckNumber,   // Next available check number
-  createCheck,       // Create a new check
-  updateCheck,       // Update current check
-  saveCheck,         // Save current check
-  deleteCheck,       // Delete a check
-  loadCheck,         // Load a specific check
-  loadChecks,        // Load all checks
-  markAsPrinted,     // Mark check as printed
-  voidCheck,         // Void a check
-  duplicateCheck,    // Duplicate a check
-  validateCheck,     // Validate current check
-  clearCurrentCheck  // Clear current check
+  isValid, // Validation state
+  amountInWords, // Amount converted to words
+  nextCheckNumber, // Next available check number
+  createCheck, // Create a new check
+  updateCheck, // Update current check
+  saveCheck, // Save current check
+  deleteCheck, // Delete a check
+  loadCheck, // Load a specific check
+  loadChecks, // Load all checks
+  markAsPrinted, // Mark check as printed
+  voidCheck, // Void a check
+  duplicateCheck, // Duplicate a check
+  validateCheck, // Validate current check
+  clearCurrentCheck, // Clear current check
 } = useChecks(options)
 ```
 
@@ -115,22 +115,22 @@ Composable for vendor management.
 
 ```typescript
 const {
-  currentVendor,     // Currently selected vendor
-  vendors,           // List of all vendors
-  isLoading,         // Loading state
-  error,             // Error message
-  favoriteVendors,   // List of favorite vendors
-  vendorCount,       // Total vendor count
-  createVendor,      // Create a new vendor
-  updateVendor,      // Update a vendor
-  deleteVendor,      // Delete a vendor
-  loadVendor,        // Load a specific vendor
-  loadVendors,       // Load all vendors
-  searchVendors,     // Search vendors
-  toggleFavorite,    // Toggle vendor favorite status
-  addTag,            // Add a tag to vendor
-  removeTag,         // Remove a tag from vendor
-  clearCurrentVendor // Clear current vendor
+  currentVendor, // Currently selected vendor
+  vendors, // List of all vendors
+  isLoading, // Loading state
+  error, // Error message
+  favoriteVendors, // List of favorite vendors
+  vendorCount, // Total vendor count
+  createVendor, // Create a new vendor
+  updateVendor, // Update a vendor
+  deleteVendor, // Delete a vendor
+  loadVendor, // Load a specific vendor
+  loadVendors, // Load all vendors
+  searchVendors, // Search vendors
+  toggleFavorite, // Toggle vendor favorite status
+  addTag, // Add a tag to vendor
+  removeTag, // Remove a tag from vendor
+  clearCurrentVendor, // Clear current vendor
 } = useVendors(options)
 ```
 
@@ -140,19 +140,19 @@ Composable for bank account management.
 
 ```typescript
 const {
-  currentAccount,    // Currently selected account
-  accounts,          // List of all accounts
-  isLoading,         // Loading state
-  error,             // Error message
-  defaultAccount,    // Default bank account
-  accountCount,      // Total account count
-  createAccount,     // Create a new account
-  updateAccount,     // Update an account
-  deleteAccount,     // Delete an account
-  loadAccount,       // Load a specific account
-  loadAccounts,      // Load all accounts
+  currentAccount, // Currently selected account
+  accounts, // List of all accounts
+  isLoading, // Loading state
+  error, // Error message
+  defaultAccount, // Default bank account
+  accountCount, // Total account count
+  createAccount, // Create a new account
+  updateAccount, // Update an account
+  deleteAccount, // Delete an account
+  loadAccount, // Load a specific account
+  loadAccounts, // Load all accounts
   setDefaultAccount, // Set default account
-  clearCurrentAccount // Clear current account
+  clearCurrentAccount, // Clear current account
 } = useBankAccounts(options)
 ```
 
@@ -162,22 +162,22 @@ Composable for receipt management.
 
 ```typescript
 const {
-  currentReceipt,    // Currently selected receipt
-  receipts,          // List of all receipts
-  isLoading,         // Loading state
-  error,             // Error message
-  isValid,           // Validation state
-  hasLineItems,      // Has line items flag
-  receiptCount,      // Total receipt count
-  createReceipt,     // Create a new receipt
-  updateReceipt,     // Update current receipt
-  deleteReceipt,     // Delete a receipt
-  loadReceipt,       // Load a specific receipt
-  loadReceipts,      // Load all receipts
-  addLineItem,       // Add a line item
-  updateLineItem,    // Update a line item
-  removeLineItem,    // Remove a line item
-  clearCurrentReceipt // Clear current receipt
+  currentReceipt, // Currently selected receipt
+  receipts, // List of all receipts
+  isLoading, // Loading state
+  error, // Error message
+  isValid, // Validation state
+  hasLineItems, // Has line items flag
+  receiptCount, // Total receipt count
+  createReceipt, // Create a new receipt
+  updateReceipt, // Update current receipt
+  deleteReceipt, // Delete a receipt
+  loadReceipt, // Load a specific receipt
+  loadReceipts, // Load all receipts
+  addLineItem, // Add a line item
+  updateLineItem, // Update a line item
+  removeLineItem, // Remove a line item
+  clearCurrentReceipt, // Clear current receipt
 } = useReceipts(options)
 ```
 
@@ -194,8 +194,8 @@ const printChecks = usePrintChecks({
   storageOptions: {
     prefix: 'myapp_',
     encryption: true,
-    password: 'my-secure-password'
-  }
+    password: 'my-secure-password',
+  },
 })
 
 // Change password later
@@ -209,17 +209,17 @@ await printChecks.changeEncryptionPassword('old-password', 'new-password')
 await checks.loadChecks({
   status: 'printed',
   startDate: '2024-01-01',
-  endDate: '2024-12-31'
+  endDate: '2024-12-31',
 })
 
 // Load only favorite vendors
 await vendors.loadVendors({
-  favorite: true
+  favorite: true,
 })
 
 // Load checking accounts only
 await bankAccounts.loadAccounts({
-  type: 'checking'
+  type: 'checking',
 })
 ```
 
@@ -235,19 +235,22 @@ const { checks } = usePrintChecks()
 checks.loadChecks()
 
 // Watch for changes
-watch(() => checks.currentCheck.value, (newCheck) => {
-  console.log('Check changed:', newCheck)
-})
+watch(
+  () => checks.currentCheck.value,
+  (newCheck) => {
+    console.log('Check changed:', newCheck)
+  }
+)
 </script>
 
 <template>
   <div>
     <!-- Automatically updates when checks.checks changes -->
     <p>Total checks: {{ checks.checks.value.length }}</p>
-    
+
     <!-- Automatically shows/hides based on loading state -->
     <div v-if="checks.isLoading.value">Loading checks...</div>
-    
+
     <!-- Automatically shows when there's an error -->
     <div v-if="checks.error.value" class="error">
       {{ checks.error.value }}
@@ -271,7 +274,7 @@ import type {
   Receipt,
   ReceiptData,
   UseChecksReturn,
-  UseVendorsReturn
+  UseVendorsReturn,
 } from '@printchecks/vue'
 ```
 

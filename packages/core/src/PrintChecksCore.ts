@@ -21,7 +21,7 @@ export interface PrintChecksCoreConfig {
    * Storage adapter (defaults to LocalStorage)
    */
   storage?: StorageAdapter
-  
+
   /**
    * Storage options
    */
@@ -30,22 +30,22 @@ export interface PrintChecksCoreConfig {
     encryption?: boolean
     password?: string
   }
-  
+
   /**
    * Auto-increment check numbers
    */
   autoIncrementCheckNumber?: boolean
-  
+
   /**
    * Auto-increment receipt numbers
    */
   autoIncrementReceiptNumber?: boolean
-  
+
   /**
    * Default currency
    */
   defaultCurrency?: Currency
-  
+
   /**
    * Enable debug logging
    */
@@ -55,7 +55,7 @@ export interface PrintChecksCoreConfig {
 export class PrintChecksCore {
   private storage: StorageAdapter
   private debug: boolean
-  
+
   // Services
   public checks: CheckService
   public vendors: VendorService
@@ -64,30 +64,30 @@ export class PrintChecksCore {
 
   constructor(config: PrintChecksCoreConfig = {}) {
     this.debug = config.debug || false
-    
+
     // Initialize storage
     this.storage = this.initializeStorage(config)
-    
+
     // Initialize services
     this.checks = new CheckService({
       storage: this.storage,
       autoIncrementCheckNumber: config.autoIncrementCheckNumber,
-      defaultCurrency: config.defaultCurrency
+      defaultCurrency: config.defaultCurrency,
     })
-    
+
     this.vendors = new VendorService({
-      storage: this.storage
+      storage: this.storage,
     })
-    
+
     this.bankAccounts = new BankAccountService({
-      storage: this.storage
+      storage: this.storage,
     })
-    
+
     this.receipts = new ReceiptService({
       storage: this.storage,
-      autoIncrementReceiptNumber: config.autoIncrementReceiptNumber
+      autoIncrementReceiptNumber: config.autoIncrementReceiptNumber,
     })
-    
+
     this.log('PrintChecksCore initialized')
   }
 
@@ -98,32 +98,35 @@ export class PrintChecksCore {
     if (config.storage) {
       return config.storage
     }
-    
+
     // Create default storage adapter
     const baseStorage = new LocalStorageAdapter({
-      prefix: config.storageOptions?.prefix || 'printchecks_'
+      prefix: config.storageOptions?.prefix || 'printchecks_',
     })
-    
+
     // Wrap with encryption if enabled
     if (config.storageOptions?.encryption && config.storageOptions?.password) {
       const secureStorage = new SecureStorageAdapter(baseStorage, {
         encryption: true,
         password: config.storageOptions.password,
-        autoMigrate: true
+        autoMigrate: true,
       })
-      
+
       // Initialize encryption synchronously to prevent race condition
       // Services will need to wait for initialization before accessing storage
-      secureStorage.initialize(config.storageOptions.password).then(() => {
-        this.log('Encryption initialized successfully')
-      }).catch(error => {
-        console.error('Failed to initialize encryption:', error)
-        throw new Error('Encryption initialization failed: ' + error.message)
-      })
-      
+      secureStorage
+        .initialize(config.storageOptions.password)
+        .then(() => {
+          this.log('Encryption initialized successfully')
+        })
+        .catch((error) => {
+          console.error('Failed to initialize encryption:', error)
+          throw new Error('Encryption initialization failed: ' + error.message)
+        })
+
       return secureStorage
     }
-    
+
     return baseStorage
   }
 
@@ -263,7 +266,11 @@ export class PrintChecksCore {
     return this.receipts.addLineItem(receiptId, itemData)
   }
 
-  async updateLineItem(receiptId: string, itemId: string, updates: Partial<LineItemData>): Promise<Receipt> {
+  async updateLineItem(
+    receiptId: string,
+    itemId: string,
+    updates: Partial<LineItemData>
+  ): Promise<Receipt> {
     return this.receipts.updateLineItem(receiptId, itemId, updates)
   }
 
@@ -296,14 +303,14 @@ export class PrintChecksCore {
       this.getCheckStatistics(),
       this.getVendorStatistics(),
       this.getBankAccountStatistics(),
-      this.getReceiptStatistics()
+      this.getReceiptStatistics(),
     ])
 
     return {
       checks: checkStats,
       vendors: vendorStats,
       bankAccounts: accountStats,
-      receipts: receiptStats
+      receipts: receiptStats,
     }
   }
 
@@ -319,7 +326,7 @@ export class PrintChecksCore {
       this.checks.getAllChecks(),
       this.vendors.getAllVendors(),
       this.bankAccounts.getAllBankAccounts(),
-      this.receipts.getAllReceipts()
+      this.receipts.getAllReceipts(),
     ])
 
     return {
@@ -329,8 +336,8 @@ export class PrintChecksCore {
         checks,
         vendors,
         bankAccounts,
-        receipts
-      }
+        receipts,
+      },
     }
   }
 
@@ -347,7 +354,7 @@ export class PrintChecksCore {
       checks: { success: 0, failed: 0 },
       vendors: { success: 0, failed: 0 },
       bankAccounts: { success: 0, failed: 0 },
-      receipts: { success: 0, failed: 0 }
+      receipts: { success: 0, failed: 0 },
     }
 
     if (data.checks) {
@@ -355,7 +362,7 @@ export class PrintChecksCore {
         try {
           await this.checks.createCheck(check)
           results.checks.success++
-        } catch (error) {
+        } catch (_error) {
           results.checks.failed++
         }
       }
@@ -384,9 +391,9 @@ export class PrintChecksCore {
       this.checks.clearAll(),
       this.vendors.clearAll(),
       this.bankAccounts.clearAll(),
-      this.receipts.clearAll()
+      this.receipts.clearAll(),
     ])
-    
+
     this.log('All data cleared')
   }
 
@@ -436,7 +443,7 @@ export class PrintChecksCore {
   /**
    * Log debug messages
    */
-  private log(message: string, ...args: any[]) {
+  private log(message: string, ...args: unknown[]) {
     if (this.debug) {
       console.log(`[PrintChecksCore] ${message}`, ...args)
     }

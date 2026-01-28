@@ -1,9 +1,11 @@
 # Phase 4: Build & Distribution - PLAN 🚀
 
 ## Overview
+
 Phase 4 focuses on establishing a robust, automated pipeline for building, versioning, and distributing the PrintChecks packages. This ensures that `@printchecks/core` and `@printchecks/web-components` can be easily consumed by developers via NPM or CDNs, and that future updates are managed reliably.
 
 ## Goals
+
 - ✅ **Automated Versioning**: Implement semantic versioning with changelog generation.
 - ✅ **CI/CD Pipeline**: Automated testing, building, and publishing via GitHub Actions.
 - ✅ **NPM Publishing**: Streamlined release process to the public NPM registry.
@@ -13,6 +15,7 @@ Phase 4 focuses on establishing a robust, automated pipeline for building, versi
 ## Implementation Details
 
 ### 1. Version Management (Changesets)
+
 We will use [Changesets](https://github.com/changesets/changesets) for managing versioning in our pnpm workspace.
 
 - **Why Changesets?**
@@ -21,16 +24,20 @@ We will use [Changesets](https://github.com/changesets/changesets) for managing 
   - Automates bumping versions and updating `CHANGELOG.md`.
 
 **Action Items:**
+
 - [ ] Install `@changesets/cli` in the root.
 - [ ] Initialize changesets config.
 - [ ] Configure npm publish access by setting `publishConfig.access: "public"` in each `@printchecks/*` package's `package.json`.
 - [ ] Add `changeset` script to root `package.json`.
 
 ### 2. CI/CD Pipeline (GitHub Actions)
+
 We will create two primary workflows:
 
 #### **A. Verification Workflow (`verify.yml`)**
+
 Triggers on: `pull_request`, `push` to branches.
+
 - Setup Node.js + pnpm.
 - `pnpm install`.
 - `pnpm lint`: Run ESLint across all workspaces via a root `lint` script (e.g. `"lint": "pnpm --filter '@printchecks/*' run lint"` in the root `package.json`).
@@ -39,7 +46,9 @@ Triggers on: `pull_request`, `push` to branches.
 - *(optional, after test scripts are added)* Add a `pnpm test` step to run unit tests.
 
 #### **B. Release Workflow (`release.yml`)**
+
 Triggers on: `push` to `main`.
+
 - Setup Node.js + pnpm.
 - `pnpm install`.
 - `pnpm build`.
@@ -48,6 +57,7 @@ Triggers on: `push` to `main`.
   - Requires `NPM_TOKEN` secret in repo.
 
 ### 3. Package Configuration Updates
+
 Audit and update `package.json` files for optimal distribution.
 
 - **`@printchecks/core`**:
@@ -61,6 +71,7 @@ Audit and update `package.json` files for optimal distribution.
   - Add `repository` and `homepage` metadata.
 
 ### 4. CDN Optimization
+
 Ensure our build artifacts are consumable directly from CDNs like unpkg.
 
 - **UMD/Global Build**:
@@ -77,5 +88,6 @@ Ensure our build artifacts are consumable directly from CDNs like unpkg.
 - **Total**: ~2-3 days
 
 ## Next Steps After Phase 4
+
 - **Phase 5**: Documentation & Examples - Build a dedicated documentation site (VitePress/Astro) with live demos.
 - **Migration**: Update the main Vue application to consume the published packages instead of local code (or use workspace aliases effectively).

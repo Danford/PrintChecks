@@ -50,6 +50,16 @@
   ],
   "author": "Joshua Danford",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Danford/PrintChecks.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/Danford/PrintChecks#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
   "dependencies": {
     "to-words": "^4.1.0"
   },

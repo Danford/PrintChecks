@@ -25,7 +25,7 @@ export class PrintChecksVendorList extends PrintChecksComponent {
 
   protected render(): void {
     const showActions = this.getBooleanAttribute('show-actions')
-    
+
     const html = `
       <style>${baseStyles}</style>
       <style>
@@ -141,21 +141,27 @@ export class PrintChecksVendorList extends PrintChecksComponent {
             id="searchInput"
             value="${this.searchTerm}"
           />
-          ${showActions ? `
+          ${showActions
+        ? `
             <button type="button" class="btn btn-primary" id="addVendorBtn">
               Add Vendor
             </button>
-          ` : ''}
+          `
+        : ''
+      }
         </div>
         
-        ${this.isLoading ? `
+        ${this.isLoading
+        ? `
           <div class="text-center">
             <span class="spinner"></span> Loading vendors...
           </div>
-        ` : this.renderVendorGrid()}
+        `
+        : this.renderVendorGrid()
+      }
       </div>
     `
-    
+
     this.setInnerHTML(html)
     this.attachEventListeners()
   }
@@ -166,43 +172,59 @@ export class PrintChecksVendorList extends PrintChecksComponent {
         <div class="empty-state">
           <div class="empty-state-icon">📋</div>
           <div>
-            ${this.searchTerm 
-              ? `No vendors found matching "${this.searchTerm}"` 
-              : 'No vendors yet. Add your first vendor to get started.'}
+            ${this.searchTerm
+          ? `No vendors found matching "${this.searchTerm}"`
+          : 'No vendors yet. Add your first vendor to get started.'
+        }
           </div>
         </div>
       `
     }
-    
+
     const showActions = this.getBooleanAttribute('show-actions')
-    
+
     return `
       <div class="vendor-grid">
-        ${this.filteredVendors.map(vendor => `
+        ${this.filteredVendors
+        .map(
+          (vendor) => `
           <div class="vendor-card" data-vendor-id="${vendor.id}">
             <div class="vendor-name">${this.escapeHtml(vendor.name)}</div>
             
-            ${vendor.displayName ? `
+            ${vendor.displayName
+              ? `
               <div class="vendor-contact">${this.escapeHtml(vendor.displayName)}</div>
-            ` : ''}
+            `
+              : ''
+            }
             
-            ${vendor.email ? `
+            ${vendor.email
+              ? `
               <div class="vendor-email">${this.escapeHtml(vendor.email)}</div>
-            ` : ''}
+            `
+              : ''
+            }
             
-            ${vendor.phone ? `
+            ${vendor.phone
+              ? `
               <div class="vendor-phone">${this.escapeHtml(vendor.phone)}</div>
-            ` : ''}
+            `
+              : ''
+            }
             
-            ${vendor.address ? `
+            ${vendor.address
+              ? `
               <div class="vendor-address">
                 ${this.escapeHtml(vendor.address)}
                 ${vendor.city || vendor.state || vendor.zip ? `<br>` : ''}
                 ${vendor.city ? this.escapeHtml(vendor.city) : ''}${vendor.state ? `, ${this.escapeHtml(vendor.state)}` : ''} ${vendor.zip ? this.escapeHtml(vendor.zip) : ''}
               </div>
-            ` : ''}
+            `
+              : ''
+            }
             
-            ${showActions ? `
+            ${showActions
+              ? `
               <div class="vendor-actions">
                 <button 
                   type="button" 
@@ -219,9 +241,13 @@ export class PrintChecksVendorList extends PrintChecksComponent {
                   Delete
                 </button>
               </div>
-            ` : ''}
+            `
+              : ''
+            }
           </div>
-        `).join('')}
+        `
+        )
+        .join('')}
       </div>
     `
   }
@@ -232,49 +258,49 @@ export class PrintChecksVendorList extends PrintChecksComponent {
     const vendorCards = this.querySelectorAll('.vendor-card')
     const editBtns = this.querySelectorAll('.edit-vendor-btn')
     const deleteBtns = this.querySelectorAll('.delete-vendor-btn')
-    
+
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         this.searchTerm = (e.target as HTMLInputElement).value
         this.filterVendors()
       })
     }
-    
+
     if (addVendorBtn) {
       addVendorBtn.addEventListener('click', () => {
         this.emit('add-vendor-clicked')
       })
     }
-    
-    vendorCards.forEach(card => {
+
+    vendorCards.forEach((card) => {
       card.addEventListener('click', (e) => {
         // Don't trigger if clicking action buttons
         if ((e.target as HTMLElement).closest('.vendor-actions')) return
-        
+
         const vendorId = card.getAttribute('data-vendor-id')
-        const vendor = this.vendors.find(v => v.id === vendorId)
+        const vendor = this.vendors.find((v) => v.id === vendorId)
         if (vendor) {
           this.selectVendor(vendor)
         }
       })
     })
-    
-    editBtns.forEach(btn => {
+
+    editBtns.forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation()
         const vendorId = btn.getAttribute('data-vendor-id')
-        const vendor = this.vendors.find(v => v.id === vendorId)
+        const vendor = this.vendors.find((v) => v.id === vendorId)
         if (vendor) {
           this.emit('edit-vendor', { vendor })
         }
       })
     })
-    
-    deleteBtns.forEach(btn => {
+
+    deleteBtns.forEach((btn) => {
       btn.addEventListener('click', async (e) => {
         e.stopPropagation()
         const vendorId = btn.getAttribute('data-vendor-id')
-        const vendor = this.vendors.find(v => v.id === vendorId)
+        const vendor = this.vendors.find((v) => v.id === vendorId)
         if (vendor && confirm(`Are you sure you want to delete ${vendor.name}?`)) {
           await this.deleteVendor(vendor.id!)
         }
@@ -287,10 +313,10 @@ export class PrintChecksVendorList extends PrintChecksComponent {
       this.isLoading = true
       this.errorMessage = null
       this.render()
-      
+
       this.vendors = await this.core.vendors.getVendors()
       this.filteredVendors = [...this.vendors]
-      
+
       this.isLoading = false
       this.render()
       this.emit('vendors-loaded', { vendors: this.vendors })
@@ -304,27 +330,28 @@ export class PrintChecksVendorList extends PrintChecksComponent {
 
   private filterVendors(): void {
     const term = this.searchTerm.toLowerCase()
-    this.filteredVendors = this.vendors.filter(vendor => 
-      vendor.name.toLowerCase().includes(term) ||
-      vendor.displayName?.toLowerCase().includes(term) ||
-      vendor.email?.toLowerCase().includes(term) ||
-      vendor.phone?.toLowerCase().includes(term)
+    this.filteredVendors = this.vendors.filter(
+      (vendor) =>
+        vendor.name.toLowerCase().includes(term) ||
+        vendor.displayName?.toLowerCase().includes(term) ||
+        vendor.email?.toLowerCase().includes(term) ||
+        vendor.phone?.toLowerCase().includes(term)
     )
     this.render()
   }
 
   private selectVendor(vendor: Vendor): void {
     // Remove active class from all cards
-    this.querySelectorAll('.vendor-card').forEach(card => {
+    this.querySelectorAll('.vendor-card').forEach((card) => {
       card.classList.remove('active')
     })
-    
+
     // Add active class to selected card
     const selectedCard = this.querySelector(`.vendor-card[data-vendor-id="${vendor.id}"]`)
     if (selectedCard) {
       selectedCard.classList.add('active')
     }
-    
+
     this.emit('vendor-selected', { vendor })
   }
 
@@ -341,9 +368,14 @@ export class PrintChecksVendorList extends PrintChecksComponent {
   }
 
   private escapeHtml(text: string): string {
-    const div = document.createElement('div')
-    div.textContent = text
-    return div.innerHTML
+    const map: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    }
+    return text.replace(/[&<>"']/g, (m) => map[m])
   }
 
   // Public methods

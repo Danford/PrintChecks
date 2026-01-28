@@ -41,7 +41,7 @@ npm run dev
 ✅ **No Hosting Costs**: No server or hosting fees  
 ✅ **Instant Setup**: Ready in minutes  
 ✅ **Full Control**: Complete control over your data  
-✅ **No Internet Required**: Works completely offline  
+✅ **No Internet Required**: Works completely offline
 
 ### Running on Network
 
@@ -56,6 +56,7 @@ npm run dev -- --port 3000 --host
 ```
 
 Then access from other devices using your computer's IP:
+
 ```
 http://192.168.1.100:5173/
 ```
@@ -108,6 +109,7 @@ Since PrintChecks is a static application with no backend, it can be hosted on a
 **Deployment Steps:**
 
 1. **Build your application**
+
 ```bash
 npm run build
 ```
@@ -115,6 +117,7 @@ npm run build
 2. **Sign up at [Netlify](https://www.netlify.com/)**
 
 3. **Deploy via Netlify CLI** (recommended)
+
 ```bash
 # Install Netlify CLI
 npm install -g netlify-cli
@@ -130,6 +133,7 @@ netlify deploy --prod --dir=dist
 4. **Or drag & drop** the `dist/` folder to Netlify's web interface
 
 **netlify.toml Configuration:**
+
 ```toml
 [build]
   command = "npm run build"
@@ -148,25 +152,25 @@ netlify deploy --prod --dir=dist
 **Deployment Steps:**
 
 1. **Install Vercel CLI**
+
 ```bash
 npm install -g vercel
 ```
 
 2. **Deploy**
+
 ```bash
 cd printchecks
 vercel --prod
 ```
 
 3. **Configure** `vercel.json` (optional)
+
 ```json
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
-  ]
+  "routes": [{ "handle": "filesystem" }, { "src": "/(.*)", "dest": "/index.html" }]
 }
 ```
 
@@ -177,19 +181,22 @@ vercel --prod
 **Deployment Steps:**
 
 1. **Add to `vite.config.ts`**
+
 ```typescript
 export default defineConfig({
   base: '/PrintChecks/', // Replace with your repo name
   // ... other config
-});
+})
 ```
 
 2. **Build**
+
 ```bash
 npm run build
 ```
 
 3. **Deploy to GitHub Pages**
+
 ```bash
 # Using gh-pages package
 npm install -D gh-pages
@@ -208,6 +215,7 @@ npm run deploy
 **Deployment Steps:**
 
 1. **Build your application**
+
 ```bash
 npm run build
 ```
@@ -217,6 +225,7 @@ npm run build
    - Configure bucket policy for public read access
 
 3. **Upload files**
+
 ```bash
 aws s3 sync dist/ s3://your-bucket-name/ --delete
 ```
@@ -231,6 +240,7 @@ aws s3 sync dist/ s3://your-bucket-name/ --delete
 **Pros**: Full control, can run on internal network
 
 **Nginx Configuration:**
+
 ```nginx
 server {
     listen 80;
@@ -249,6 +259,7 @@ server {
 ```
 
 **Apache Configuration (.htaccess):**
+
 ```apache
 <IfModule mod_rewrite.c>
     RewriteEngine On
@@ -274,6 +285,7 @@ server {
 **DO NOT host PrintChecks publicly if you plan to enter real banking information!**
 
 While the application doesn't transmit data externally:
+
 - Anyone with access to the URL can use the application
 - LocalStorage data is accessible via browser DevTools
 - Your banking information could be exposed if someone gains access
@@ -298,6 +310,7 @@ While the application doesn't transmit data externally:
 ### Adding Password Protection
 
 **Netlify Basic Auth:**
+
 ```toml
 # netlify.toml
 [[redirects]]
@@ -313,6 +326,7 @@ While the application doesn't transmit data externally:
 ```
 
 **Nginx Basic Auth:**
+
 ```nginx
 location / {
     auth_basic "Restricted";
@@ -324,6 +338,7 @@ location / {
 ### HTTPS Requirement
 
 Always use HTTPS when hosting:
+
 - Prevents man-in-the-middle attacks
 - Protects data in transit
 - Required for modern browser features
@@ -337,6 +352,7 @@ Most hosting providers (Netlify, Vercel, etc.) provide free HTTPS.
 ### Build Optimizations
 
 Already configured in Vite:
+
 - ✅ Code minification
 - ✅ Tree shaking
 - ✅ Code splitting
@@ -347,6 +363,7 @@ Already configured in Vite:
 #### 1. Enable Compression
 
 **Nginx:**
+
 ```nginx
 gzip on;
 gzip_types text/plain text/css application/json application/javascript;
@@ -354,6 +371,7 @@ gzip_min_length 1000;
 ```
 
 **Apache:**
+
 ```apache
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html text/plain text/css application/json application/javascript
@@ -363,6 +381,7 @@ gzip_min_length 1000;
 #### 2. Enable Caching
 
 **Nginx:**
+
 ```nginx
 location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
     expires 1y;
@@ -371,6 +390,7 @@ location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
 ```
 
 **Apache:**
+
 ```apache
 <IfModule mod_expires.c>
     ExpiresActive On
@@ -383,6 +403,7 @@ location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
 #### 3. Use a CDN
 
 For faster global access:
+
 - Cloudflare (free tier available)
 - AWS CloudFront
 - Fastly
@@ -390,6 +411,7 @@ For faster global access:
 #### 4. Optimize Images/Logos
 
 Before uploading logos:
+
 ```bash
 # Install image optimization tools
 npm install -g sharp-cli
@@ -401,6 +423,7 @@ sharp -i logo.png -o logo-optimized.png --width 200
 ### Monitoring Performance
 
 **Lighthouse Audit:**
+
 ```bash
 # Install Lighthouse
 npm install -g lighthouse
@@ -410,6 +433,7 @@ lighthouse http://localhost:4173/ --view
 ```
 
 **Expected Scores:**
+
 - Performance: 90+
 - Accessibility: 85+
 - Best Practices: 95+
@@ -424,6 +448,7 @@ lighthouse http://localhost:4173/ --view
 **Issue**: `npm run build` fails
 
 **Solutions:**
+
 ```bash
 # Clear cache
 rm -rf node_modules package-lock.json
@@ -449,6 +474,7 @@ See hosting-specific configurations above.
 **Issue**: Fonts don't load in production
 
 **Solution:**
+
 1. Ensure fonts are in `public/` directory
 2. Check font paths in CSS
 3. Verify CORS headers if using CDN
@@ -458,6 +484,7 @@ See hosting-specific configurations above.
 **Issue**: App loads slowly
 
 **Solutions:**
+
 1. Enable compression (gzip/brotli)
 2. Use a CDN
 3. Enable browser caching
@@ -468,6 +495,7 @@ See hosting-specific configurations above.
 **Issue**: Data doesn't save between sessions
 
 **Solutions:**
+
 1. Check browser settings (not in private mode)
 2. Ensure localStorage is enabled
 3. Check for quota exceeded errors in console
@@ -525,5 +553,4 @@ If you encounter deployment issues:
 
 ---
 
-*Last updated: December 2024*
-
+_Last updated: December 2024_

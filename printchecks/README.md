@@ -7,25 +7,29 @@ This directory contains the main **PrintChecks** application—a comprehensive c
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Node.js** (v18+ LTS recommended)
 - **npm** or **yarn** package manager
 
 ### Installation
 
 1. **Install dependencies**
+
 ```bash
 npm install
 ```
 
 2. **Start development server**
+
 ```bash
 npm run dev
 ```
 
 3. **Open in browser**
-Navigate to `http://localhost:5173/` to start using PrintChecks
+   Navigate to `http://localhost:5173/` to start using PrintChecks
 
 ### Production Build
+
 ```bash
 npm run build
 ```
@@ -87,6 +91,7 @@ src/
 ## 🎯 Core Features
 
 ### ✅ Check Printing
+
 - **Professional Layout**: Print on standard 8.5" x 11" paper with precise positioning
 - **E13B MICR Font**: Official banking font for routing and account numbers
 - **Currency Conversion**: Automatic amount-to-words conversion with proper formatting
@@ -95,6 +100,7 @@ src/
 - **Logo Integration**: Upload and position company logos
 
 ### 🎨 Customization System
+
 - **Font Controls**: Customize fonts for all check elements (payee, amount, memo, etc.)
 - **Color Schemes**: Full color customization with preset themes
 - **Logo Management**: Upload, position, and resize logos
@@ -103,18 +109,21 @@ src/
 - **Coming Soon**: Advanced layout controls for spacing and positioning
 
 ### 📋 Receipt Management
+
 - **Line Items**: Create itemized receipts with descriptions, quantities, and prices
 - **Automatic Calculations**: Subtotal, tax, and total calculations
 - **Professional Output**: Business-ready receipt formatting
 - **Print Integration**: Seamless printing with check printing workflow
 
 ### 👥 Vendor Management
+
 - **Contact Information**: Store name, address, email, and phone for each vendor
 - **Quick Fill**: Auto-populate check fields from vendor data
 - **Payment History**: Track all payments made to each vendor
 - **Coming Soon**: Advanced search, filtering, and data export capabilities
 
 ### 📊 Analytics & Insights
+
 - **Payment Trends**: Visualize payment volume over time
 - **Top Vendors**: Identify vendors by payment amount and frequency
 - **Monthly Breakdown**: Analyze spending patterns by month
@@ -122,6 +131,7 @@ src/
 - **Historical Summaries**: Comprehensive payment summaries with detailed breakdowns
 
 ### 📚 History System
+
 - **Complete History**: Unified view of all checks, receipts, and payments
 - **Immutable Log**: Payment records are unalterable for accuracy
 - **Coming Soon**: Enhanced search, filtering, pagination, sorting, and data export
@@ -185,6 +195,7 @@ This project enforces code quality through:
 - **Vue ESLint Config** - Official Vue.js linting standards
 
 Configuration files:
+
 - `.eslintrc.cjs` - ESLint rules and parser configuration
 - `.prettierrc.json` - Prettier formatting rules
 - `tsconfig.json` - TypeScript compiler options
@@ -309,6 +320,7 @@ We welcome contributions! To get started:
 ### Issue: Dev server won't start
 
 **Solution:**
+
 ```bash
 # Clear modules and reinstall
 rm -rf node_modules package-lock.json
@@ -319,6 +331,7 @@ npm run dev
 ### Issue: TypeScript errors
 
 **Solution:**
+
 ```bash
 # Run type checking to see all errors
 npm run type-check
@@ -329,6 +342,7 @@ npm run type-check
 ### Issue: Fonts not displaying
 
 **Solution:**
+
 - Ensure `expanded_fonts.js` exists in the root directory
 - Check browser console for font loading errors
 - Clear browser cache and reload
@@ -336,6 +350,7 @@ npm run type-check
 ### Issue: Printing looks wrong
 
 **Solution:**
+
 - Enable "Background graphics" in browser print settings
 - Set margins to minimum or "None"
 - Use 100% scale (no fit-to-page)
@@ -344,6 +359,7 @@ npm run type-check
 ### Issue: Data not persisting
 
 **Solution:**
+
 - Check that localStorage is enabled in your browser
 - Ensure you're not in private/incognito mode
 - Check browser console for quota exceeded errors

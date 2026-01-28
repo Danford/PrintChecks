@@ -8,33 +8,33 @@ export interface VendorData extends BaseEntity {
   // Basic information
   name: string
   displayName?: string
-  
+
   // Address
   address: string
   city: string
   state: string
   zip: string
   country?: string
-  
+
   // Contact information
   email?: string
   phone?: string
   fax?: string
   website?: string
-  
+
   // Business information
   taxId?: string
   businessNumber?: string
   accountNumber?: string
-  
+
   // Payment preferences
   paymentTerms?: string
   preferredPaymentMethod?: 'check' | 'cash' | 'transfer' | 'other'
-  
+
   // Categories and tags
   category?: string
   tags?: string[]
-  
+
   // Metadata
   notes?: string
   isActive?: boolean
@@ -45,31 +45,31 @@ export class Vendor implements VendorData {
   id?: string
   createdAt?: Date
   updatedAt?: Date
-  
+
   name: string
   displayName?: string
-  
+
   address: string
   city: string
   state: string
   zip: string
   country?: string
-  
+
   email?: string
   phone?: string
   fax?: string
   website?: string
-  
+
   taxId?: string
   businessNumber?: string
   accountNumber?: string
-  
+
   paymentTerms?: string
   preferredPaymentMethod?: 'check' | 'cash' | 'transfer' | 'other'
-  
+
   category?: string
   tags?: string[]
-  
+
   notes?: string
   isActive?: boolean
   isFavorite?: boolean
@@ -108,7 +108,7 @@ export class Vendor implements VendorData {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     }
   }
 
@@ -124,7 +124,7 @@ export class Vendor implements VendorData {
    */
   private isValidPhone(phone: string): boolean {
     // Remove formatting characters
-    const cleaned = phone.replace(/[\s\-\(\)\.]/g, '')
+    const cleaned = phone.replace(/[\s().-]/g, '')
     return /^\+?\d{10,15}$/.test(cleaned)
   }
 
@@ -144,14 +144,8 @@ export class Vendor implements VendorData {
    * Get full address as single string
    */
   getFullAddress(): string {
-    const parts = [
-      this.address,
-      this.city,
-      this.state,
-      this.zip,
-      this.country
-    ].filter(Boolean)
-    
+    const parts = [this.address, this.city, this.state, this.zip, this.country].filter(Boolean)
+
     return parts.join(', ')
   }
 
@@ -180,7 +174,7 @@ export class Vendor implements VendorData {
    */
   removeTag(tag: string): void {
     if (this.tags) {
-      this.tags = this.tags.filter(t => t !== tag)
+      this.tags = this.tags.filter((t) => t !== tag)
       this.updatedAt = new Date()
     }
   }
@@ -220,7 +214,7 @@ export class Vendor implements VendorData {
       tags: this.tags,
       notes: this.notes,
       isActive: this.isActive,
-      isFavorite: this.isFavorite
+      isFavorite: this.isFavorite,
     }
   }
 

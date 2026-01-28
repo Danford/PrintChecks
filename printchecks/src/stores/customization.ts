@@ -1,9 +1,9 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import type { 
-  CustomizationSettings, 
-  CustomizationPreset, 
-  FontFamily, 
+import type {
+  CustomizationSettings,
+  CustomizationPreset,
+  FontFamily,
   ColorPalette,
   CustomizationValidation,
   FontSettings,
@@ -16,15 +16,15 @@ import { secureStorage } from '@/services/secureStorage'
 export const useCustomizationStore = defineStore('useCustomizationStore', () => {
   // Current customization settings
   const currentSettings = ref<CustomizationSettings | null>(null)
-  
+
   // Available presets
   const presets = ref<CustomizationPreset[]>([])
   const currentPreset = ref<CustomizationPreset | null>(null)
-  
+
   // Available fonts and colors
   const availableFonts = ref<FontFamily[]>([])
   const colorPalettes = ref<ColorPalette[]>([])
-  
+
   // Validation state
   const validation = ref<CustomizationValidation>({
     fonts: true,
@@ -35,11 +35,11 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     overall: true,
     errors: []
   })
-  
+
   // Loading states
   const isLoadingFonts = ref(false)
   const isLoadingPresets = ref(false)
-  
+
   // Default settings - matching original PrintChecks styling exactly
   const defaultSettings: CustomizationSettings = {
     id: 'default',
@@ -181,21 +181,22 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     createdAt: new Date(),
     updatedAt: new Date()
   }
-  
+
   // Computed properties
   const isValid = computed(() => validation.value.overall)
-  
-  const hasCustomLogo = computed(() => 
-    currentSettings.value?.logo.enabled && 
-    (currentSettings.value?.logo.file || currentSettings.value?.logo.url)
+
+  const hasCustomLogo = computed(
+    () =>
+      currentSettings.value?.logo.enabled &&
+      (currentSettings.value?.logo.file || currentSettings.value?.logo.url)
   )
-  
+
   const cssVariables = computed(() => {
     if (!currentSettings.value) return {}
-    
+
     const vars: Record<string, string> = {}
     const settings = currentSettings.value
-    
+
     // Font variables
     Object.entries(settings.fonts).forEach(([key, font]) => {
       vars[`--font-${key}-family`] = font.family
@@ -204,12 +205,12 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       vars[`--font-${key}-style`] = font.style
       vars[`--font-${key}-color`] = font.color
     })
-    
+
     // Color variables
     Object.entries(settings.colors).forEach(([key, color]) => {
       vars[`--color-${key}`] = color
     })
-    
+
     // Layout variables
     vars['--check-position-x'] = `${settings.layout.checkPosition.x}px`
     vars['--check-position-y'] = `${settings.layout.checkPosition.y}px`
@@ -217,7 +218,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     vars['--field-spacing'] = `${settings.layout.spacing.fieldSpacing}px`
     vars['--border-width'] = `${settings.layout.borderWidth}px`
     vars['--border-style'] = settings.layout.borderStyle
-    
+
     // Logo variables
     if (settings.logo.enabled) {
       vars['--logo-width'] = `${settings.logo.size.width}px`
@@ -228,23 +229,23 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       vars['--logo-margin-bottom'] = `${settings.logo.margin.bottom}px`
       vars['--logo-margin-left'] = `${settings.logo.margin.left}px`
     }
-    
+
     return vars
   })
-  
+
   // Actions
   async function initializeCustomization() {
     await loadSettings()
     await loadPresets()
     loadAvailableFonts()
     loadColorPalettes()
-    
+
     // If no preset is selected, apply the first one
     if (!currentPreset.value && presets.value.length > 0) {
       applyPreset(presets.value[0])
     }
   }
-  
+
   async function loadSettings() {
     try {
       const saved = await secureStorage.get('printchecks_customization')
@@ -259,10 +260,10 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       currentSettings.value = { ...defaultSettings }
     }
   }
-  
+
   async function saveSettings() {
     if (!currentSettings.value) return
-    
+
     try {
       currentSettings.value.updatedAt = new Date()
       await secureStorage.set('printchecks_customization', JSON.stringify(currentSettings.value))
@@ -270,130 +271,145 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       console.error('Failed to save customization settings:', e)
     }
   }
-  
+
   async function updateSettings(updates: Partial<CustomizationSettings>) {
     if (!currentSettings.value) return
-    
+
     currentSettings.value = {
       ...currentSettings.value,
       ...updates,
       updatedAt: new Date()
     }
-    
+
     validateSettings()
     await saveSettings()
   }
-  
-  function updateFont(element: keyof CustomizationSettings['fonts'], fontSettings: Partial<FontSettings>) {
+
+  function updateFont(
+    element: keyof CustomizationSettings['fonts'],
+    fontSettings: Partial<FontSettings>
+  ) {
     if (!currentSettings.value) return
-    
+
     currentSettings.value.fonts[element] = {
       ...currentSettings.value.fonts[element],
       ...fontSettings
     }
-    
+
     validateSettings()
     saveSettings()
     syncCurrentSettingsToPreset()
   }
-  
+
   function updateColors(colorUpdates: Partial<ColorScheme>) {
     if (!currentSettings.value) return
-    
+
     currentSettings.value.colors = {
       ...currentSettings.value.colors,
       ...colorUpdates
     }
-    
+
     validateSettings()
     saveSettings()
     syncCurrentSettingsToPreset()
   }
-  
+
   function updateLogo(logoSettings: Partial<LogoSettings>) {
     if (!currentSettings.value) return
-    
+
     currentSettings.value.logo = {
       ...currentSettings.value.logo,
       ...logoSettings
     }
-    
+
     validateSettings()
     saveSettings()
     syncCurrentSettingsToPreset()
   }
-  
+
   function updateLayout(layoutSettings: Partial<LayoutSettings>) {
     if (!currentSettings.value) return
-    
+
     currentSettings.value.layout = {
       ...currentSettings.value.layout,
       ...layoutSettings
     }
-    
+
     validateSettings()
     saveSettings()
     syncCurrentSettingsToPreset()
   }
-  
-  function updateAdjustment(element: keyof CustomizationSettings['fonts'], adjustment: { x?: number; y?: number }) {
+
+  function updateAdjustment(
+    element: keyof CustomizationSettings['fonts'],
+    adjustment: { x?: number; y?: number }
+  ) {
     if (!currentSettings.value) return
-    
+
     if (!currentSettings.value.adjustments) {
       currentSettings.value.adjustments = {}
     }
-    
+
     currentSettings.value.adjustments[element] = {
-      x: adjustment.x !== undefined ? adjustment.x : (currentSettings.value.adjustments[element]?.x || 0),
-      y: adjustment.y !== undefined ? adjustment.y : (currentSettings.value.adjustments[element]?.y || 0)
+      x:
+        adjustment.x !== undefined
+          ? adjustment.x
+          : currentSettings.value.adjustments[element]?.x || 0,
+      y:
+        adjustment.y !== undefined
+          ? adjustment.y
+          : currentSettings.value.adjustments[element]?.y || 0
     }
-    
+
     validateSettings()
     saveSettings()
     syncCurrentSettingsToPreset()
   }
-  
+
   function validateSettings(): boolean {
     if (!currentSettings.value) return false
-    
+
     const errors: string[] = []
-    
+
     // Validate fonts
-    const fontsValid = Object.values(currentSettings.value.fonts).every(font => {
+    const fontsValid = Object.values(currentSettings.value.fonts).every((font) => {
       if (!font.family || font.size <= 0) {
         errors.push('Invalid font settings')
         return false
       }
       return true
     })
-    
+
     // Validate colors
-    const colorsValid = Object.values(currentSettings.value.colors).every(color => {
+    const colorsValid = Object.values(currentSettings.value.colors).every((color) => {
       if (!isValidColor(color)) {
         errors.push('Invalid color format')
         return false
       }
       return true
     })
-    
+
     // Validate logo
-    const logoValid = !currentSettings.value.logo.enabled || 
-      currentSettings.value.logo.file || 
+    const logoValid = !!(
+      !currentSettings.value.logo.enabled ||
+      currentSettings.value.logo.file ||
       currentSettings.value.logo.url
-    
+    )
+
     if (!logoValid) {
       errors.push('Logo enabled but no file or URL provided')
     }
-    
+
     // Validate layout
-    const layoutValid = currentSettings.value.layout.spacing.lineHeight > 0 &&
+    const layoutValid =
+      currentSettings.value.layout.spacing.lineHeight > 0 &&
       currentSettings.value.layout.spacing.fieldSpacing >= 0 &&
       currentSettings.value.layout.borderWidth >= 0
-    
+
     if (!layoutValid) {
       errors.push('Invalid layout settings')
     }
-    
+
     validation.value = {
       fonts: fontsValid,
       colors: colorsValid,
@@ -403,34 +419,40 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       overall: fontsValid && colorsValid && logoValid && layoutValid,
       errors
     }
-    
+
     return validation.value.overall
   }
-  
+
   function isValidColor(color: string): boolean {
     // Basic hex color validation
-    return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color) ||
-           /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/.test(color) ||
-           /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/.test(color)
+    return (
+      /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color) ||
+      /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/.test(color) ||
+      /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/.test(color)
+    )
   }
-  
+
   function resetToDefault() {
     currentSettings.value = { ...defaultSettings }
     currentPreset.value = null
     validateSettings()
     saveSettings()
   }
-  
+
   function applyPreset(preset: CustomizationPreset) {
     currentSettings.value = { ...preset.settings }
     currentPreset.value = preset
     validateSettings()
     saveSettings()
   }
-  
-  function saveAsPreset(name: string, description?: string, category: CustomizationPreset['category'] = 'custom') {
+
+  function saveAsPreset(
+    name: string,
+    description?: string,
+    category: CustomizationPreset['category'] = 'custom'
+  ) {
     if (!currentSettings.value) return null
-    
+
     const preset: CustomizationPreset = {
       id: generateId(),
       name,
@@ -441,13 +463,13 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       createdAt: new Date(),
       updatedAt: new Date()
     }
-    
+
     presets.value.push(preset)
     savePresets()
-    
+
     return preset
   }
-  
+
   async function loadPresets() {
     try {
       const saved = await secureStorage.get('printchecks_presets')
@@ -458,7 +480,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       } else {
         presets.value = []
       }
-      
+
       // Always add fresh built-in presets (ensures defaults are never modified)
       addBuiltInPresets()
     } catch (e) {
@@ -467,17 +489,17 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       addBuiltInPresets()
     }
   }
-  
+
   async function savePresets() {
     try {
       // Only save custom presets (never save built-in presets)
-      const customPresets = presets.value.filter(p => !p.isBuiltIn)
+      const customPresets = presets.value.filter((p) => !p.isBuiltIn)
       await secureStorage.set('printchecks_presets', JSON.stringify(customPresets))
     } catch (e) {
       console.error('Failed to save presets:', e)
     }
   }
-  
+
   function addBuiltInPresets() {
     const builtInPresets: CustomizationPreset[] = [
       {
@@ -524,43 +546,44 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         updatedAt: new Date()
       }
     ]
-    
+
     // Always add built-in presets fresh (ensures hardcoded defaults are never modified)
-    builtInPresets.forEach(preset => {
+    builtInPresets.forEach((preset) => {
       presets.value.push(preset)
     })
   }
-  
+
   function deletePreset(presetId: string) {
     // Only delete if not built-in, and filter out the specific preset
-    const presetToDelete = presets.value.find(p => p.id === presetId)
+    const presetToDelete = presets.value.find((p) => p.id === presetId)
     if (presetToDelete && presetToDelete.isBuiltIn) {
       console.warn('Cannot delete built-in preset')
       return
     }
-    
+
     // If deleting the currently active preset, switch to default before deletion
     if (currentPreset.value?.id === presetId) {
       // Find the first built-in preset as a safe default
-      const defaultPreset = presets.value.find(p => p.isBuiltIn && p.id === 'business-classic') 
-                          || presets.value.find(p => p.isBuiltIn)
+      const defaultPreset =
+        presets.value.find((p) => p.isBuiltIn && p.id === 'business-classic') ||
+        presets.value.find((p) => p.isBuiltIn)
       if (defaultPreset) {
         applyPreset(defaultPreset)
       }
     }
-    
-    presets.value = presets.value.filter(p => p.id !== presetId)
+
+    presets.value = presets.value.filter((p) => p.id !== presetId)
     savePresets()
   }
-  
+
   function renamePreset(presetId: string, newName: string, newDescription: string) {
     // Only rename if not built-in
-    const presetToRename = presets.value.find(p => p.id === presetId)
+    const presetToRename = presets.value.find((p) => p.id === presetId)
     if (presetToRename && presetToRename.isBuiltIn) {
       console.warn('Cannot rename built-in preset')
       return
     }
-    
+
     if (presetToRename) {
       presetToRename.name = newName
       presetToRename.description = newDescription
@@ -568,21 +591,21 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       savePresets()
     }
   }
-  
+
   function syncCurrentSettingsToPreset() {
     // Sync the current settings back to the current preset (if it's not built-in)
     if (!currentPreset.value || currentPreset.value.isBuiltIn || !currentSettings.value) {
       return
     }
-    
-    const presetToUpdate = presets.value.find(p => p.id === currentPreset.value?.id)
+
+    const presetToUpdate = presets.value.find((p) => p.id === currentPreset.value?.id)
     if (presetToUpdate) {
       presetToUpdate.settings = { ...currentSettings.value }
       presetToUpdate.updatedAt = new Date()
       savePresets()
     }
   }
-  
+
   function loadAvailableFonts() {
     // Load comprehensive font collection with ALL available fonts
     availableFonts.value = [
@@ -788,7 +811,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         variants: ['normal', 'bold'],
         isWebFont: true,
         url: 'https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;700&display=swap',
-        description: 'Adobe\'s first open source font'
+        description: "Adobe's first open source font"
       },
       {
         name: 'Nunito, sans-serif',
@@ -833,7 +856,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         variants: ['normal', 'bold'],
         isWebFont: true,
         url: 'https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;700&display=swap',
-        description: 'Mozilla\'s signature typeface'
+        description: "Mozilla's signature typeface"
       },
       {
         name: 'PT Sans, sans-serif',
@@ -869,7 +892,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         variants: ['normal', 'bold'],
         isWebFont: true,
         url: 'https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap',
-        description: 'Canonical\'s signature font'
+        description: "Canonical's signature font"
       },
       {
         name: 'Raleway, sans-serif',
@@ -916,7 +939,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         variants: ['normal', 'bold'],
         isWebFont: true,
         url: 'https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap',
-        description: 'Based on American Type Founder\'s Baskerville'
+        description: "Based on American Type Founder's Baskerville"
       },
       {
         name: 'Lora, serif',
@@ -943,7 +966,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         variants: ['normal', 'bold'],
         isWebFont: true,
         url: 'https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;700&display=swap',
-        description: 'Adobe\'s serif companion'
+        description: "Adobe's serif companion"
       },
       {
         name: 'Cormorant Garamond, serif',
@@ -990,7 +1013,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         url: 'https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&display=swap',
         description: 'Geometric slab serif'
       },
-      
+
       // Google Web Fonts - Handwriting & Signature Styles (Massive Collection)
       {
         name: 'Caveat, cursive',
@@ -1136,7 +1159,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         variants: ['normal', 'bold'],
         isWebFont: true,
         url: 'https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap',
-        description: 'Adobe\'s coding font'
+        description: "Adobe's coding font"
       },
       {
         name: 'Fira Code, monospace',
@@ -1238,7 +1261,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         url: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap',
         description: 'Urban inspired design'
       },
-      
+
       // Google Web Fonts - Professional Serif
       {
         name: 'Playfair Display, serif',
@@ -1268,21 +1291,21 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
         description: 'Inspired by old-style serif'
       }
     ]
-    
+
     // Load Google Fonts dynamically
     loadGoogleFonts()
   }
-  
+
   function loadGoogleFonts() {
-    const webFonts = availableFonts.value.filter(font => font.isWebFont && font.url)
+    const webFonts = availableFonts.value.filter((font) => font.isWebFont && font.url)
     const existingLinks = document.querySelectorAll('link[data-font-loader]')
-    
+
     // Remove existing font links to avoid duplicates
-    existingLinks.forEach(link => link.remove())
-    
+    existingLinks.forEach((link) => link.remove())
+
     // Load each unique Google Font
-    const uniqueUrls = [...new Set(webFonts.map(font => font.url))]
-    uniqueUrls.forEach(url => {
+    const uniqueUrls = [...new Set(webFonts.map((font) => font.url))]
+    uniqueUrls.forEach((url) => {
       if (url) {
         const link = document.createElement('link')
         link.rel = 'stylesheet'
@@ -1292,7 +1315,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       }
     })
   }
-  
+
   function loadColorPalettes() {
     colorPalettes.value = [
       {
@@ -1317,7 +1340,7 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
       }
     ]
   }
-  
+
   function generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substr(2)
   }
@@ -1339,12 +1362,12 @@ export const useCustomizationStore = defineStore('useCustomizationStore', () => 
     validation,
     isLoadingFonts,
     isLoadingPresets,
-    
+
     // Computed
     isValid,
     hasCustomLogo,
     cssVariables,
-    
+
     // Actions
     initializeCustomization,
     loadSettings,

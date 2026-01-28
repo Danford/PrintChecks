@@ -4,7 +4,8 @@ export default defineConfig({
   entry: {
     index: 'src/index.ts',
   },
-  format: ['esm', 'cjs'],
+  format: ['esm', 'cjs', 'iife'],
+  globalName: 'PrintChecksWebComponents',
   dts: true,
   sourcemap: true,
   clean: true,

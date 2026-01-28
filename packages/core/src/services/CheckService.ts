@@ -81,7 +81,7 @@ export class CheckService {
    */
   async getCheck(id: string): Promise<Check | null> {
     const checks = await this.getAllChecks()
-    const checkData = checks.find(c => c.id === id)
+    const checkData = checks.find((c) => c.id === id)
     return checkData ? Check.fromJSON(checkData) : null
   }
 
@@ -91,7 +91,7 @@ export class CheckService {
   async getAllChecks(): Promise<CheckData[]> {
     const data = await this.storage.get<string>(STORAGE_KEY)
     if (!data) return []
-    
+
     try {
       const parsed = typeof data === 'string' ? JSON.parse(data) : data
       return Array.isArray(parsed) ? parsed : []
@@ -109,7 +109,7 @@ export class CheckService {
     let filtered = allChecks
 
     if (filters) {
-      filtered = allChecks.filter(checkData => {
+      filtered = allChecks.filter((checkData) => {
         // Status filter
         if (filters.status && checkData.status !== filters.status) {
           return false
@@ -138,10 +138,9 @@ export class CheckService {
 
         // Amount range filter
         if (filters.minAmount !== undefined || filters.maxAmount !== undefined) {
-          const amount = typeof checkData.amount === 'string' 
-            ? parseFloat(checkData.amount) 
-            : checkData.amount
-          
+          const amount =
+            typeof checkData.amount === 'string' ? parseFloat(checkData.amount) : checkData.amount
+
           if (filters.minAmount !== undefined && amount < filters.minAmount) {
             return false
           }
@@ -164,7 +163,7 @@ export class CheckService {
       })
     }
 
-    return filtered.map(data => Check.fromJSON(data))
+    return filtered.map((data) => Check.fromJSON(data))
   }
 
   /**
@@ -207,8 +206,8 @@ export class CheckService {
    */
   async deleteCheck(id: string): Promise<void> {
     const checks = await this.getAllChecks()
-    const filtered = checks.filter(c => c.id !== id)
-    
+    const filtered = checks.filter((c) => c.id !== id)
+
     await this.storage.set(STORAGE_KEY, JSON.stringify(filtered))
   }
 
@@ -266,18 +265,18 @@ export class CheckService {
     }
 
     // If no new check number provided, auto-increment
-    const checkNumber = newCheckNumber || (this.autoIncrementCheckNumber 
-      ? await this.getNextCheckNumber()
-      : original.checkNumber)
+    const checkNumber =
+      newCheckNumber ||
+      (this.autoIncrementCheckNumber ? await this.getNextCheckNumber() : original.checkNumber)
 
     const duplicate = original.duplicate(checkNumber)
-    
+
     // Validate duplicated check before saving
     const validation = duplicate.validate()
     if (!validation.isValid) {
       throw new Error(`Duplicated check validation failed: ${validation.errors.join(', ')}`)
     }
-    
+
     await this.saveCheck(duplicate)
 
     return duplicate
@@ -288,15 +287,13 @@ export class CheckService {
    */
   async getNextCheckNumber(): Promise<string> {
     const checks = await this.getAllChecks()
-    
+
     if (checks.length === 0) {
       return '1000'
     }
 
     // Find highest numeric check number
-    const numericCheckNumbers = checks
-      .map(c => parseInt(c.checkNumber))
-      .filter(n => !isNaN(n))
+    const numericCheckNumbers = checks.map((c) => parseInt(c.checkNumber)).filter((n) => !isNaN(n))
 
     if (numericCheckNumbers.length === 0) {
       return '1000'
@@ -323,18 +320,16 @@ export class CheckService {
       printed: 0,
       void: 0,
       draft: 0,
-      totalAmount: 0
+      totalAmount: 0,
     }
 
     for (const check of checks) {
       if (check.isPrinted) stats.printed++
       if (check.isVoid) stats.void++
       if (check.status === 'draft') stats.draft++
-      
+
       if (!check.isVoid) {
-        const amount = typeof check.amount === 'string' 
-          ? parseFloat(check.amount) 
-          : check.amount
+        const amount = typeof check.amount === 'string' ? parseFloat(check.amount) : check.amount
         stats.totalAmount += amount
       }
     }
@@ -347,7 +342,7 @@ export class CheckService {
    */
   private async saveCheck(check: Check): Promise<void> {
     const checks = await this.getAllChecks()
-    const index = checks.findIndex(c => c.id === check.id)
+    const index = checks.findIndex((c) => c.id === check.id)
 
     if (index >= 0) {
       checks[index] = check.toJSON()
@@ -366,7 +361,7 @@ export class CheckService {
     if (checks.length === 0) return null
 
     const recent = checks[checks.length - 1]
-    
+
     // Return only the fields that should be pre-filled
     return {
       accountHolderName: recent.accountHolderName,
@@ -378,7 +373,7 @@ export class CheckService {
       routingNumber: recent.routingNumber,
       bankAccountNumber: recent.bankAccountNumber,
       signature: recent.signature,
-      bankAccountId: recent.bankAccountId
+      bankAccountId: recent.bankAccountId,
     }
   }
 

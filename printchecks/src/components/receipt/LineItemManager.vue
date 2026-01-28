@@ -2,18 +2,14 @@
   <div class="line-item-manager">
     <div class="header">
       <h3>📋 Line Items</h3>
-      <button @click="addNewItem" class="btn btn-primary">
-        ➕ Add Item
-      </button>
+      <button @click="addNewItem" class="btn btn-primary">➕ Add Item</button>
     </div>
-    
+
     <div v-if="!hasLineItems" class="empty-state">
       <p>No line items added yet.</p>
-      <button @click="addNewItem" class="btn btn-secondary">
-        Add Your First Item
-      </button>
+      <button @click="addNewItem" class="btn btn-secondary">Add Your First Item</button>
     </div>
-    
+
     <div v-else class="line-items-table">
       <table>
         <thead>
@@ -26,19 +22,19 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in lineItems" :key="item.id" class="line-item-row">
+          <tr v-for="item in lineItems" :key="item.id" class="line-item-row">
             <td>
-              <input 
+              <input
                 v-model="item.description"
-                @blur="updateItem(item.id, 'description', item.description)"
+                @blur="item.id && updateItem(item.id, 'description', item.description)"
                 placeholder="Item description"
                 class="description-input"
               />
             </td>
             <td>
-              <input 
+              <input
                 v-model.number="item.quantity"
-                @blur="updateItem(item.id, 'quantity', item.quantity)"
+                @blur="item.id && updateItem(item.id, 'quantity', item.quantity)"
                 type="number"
                 min="0"
                 step="1"
@@ -48,9 +44,9 @@
             <td>
               <div class="price-input-wrapper">
                 <span class="currency-symbol">$</span>
-                <input 
+                <input
                   v-model.number="item.unitPrice"
-                  @blur="updateItem(item.id, 'unitPrice', item.unitPrice)"
+                  @blur="item.id && updateItem(item.id, 'unitPrice', item.unitPrice)"
                   type="number"
                   min="0"
                   step="0.01"
@@ -62,8 +58,8 @@
               {{ formatCurrency(item.totalPrice) }}
             </td>
             <td class="actions-cell">
-              <button 
-                @click="removeItem(item.id)"
+              <button
+                @click="item.id && removeItem(item.id)"
                 class="btn btn-danger btn-sm"
                 title="Remove item"
               >
@@ -73,7 +69,7 @@
           </tr>
         </tbody>
       </table>
-      
+
       <!-- Totals Section -->
       <div class="totals-section">
         <div class="totals-grid">
@@ -81,28 +77,30 @@
             <span class="total-label">Subtotal:</span>
             <span class="total-value">{{ formatCurrency(calculatedTotals.subtotal) }}</span>
           </div>
-          
+
           <div class="total-row" v-if="calculatedTotals.totalTax > 0">
             <span class="total-label">Tax:</span>
             <span class="total-value">{{ formatCurrency(calculatedTotals.totalTax) }}</span>
           </div>
-          
+
           <div class="total-row" v-if="calculatedTotals.totalDiscount > 0">
             <span class="total-label">Discount:</span>
-            <span class="total-value discount">-{{ formatCurrency(calculatedTotals.totalDiscount) }}</span>
+            <span class="total-value discount"
+              >-{{ formatCurrency(calculatedTotals.totalDiscount) }}</span
+            >
           </div>
-          
+
           <div class="total-row" v-if="calculatedTotals.shippingAmount > 0">
             <span class="total-label">Shipping:</span>
             <span class="total-value">{{ formatCurrency(calculatedTotals.shippingAmount) }}</span>
           </div>
-          
+
           <div class="total-row grand-total">
             <span class="total-label">Grand Total:</span>
             <span class="total-value">{{ formatCurrency(calculatedTotals.grandTotal) }}</span>
           </div>
         </div>
-        
+
         <!-- Additional Charges -->
         <div class="additional-charges">
           <h4>Additional Charges</h4>
@@ -111,7 +109,7 @@
               <label>Shipping:</label>
               <div class="price-input-wrapper">
                 <span class="currency-symbol">$</span>
-                <input 
+                <input
                   v-model.number="shippingAmount"
                   @blur="updateShipping"
                   type="number"
@@ -121,12 +119,12 @@
                 />
               </div>
             </div>
-            
+
             <div class="charge-input">
               <label>Handling:</label>
               <div class="price-input-wrapper">
                 <span class="currency-symbol">$</span>
-                <input 
+                <input
                   v-model.number="handlingAmount"
                   @blur="updateHandling"
                   type="number"
@@ -144,7 +142,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useReceiptStore } from '@/stores/receipt'
 import { useFormatting } from '@/composables/useFormatting'
 
@@ -165,7 +163,7 @@ function addNewItem() {
   receiptStore.addLineItem('New Item', 1, 0)
 }
 
-function updateItem(itemId: string, field: string, value: any) {
+function updateItem(itemId: string, field: string, value: unknown) {
   receiptStore.updateLineItem(itemId, { [field]: value })
 }
 
@@ -202,7 +200,7 @@ onMounted(() => {
   if (!receiptStore.currentReceipt) {
     receiptStore.createNewReceipt()
   }
-  
+
   // Load existing additional charges
   if (receiptStore.currentReceipt) {
     shippingAmount.value = receiptStore.currentReceipt.totals.shippingAmount || 0
@@ -248,7 +246,7 @@ onMounted(() => {
   background: white;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 table {

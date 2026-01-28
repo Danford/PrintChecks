@@ -13,12 +13,12 @@ export interface CheckData extends BaseEntity {
   accountHolderCity: string
   accountHolderState: string
   accountHolderZip: string
-  
+
   // Bank information
   bankName: string
   routingNumber: string
   bankAccountNumber: string
-  
+
   // Check details
   checkNumber: string
   date: string
@@ -26,11 +26,11 @@ export interface CheckData extends BaseEntity {
   payTo: string
   memo: string
   signature: string
-  
+
   // Enhanced fields
   currency?: Currency
   amountInWords?: string
-  
+
   // Status tracking
   status?: CheckStatus
   isVoid?: boolean
@@ -38,7 +38,7 @@ export interface CheckData extends BaseEntity {
   printedAt?: Date
   voidedAt?: Date
   voidReason?: string
-  
+
   // Relationships
   receiptId?: string
   vendorId?: string
@@ -50,34 +50,34 @@ export class Check implements CheckData {
   id?: string
   createdAt?: Date
   updatedAt?: Date
-  
+
   accountHolderName: string
   accountHolderAddress: string
   accountHolderCity: string
   accountHolderState: string
   accountHolderZip: string
-  
+
   bankName: string
   routingNumber: string
   bankAccountNumber: string
-  
+
   checkNumber: string
   date: string
   amount: string | number
   payTo: string
   memo: string
   signature: string
-  
+
   currency?: Currency
   amountInWords?: string
-  
+
   status?: CheckStatus
   isVoid?: boolean
   isPrinted?: boolean
   printedAt?: Date
   voidedAt?: Date
   voidReason?: string
-  
+
   receiptId?: string
   vendorId?: string
   customizationId?: string
@@ -131,7 +131,7 @@ export class Check implements CheckData {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     }
   }
 
@@ -209,9 +209,9 @@ export class Check implements CheckData {
       this.accountHolderAddress,
       this.accountHolderCity,
       this.accountHolderState,
-      this.accountHolderZip
+      this.accountHolderZip,
     ].filter(Boolean)
-    
+
     return parts.join(', ')
   }
 
@@ -221,7 +221,7 @@ export class Check implements CheckData {
    */
   duplicate(newCheckNumber?: string): Check {
     const duplicateData = { ...this.toJSON() }
-    
+
     // Reset only metadata fields for new check
     delete duplicateData.id
     delete duplicateData.createdAt
@@ -237,7 +237,7 @@ export class Check implements CheckData {
     duplicateData.voidedAt = undefined
     duplicateData.voidReason = undefined
     duplicateData.status = 'draft'
-    
+
     return new Check(duplicateData)
   }
 
@@ -274,7 +274,7 @@ export class Check implements CheckData {
       receiptId: this.receiptId,
       vendorId: this.vendorId,
       customizationId: this.customizationId,
-      bankAccountId: this.bankAccountId
+      bankAccountId: this.bankAccountId,
     }
   }
 

@@ -70,7 +70,7 @@ export class ReceiptService {
    */
   async getReceipt(id: string): Promise<Receipt | null> {
     const receipts = await this.getAllReceipts()
-    const receiptData = receipts.find(r => r.id === id)
+    const receiptData = receipts.find((r) => r.id === id)
     return receiptData ? Receipt.fromJSON(receiptData) : null
   }
 
@@ -80,7 +80,7 @@ export class ReceiptService {
   async getAllReceipts(): Promise<ReceiptData[]> {
     const data = await this.storage.get<string>(STORAGE_KEY)
     if (!data) return []
-    
+
     try {
       const parsed = typeof data === 'string' ? JSON.parse(data) : data
       return Array.isArray(parsed) ? parsed : []
@@ -98,7 +98,7 @@ export class ReceiptService {
     let filtered = allReceipts
 
     if (filters) {
-      filtered = allReceipts.filter(receiptData => {
+      filtered = allReceipts.filter((receiptData) => {
         // Check ID filter
         if (filters.checkId && receiptData.checkId !== filters.checkId) {
           return false
@@ -123,7 +123,7 @@ export class ReceiptService {
         // Amount range filter
         if (filters.minAmount !== undefined || filters.maxAmount !== undefined) {
           const amount = receiptData.totals.grandTotal
-          
+
           if (filters.minAmount !== undefined && amount < filters.minAmount) {
             return false
           }
@@ -139,9 +139,7 @@ export class ReceiptService {
             receiptData.receiptNumber?.toLowerCase().includes(term) ||
             receiptData.billTo?.name?.toLowerCase().includes(term) ||
             receiptData.notes?.toLowerCase().includes(term) ||
-            receiptData.lineItems?.some(item => 
-              item.description?.toLowerCase().includes(term)
-            )
+            receiptData.lineItems?.some((item) => item.description?.toLowerCase().includes(term))
           )
         }
 
@@ -149,7 +147,7 @@ export class ReceiptService {
       })
     }
 
-    return filtered.map(data => Receipt.fromJSON(data))
+    return filtered.map((data) => Receipt.fromJSON(data))
   }
 
   /**
@@ -192,8 +190,8 @@ export class ReceiptService {
    */
   async deleteReceipt(id: string): Promise<void> {
     const receipts = await this.getAllReceipts()
-    const filtered = receipts.filter(r => r.id !== id)
-    
+    const filtered = receipts.filter((r) => r.id !== id)
+
     await this.storage.set(STORAGE_KEY, JSON.stringify(filtered))
   }
 
@@ -216,8 +214,8 @@ export class ReceiptService {
    * Update line item in receipt
    */
   async updateLineItem(
-    receiptId: string, 
-    itemId: string, 
+    receiptId: string,
+    itemId: string,
     updates: Partial<LineItemData>
   ): Promise<Receipt> {
     const receipt = await this.getReceipt(receiptId)
@@ -281,14 +279,14 @@ export class ReceiptService {
    */
   async getNextReceiptNumber(): Promise<string> {
     const receipts = await this.getAllReceipts()
-    
+
     if (receipts.length === 0) {
       return 'R-1000'
     }
 
     // Find highest numeric receipt number (assuming format like "R-1000")
     const numericReceiptNumbers = receipts
-      .map(r => {
+      .map((r) => {
         const match = r.receiptNumber.match(/\d+/)
         return match ? parseInt(match[0]) : null
       })
@@ -334,7 +332,7 @@ export class ReceiptService {
       totalAmount,
       averageAmount: receipts.length > 0 ? totalAmount / receipts.length : 0,
       totalItems,
-      averageItemsPerReceipt: receipts.length > 0 ? totalItems / receipts.length : 0
+      averageItemsPerReceipt: receipts.length > 0 ? totalItems / receipts.length : 0,
     }
   }
 
@@ -343,7 +341,7 @@ export class ReceiptService {
    */
   private async saveReceipt(receipt: Receipt): Promise<void> {
     const receipts = await this.getAllReceipts()
-    const index = receipts.findIndex(r => r.id === receipt.id)
+    const index = receipts.findIndex((r) => r.id === receipt.id)
 
     if (index >= 0) {
       receipts[index] = receipt.toJSON()

@@ -1,5 +1,10 @@
 <template>
-  <div v-if="modelValue" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+  <div
+    v-if="modelValue"
+    class="modal show d-block"
+    tabindex="-1"
+    style="background-color: rgba(0, 0, 0, 0.5)"
+  >
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -10,15 +15,15 @@
           <form @submit.prevent="handleSave">
             <div class="mb-3">
               <label class="form-label">Vendor Name <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" v-model="formData.name" required>
+              <input type="text" class="form-control" v-model="formData.name" required />
             </div>
             <div class="mb-3">
               <label class="form-label">Email</label>
-              <input type="email" class="form-control" v-model="formData.email">
+              <input type="email" class="form-control" v-model="formData.email" />
             </div>
             <div class="mb-3">
               <label class="form-label">Phone</label>
-              <input type="text" class="form-control" v-model="formData.phone">
+              <input type="text" class="form-control" v-model="formData.phone" />
             </div>
             <div class="mb-3">
               <label class="form-label">Address</label>
@@ -27,12 +32,8 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="handleCancel">
-            Cancel
-          </button>
-          <button type="button" class="btn btn-primary" @click="handleSave">
-            💾 Save Vendor
-          </button>
+          <button type="button" class="btn btn-secondary" @click="handleCancel">Cancel</button>
+          <button type="button" class="btn btn-primary" @click="handleSave">💾 Save Vendor</button>
         </div>
       </div>
     </div>
@@ -41,14 +42,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-
-interface Vendor {
-  id?: string
-  name: string
-  email: string
-  phone: string
-  address: string
-}
+import type { Vendor } from '@/types'
 
 interface Props {
   modelValue: boolean
@@ -73,20 +67,24 @@ const formData = ref<Vendor>({
 })
 
 // Watch for changes to editingVendor and update formData
-watch(() => props.editingVendor, (newVendor) => {
-  if (newVendor) {
-    formData.value = { ...newVendor }
-  } else {
-    // Reset form when not editing
-    formData.value = {
-      id: '',
-      name: '',
-      email: '',
-      phone: '',
-      address: ''
+watch(
+  () => props.editingVendor,
+  (newVendor) => {
+    if (newVendor) {
+      formData.value = { ...newVendor }
+    } else {
+      // Reset form when not editing
+      formData.value = {
+        id: '',
+        name: '',
+        email: '',
+        phone: '',
+        address: ''
+      }
     }
-  }
-}, { immediate: true })
+  },
+  { immediate: true }
+)
 
 function handleSave() {
   emit('save', { ...formData.value })
@@ -101,4 +99,3 @@ function handleCancel() {
 <style scoped>
 /* No custom styles needed - using Bootstrap modal classes */
 </style>
-

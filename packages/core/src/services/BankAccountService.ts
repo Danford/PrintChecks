@@ -58,7 +58,7 @@ export class BankAccountService {
    */
   async getBankAccount(id: string): Promise<BankAccount | null> {
     const accounts = await this.getAllBankAccounts()
-    const accountData = accounts.find(a => a.id === id)
+    const accountData = accounts.find((a) => a.id === id)
     return accountData ? BankAccount.fromJSON(accountData) : null
   }
 
@@ -68,7 +68,7 @@ export class BankAccountService {
   async getAllBankAccounts(): Promise<BankAccountData[]> {
     const data = await this.storage.get<string>(STORAGE_KEY)
     if (!data) return []
-    
+
     try {
       const parsed = typeof data === 'string' ? JSON.parse(data) : data
       return Array.isArray(parsed) ? parsed : []
@@ -86,7 +86,7 @@ export class BankAccountService {
     let filtered = allAccounts
 
     if (filters) {
-      filtered = allAccounts.filter(accountData => {
+      filtered = allAccounts.filter((accountData) => {
         // Account type filter
         if (filters.accountType && accountData.accountType !== filters.accountType) {
           return false
@@ -112,7 +112,7 @@ export class BankAccountService {
       })
     }
 
-    return filtered.map(data => BankAccount.fromJSON(data))
+    return filtered.map((data) => BankAccount.fromJSON(data))
   }
 
   /**
@@ -160,8 +160,8 @@ export class BankAccountService {
     }
 
     const accounts = await this.getAllBankAccounts()
-    const filtered = accounts.filter(a => a.id !== id)
-    
+    const filtered = accounts.filter((a) => a.id !== id)
+
     // If deleted account was default and there are other accounts, make the first one default
     if (account.isDefault && filtered.length > 0) {
       filtered[0].isDefault = true
@@ -175,17 +175,17 @@ export class BankAccountService {
    */
   async getDefaultBankAccount(): Promise<BankAccount | null> {
     const accounts = await this.getAllBankAccounts()
-    const defaultAccount = accounts.find(a => a.isDefault)
-    
+    const defaultAccount = accounts.find((a) => a.isDefault)
+
     if (defaultAccount) {
       return BankAccount.fromJSON(defaultAccount)
     }
-    
+
     // If no default but accounts exist, return the first one
     if (accounts.length > 0) {
       return BankAccount.fromJSON(accounts[0])
     }
-    
+
     return null
   }
 
@@ -214,7 +214,7 @@ export class BankAccountService {
 
     account.isActive = !account.isActive
     account.updatedAt = new Date()
-    
+
     await this.saveBankAccount(account)
     return account
   }
@@ -241,13 +241,13 @@ export class BankAccountService {
       total: accounts.length,
       active: 0,
       inactive: 0,
-      byType: {} as Record<string, number>
+      byType: {} as Record<string, number>,
     }
 
     for (const account of accounts) {
       if (account.isActive) stats.active++
       else stats.inactive++
-      
+
       if (account.accountType) {
         stats.byType[account.accountType] = (stats.byType[account.accountType] || 0) + 1
       }
@@ -280,7 +280,7 @@ export class BankAccountService {
    */
   private async saveBankAccount(account: BankAccount): Promise<void> {
     const accounts = await this.getAllBankAccounts()
-    const index = accounts.findIndex(a => a.id === account.id)
+    const index = accounts.findIndex((a) => a.id === account.id)
 
     if (index >= 0) {
       accounts[index] = account.toJSON()
@@ -294,7 +294,9 @@ export class BankAccountService {
   /**
    * Import bank accounts from array
    */
-  async importBankAccounts(accountsData: BankAccountData[]): Promise<{ success: number; failed: number }> {
+  async importBankAccounts(
+    accountsData: BankAccountData[]
+  ): Promise<{ success: number; failed: number }> {
     let success = 0
     let failed = 0
 
