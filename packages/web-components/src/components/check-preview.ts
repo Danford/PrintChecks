@@ -254,9 +254,8 @@ export class PrintChecksCheckPreview extends PrintChecksComponent {
         
         ${this.currentCheck ? this.renderCheck() : '<div class="text-muted">No check to preview</div>'}
         
-        ${
-          this.currentCheck
-            ? `
+        ${this.currentCheck
+        ? `
           <div class="actions">
             <button type="button" class="btn btn-primary" id="printBtn">
               Print Check
@@ -266,8 +265,8 @@ export class PrintChecksCheckPreview extends PrintChecksComponent {
             </button>
           </div>
         `
-            : ''
-        }
+        : ''
+      }
       </div>
     `
 
@@ -392,9 +391,14 @@ export class PrintChecksCheckPreview extends PrintChecksComponent {
   }
 
   private escapeHtml(text: string): string {
-    const div = document.createElement('div')
-    div.textContent = text
-    return div.innerHTML
+    const map: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    }
+    return text.replace(/[&<>"']/g, (m) => map[m])
   }
 
   private numberToWords(num: number): string {

@@ -141,26 +141,24 @@ export class PrintChecksVendorList extends PrintChecksComponent {
             id="searchInput"
             value="${this.searchTerm}"
           />
-          ${
-            showActions
-              ? `
+          ${showActions
+        ? `
             <button type="button" class="btn btn-primary" id="addVendorBtn">
               Add Vendor
             </button>
           `
-              : ''
-          }
+        : ''
+      }
         </div>
         
-        ${
-          this.isLoading
-            ? `
+        ${this.isLoading
+        ? `
           <div class="text-center">
             <span class="spinner"></span> Loading vendors...
           </div>
         `
-            : this.renderVendorGrid()
-        }
+        : this.renderVendorGrid()
+      }
       </div>
     `
 
@@ -174,11 +172,10 @@ export class PrintChecksVendorList extends PrintChecksComponent {
         <div class="empty-state">
           <div class="empty-state-icon">📋</div>
           <div>
-            ${
-              this.searchTerm
-                ? `No vendors found matching "${this.searchTerm}"`
-                : 'No vendors yet. Add your first vendor to get started.'
-            }
+            ${this.searchTerm
+          ? `No vendors found matching "${this.searchTerm}"`
+          : 'No vendors yet. Add your first vendor to get started.'
+        }
           </div>
         </div>
       `
@@ -189,50 +186,45 @@ export class PrintChecksVendorList extends PrintChecksComponent {
     return `
       <div class="vendor-grid">
         ${this.filteredVendors
-          .map(
-            (vendor) => `
+        .map(
+          (vendor) => `
           <div class="vendor-card" data-vendor-id="${vendor.id}">
             <div class="vendor-name">${this.escapeHtml(vendor.name)}</div>
             
-            ${
-              vendor.displayName
-                ? `
+            ${vendor.displayName
+              ? `
               <div class="vendor-contact">${this.escapeHtml(vendor.displayName)}</div>
             `
-                : ''
+              : ''
             }
             
-            ${
-              vendor.email
-                ? `
+            ${vendor.email
+              ? `
               <div class="vendor-email">${this.escapeHtml(vendor.email)}</div>
             `
-                : ''
+              : ''
             }
             
-            ${
-              vendor.phone
-                ? `
+            ${vendor.phone
+              ? `
               <div class="vendor-phone">${this.escapeHtml(vendor.phone)}</div>
             `
-                : ''
+              : ''
             }
             
-            ${
-              vendor.address
-                ? `
+            ${vendor.address
+              ? `
               <div class="vendor-address">
                 ${this.escapeHtml(vendor.address)}
                 ${vendor.city || vendor.state || vendor.zip ? `<br>` : ''}
                 ${vendor.city ? this.escapeHtml(vendor.city) : ''}${vendor.state ? `, ${this.escapeHtml(vendor.state)}` : ''} ${vendor.zip ? this.escapeHtml(vendor.zip) : ''}
               </div>
             `
-                : ''
+              : ''
             }
             
-            ${
-              showActions
-                ? `
+            ${showActions
+              ? `
               <div class="vendor-actions">
                 <button 
                   type="button" 
@@ -250,12 +242,12 @@ export class PrintChecksVendorList extends PrintChecksComponent {
                 </button>
               </div>
             `
-                : ''
+              : ''
             }
           </div>
         `
-          )
-          .join('')}
+        )
+        .join('')}
       </div>
     `
   }
@@ -376,9 +368,14 @@ export class PrintChecksVendorList extends PrintChecksComponent {
   }
 
   private escapeHtml(text: string): string {
-    const div = document.createElement('div')
-    div.textContent = text
-    return div.innerHTML
+    const map: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    }
+    return text.replace(/[&<>"']/g, (m) => map[m])
   }
 
   // Public methods

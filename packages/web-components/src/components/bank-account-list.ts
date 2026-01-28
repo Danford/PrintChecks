@@ -164,26 +164,24 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
             id="searchInput"
             value="${this.searchTerm}"
           />
-          ${
-            showActions
-              ? `
+          ${showActions
+        ? `
             <button type="button" class="btn btn-primary" id="addAccountBtn">
               Add Account
             </button>
           `
-              : ''
-          }
+        : ''
+      }
         </div>
         
-        ${
-          this.isLoading
-            ? `
+        ${this.isLoading
+        ? `
           <div class="text-center">
             <span class="spinner"></span> Loading accounts...
           </div>
         `
-            : this.renderAccountGrid()
-        }
+        : this.renderAccountGrid()
+      }
       </div>
     `
 
@@ -197,11 +195,10 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
         <div class="empty-state">
           <div class="empty-state-icon">🏦</div>
           <div>
-            ${
-              this.searchTerm
-                ? `No accounts found matching "${this.searchTerm}"`
-                : 'No bank accounts yet. Add your first account to get started.'
-            }
+            ${this.searchTerm
+          ? `No accounts found matching "${this.searchTerm}"`
+          : 'No bank accounts yet. Add your first account to get started.'
+        }
           </div>
         </div>
       `
@@ -212,8 +209,8 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
     return `
       <div class="account-grid">
         ${this.filteredAccounts
-          .map(
-            (account) => `
+        .map(
+          (account) => `
           <div class="account-card" data-account-id="${account.id}">
             <div class="account-header">
               <div class="account-name">${this.escapeHtml(account.accountHolderName)}</div>
@@ -231,9 +228,8 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
               </div>
             </div>
             
-            ${
-              showActions
-                ? `
+            ${showActions
+              ? `
               <div class="account-actions">
                 <button 
                   type="button" 
@@ -251,12 +247,12 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
                 </button>
               </div>
             `
-                : ''
+              : ''
             }
           </div>
         `
-          )
-          .join('')}
+        )
+        .join('')}
       </div>
     `
   }
@@ -387,9 +383,14 @@ export class PrintChecksBankAccountList extends PrintChecksComponent {
   }
 
   private escapeHtml(text: string): string {
-    const div = document.createElement('div')
-    div.textContent = text
-    return div.innerHTML
+    const map: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    }
+    return text.replace(/[&<>"']/g, (m) => map[m])
   }
 
   // Public methods
