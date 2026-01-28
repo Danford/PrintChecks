@@ -45,6 +45,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "sideEffects": false,
   "peerDependencies": {
     "vue": "^3.3.0"
   },
