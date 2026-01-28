@@ -1,11 +1,13 @@
 # Phase 1: Core Library Extraction - COMPLETE ✅
 
 ## Overview
+
 Successfully extracted all business logic from the Vue.js application into a framework-agnostic core library that can be integrated into any JavaScript/TypeScript application or framework.
 
 ## What Was Built
 
 ### 1. Package Structure
+
 - **Package Name:** `@printchecks/core`
 - **Version:** 1.0.0
 - **TypeScript-first** with full type definitions
@@ -15,6 +17,7 @@ Successfully extracted all business logic from the Vue.js application into a fra
   - TypeScript definitions (`.d.ts` and `.d.mts`)
 
 ### 2. Core Models (`src/models/`)
+
 Framework-agnostic data models with validation:
 
 - **Check** - Complete check management with status tracking
@@ -41,6 +44,7 @@ Framework-agnostic data models with validation:
   - PrintOptions, FileUpload
 
 ### 3. Storage Layer (`src/storage/`)
+
 Abstract storage system supporting multiple backends:
 
 - **StorageAdapter** - Abstract interface for storage implementations
@@ -56,6 +60,7 @@ Abstract storage system supporting multiple backends:
   - Password change capabilities
 
 ### 4. Services Layer (`src/services/`)
+
 Business logic extracted from Vue stores:
 
 - **CheckService** - Check CRUD operations
@@ -86,6 +91,7 @@ Business logic extracted from Vue stores:
 ### 5. Utilities (`src/utils/`)
 
 **Encryption** (`encryption.ts`):
+
 - `encrypt(data, password)` - AES-GCM encryption
 - `decrypt(encryptedString, password)` - Decryption with password
 - `isEncrypted(data)` - Check if data is encrypted
@@ -94,6 +100,7 @@ Business logic extracted from Vue stores:
 - **Security:** 100,000 PBKDF2 iterations, 256-bit keys
 
 **Formatting** (`formatting.ts`):
+
 - Currency: `formatCurrency()`, `parseCurrency()`
 - Dates: `formatDate()`
 - Numbers: `formatCheckNumber()`, `formatAccountNumber()`
@@ -102,6 +109,7 @@ Business logic extracted from Vue stores:
 - Phone: `formatPhoneNumber()`
 
 **Validation** (`validation.ts`):
+
 - General: `validateRequired()`, `validateLength()`, `validateRange()`
 - Financial: `validateAmount()`, `validateCheckNumber()`
 - Banking: `validateRoutingNumber()`
@@ -110,10 +118,12 @@ Business logic extracted from Vue stores:
 - Dates: `validateDate()`, `validatePastDate()`, `validateFutureDate()`
 
 **Number Conversion** (`numberConverter.ts`):
+
 - `amountToWords(amount)` - Convert amounts to words
   - Example: 1234.56 → "One Thousand Two Hundred Thirty Four Dollars And Fifty Six Cents"
 
 ### 6. Main API Class (`src/PrintChecksCore.ts`)
+
 Unified entry point that orchestrates all services:
 
 ```typescript
@@ -197,6 +207,7 @@ The package provides tree-shakeable exports:
 ## Usage Examples
 
 ### Basic Import
+
 ```javascript
 import { PrintChecksCore } from '@printchecks/core'
 import { Check, Vendor } from '@printchecks/core/models'
@@ -204,6 +215,7 @@ import { formatCurrency } from '@printchecks/core/utils'
 ```
 
 ### Tree-shaking
+
 ```javascript
 // Only import what you need
 import { formatCurrency, amountToWords } from '@printchecks/core/utils'
@@ -212,6 +224,7 @@ import { formatCurrency, amountToWords } from '@printchecks/core/utils'
 ## Testing
 
 Verified all imports work correctly:
+
 ```bash
 npm run build
 node test-import.mjs
@@ -228,7 +241,7 @@ node test-import.mjs
 - **Target:** ES2020
 - **Tree-shakeable:** Yes
 - **Side Effects:** None
-- **Dependencies:** 
+- **Dependencies:**
   - `to-words` (for number-to-words conversion)
   - All crypto APIs use native Web Crypto API (no external dependencies)
 

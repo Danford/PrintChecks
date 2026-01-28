@@ -67,33 +67,38 @@ We appreciate all kinds of contributions:
 1. **Fork the repository** on GitHub
 
 2. **Clone your fork**
+
 ```bash
 git clone https://github.com/YOUR_USERNAME/PrintChecks.git
 cd PrintChecks
 ```
 
 3. **Add upstream remote**
+
 ```bash
 git remote add upstream https://github.com/Danford/PrintChecks.git
 ```
 
 4. **Navigate to the application directory**
+
 ```bash
 cd printchecks
 ```
 
 5. **Install dependencies**
+
 ```bash
 npm install
 ```
 
 6. **Start the development server**
+
 ```bash
 npm run dev
 ```
 
 7. **Open in browser**
-Navigate to `http://localhost:5173/`
+   Navigate to `http://localhost:5173/`
 
 ### Keeping Your Fork Updated
 
@@ -121,22 +126,23 @@ git push origin master
 - ✅ **Descriptive names** - Make variable and function names clear
 
 **Example:**
+
 ```typescript
 // ✅ Good
 interface CheckData {
-  payee: string;
-  amount: number;
-  date: Date;
-  memo?: string;
+  payee: string
+  amount: number
+  date: Date
+  memo?: string
 }
 
 function formatCurrency(amount: number): string {
-  return `$${amount.toFixed(2)}`;
+  return `$${amount.toFixed(2)}`
 }
 
 // ❌ Avoid
 function doStuff(x: any) {
-  return x;
+  return x
 }
 ```
 
@@ -148,29 +154,30 @@ function doStuff(x: any) {
 - ✅ **Emits declaration** - Declare all emitted events
 
 **Example:**
+
 ```vue
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from 'vue'
 
 interface Props {
-  title: string;
-  amount?: number;
+  title: string
+  amount?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  amount: 0
-});
+  amount: 0,
+})
 
 const emit = defineEmits<{
-  save: [value: number];
-  cancel: [];
-}>();
+  save: [value: number]
+  cancel: []
+}>()
 
-const localAmount = ref(props.amount);
+const localAmount = ref(props.amount)
 
 const formattedAmount = computed(() => {
-  return `$${localAmount.value.toFixed(2)}`;
-});
+  return `$${localAmount.value.toFixed(2)}`
+})
 </script>
 
 <template>
@@ -190,6 +197,7 @@ This project uses **ESLint** and **Prettier** for consistent code style:
 - Type check: `npm run type-check`
 
 **Before committing:**
+
 ```bash
 npm run lint && npm run type-check
 ```
@@ -212,27 +220,28 @@ npm run lint && npm run type-check
 7. Local utilities
 
 **Example:**
+
 ```typescript
 // Vue
-import { ref, computed } from 'vue';
+import { ref, computed } from 'vue'
 
 // Third-party
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 
 // Stores
-import { useCheckStore } from '@/stores/check';
+import { useCheckStore } from '@/stores/check'
 
 // Composables
-import { useFormatting } from '@/composables/useFormatting';
+import { useFormatting } from '@/composables/useFormatting'
 
 // Components
-import CheckPrinter from '@/components/CheckPrinter.vue';
+import CheckPrinter from '@/components/CheckPrinter.vue'
 
 // Types
-import type { CheckData } from '@/types';
+import type { CheckData } from '@/types'
 
 // Utilities
-import { formatDate } from '@/utilities';
+import { formatDate } from '@/utilities'
 ```
 
 ---
@@ -290,7 +299,7 @@ and troubleshooting section.
 - ✅ Keep subject line under 50 characters
 - ✅ Separate subject from body with blank line
 - ✅ Wrap body at 72 characters
-- ✅ Explain *what* and *why*, not *how*
+- ✅ Explain _what_ and _why_, not _how_
 
 ---
 
@@ -299,6 +308,7 @@ and troubleshooting section.
 ### Before Submitting
 
 1. ✅ **Create a feature branch** from `master`
+
    ```bash
    git checkout -b feature/my-awesome-feature
    ```
@@ -306,6 +316,7 @@ and troubleshooting section.
 2. ✅ **Make your changes** with clear, focused commits
 
 3. ✅ **Run quality checks**
+
    ```bash
    npm run lint
    npm run type-check
@@ -326,6 +337,7 @@ and troubleshooting section.
 ### Submitting the PR
 
 1. **Push to your fork**
+
    ```bash
    git push origin feature/my-awesome-feature
    ```
@@ -343,20 +355,25 @@ and troubleshooting section.
 
 ```markdown
 ## Description
+
 Brief description of what this PR does.
 
 ## Motivation
+
 Why is this change needed?
 
 ## Changes
+
 - Change 1
 - Change 2
 - Change 3
 
 ## Screenshots (if applicable)
+
 [Add screenshots here]
 
 ## Testing
+
 - [ ] Tested locally
 - [ ] Ran linting and type checks
 - [ ] Tested in Chrome
@@ -364,6 +381,7 @@ Why is this change needed?
 - [ ] Tested printing (if applicable)
 
 ## Related Issues
+
 Closes #123
 ```
 
@@ -399,6 +417,7 @@ A clear description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce:
+
 1. Go to '...'
 2. Click on '...'
 3. Scroll down to '...'
@@ -411,6 +430,7 @@ What you expected to happen.
 If applicable, add screenshots.
 
 **Environment:**
+
 - OS: [e.g., Windows 10, macOS 12]
 - Browser: [e.g., Chrome 96, Firefox 95]
 - Node version: [e.g., 18.12.0]
@@ -471,5 +491,4 @@ Your contributions help make PrintChecks better for everyone. We appreciate your
 
 ---
 
-*Last updated: December 2024*
-
+_Last updated: December 2024_

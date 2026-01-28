@@ -1,0 +1,311 @@
+/**
+ * Base styles for PrintChecks Web Components
+ */
+
+:host {
+  /* Color palette */
+  --pc-primary-color: #007bff;
+  --pc-primary-hover: #0056b3;
+  --pc-secondary-color: #6c757d;
+  --pc-success-color: #28a745;
+  --pc-danger-color: #dc3545;
+  --pc-warning-color: #ffc107;
+  --pc-info-color: #17a2b8;
+  --pc-light-color: #f8f9fa;
+  --pc-dark-color: #343a40;
+
+  /* Text colors */
+  --pc-text-primary: #212529;
+  --pc-text-secondary: #6c757d;
+  --pc-text-muted: #868e96;
+  --pc-text-light: #ffffff;
+
+  /* Background colors */
+  --pc-bg-primary: #ffffff;
+  --pc-bg-secondary: #f8f9fa;
+  --pc-bg-dark: #343a40;
+
+  /* Border colors */
+  --pc-border-color: #dee2e6;
+  --pc-border-radius: 4px;
+
+  /* Spacing */
+  --pc-spacing-xs: 0.25rem;
+  --pc-spacing-sm: 0.5rem;
+  --pc-spacing-md: 1rem;
+  --pc-spacing-lg: 1.5rem;
+  --pc-spacing-xl: 2rem;
+
+  /* Typography */
+  --pc-font-family:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --pc-font-size-sm: 0.875rem;
+  --pc-font-size-base: 1rem;
+  --pc-font-size-lg: 1.25rem;
+  --pc-font-size-xl: 1.5rem;
+  --pc-line-height: 1.5;
+
+  /* Shadows */
+  --pc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --pc-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --pc-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+
+  /* Transitions */
+  --pc-transition: all 0.2s ease-in-out;
+
+  /* Display */
+  display: block;
+  box-sizing: border-box;
+  font-family: var(--pc-font-family);
+  font-size: var(--pc-font-size-base);
+  line-height: var(--pc-line-height);
+  color: var(--pc-text-primary);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/* Form elements */
+.form-group {
+  margin-bottom: var(--pc-spacing-md);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--pc-spacing-xs);
+  font-weight: 500;
+  color: var(--pc-text-primary);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: var(--pc-spacing-sm) var(--pc-spacing-md);
+  font-size: var(--pc-font-size-base);
+  line-height: var(--pc-line-height);
+  color: var(--pc-text-primary);
+  background-color: var(--pc-bg-primary);
+  border: 1px solid var(--pc-border-color);
+  border-radius: var(--pc-border-radius);
+  transition: var(--pc-transition);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--pc-primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form-control:disabled {
+  background-color: var(--pc-bg-secondary);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: var(--pc-spacing-sm) var(--pc-spacing-md);
+  font-size: var(--pc-font-size-base);
+  font-weight: 500;
+  line-height: var(--pc-line-height);
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: var(--pc-border-radius);
+  cursor: pointer;
+  transition: var(--pc-transition);
+  user-select: none;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  color: var(--pc-text-light);
+  background-color: var(--pc-primary-color);
+  border-color: var(--pc-primary-color);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--pc-primary-hover);
+  border-color: var(--pc-primary-hover);
+}
+
+.btn-secondary {
+  color: var(--pc-text-light);
+  background-color: var(--pc-secondary-color);
+  border-color: var(--pc-secondary-color);
+}
+
+.btn-success {
+  color: var(--pc-text-light);
+  background-color: var(--pc-success-color);
+  border-color: var(--pc-success-color);
+}
+
+.btn-danger {
+  color: var(--pc-text-light);
+  background-color: var(--pc-danger-color);
+  border-color: var(--pc-danger-color);
+}
+
+/* Cards */
+.card {
+  background-color: var(--pc-bg-primary);
+  border: 1px solid var(--pc-border-color);
+  border-radius: var(--pc-border-radius);
+  box-shadow: var(--pc-shadow-sm);
+}
+
+.card-header {
+  padding: var(--pc-spacing-md);
+  border-bottom: 1px solid var(--pc-border-color);
+  background-color: var(--pc-bg-secondary);
+  font-weight: 500;
+}
+
+.card-body {
+  padding: var(--pc-spacing-md);
+}
+
+.card-footer {
+  padding: var(--pc-spacing-md);
+  border-top: 1px solid var(--pc-border-color);
+  background-color: var(--pc-bg-secondary);
+}
+
+/* Utilities */
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-muted {
+  color: var(--pc-text-muted);
+}
+
+.text-danger {
+  color: var(--pc-danger-color);
+}
+
+.text-success {
+  color: var(--pc-success-color);
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+.mb-1 {
+  margin-bottom: var(--pc-spacing-sm);
+}
+
+.mb-2 {
+  margin-bottom: var(--pc-spacing-md);
+}
+
+.mb-3 {
+  margin-bottom: var(--pc-spacing-lg);
+}
+
+.mt-0 {
+  margin-top: 0;
+}
+
+.mt-1 {
+  margin-top: var(--pc-spacing-sm);
+}
+
+.mt-2 {
+  margin-top: var(--pc-spacing-md);
+}
+
+.mt-3 {
+  margin-top: var(--pc-spacing-lg);
+}
+
+.d-none {
+  display: none !important;
+}
+
+.d-block {
+  display: block !important;
+}
+
+.d-flex {
+  display: flex !important;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.gap-1 {
+  gap: var(--pc-spacing-sm);
+}
+
+.gap-2 {
+  gap: var(--pc-spacing-md);
+}
+
+.gap-3 {
+  gap: var(--pc-spacing-lg);
+}
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--pc-border-color);
+  border-top-color: var(--pc-primary-color);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error message */
+.error-message {
+  padding: var(--pc-spacing-md);
+  margin-bottom: var(--pc-spacing-md);
+  color: var(--pc-danger-color);
+  background-color: rgba(220, 53, 69, 0.1);
+  border: 1px solid var(--pc-danger-color);
+  border-radius: var(--pc-border-radius);
+}
+
+/* Success message */
+.success-message {
+  padding: var(--pc-spacing-md);
+  margin-bottom: var(--pc-spacing-md);
+  color: var(--pc-success-color);
+  background-color: rgba(40, 167, 69, 0.1);
+  border: 1px solid var(--pc-success-color);
+  border-radius: var(--pc-border-radius);
+}

@@ -21,7 +21,7 @@ export class LineItem implements LineItemData {
   id?: string
   createdAt?: Date
   updatedAt?: Date
-  
+
   description: string
   quantity: number
   unitPrice: number
@@ -42,7 +42,7 @@ export class LineItem implements LineItemData {
       this.createdAt = new Date()
     }
     this.updatedAt = new Date()
-    
+
     // Calculate total if not provided
     if (this.totalPrice === undefined) {
       this.calculateTotal()
@@ -54,18 +54,18 @@ export class LineItem implements LineItemData {
    */
   calculateTotal(): void {
     this.totalPrice = this.quantity * this.unitPrice
-    
+
     // Apply tax if taxable
     if (this.taxable && this.taxRate) {
       this.taxAmount = this.totalPrice * (this.taxRate / 100)
       this.totalPrice += this.taxAmount
     }
-    
+
     // Apply discount
     if (this.discountAmount) {
       this.totalPrice -= this.discountAmount
     }
-    
+
     this.updatedAt = new Date()
   }
 
@@ -83,7 +83,7 @@ export class LineItem implements LineItemData {
       taxRate: this.taxRate,
       taxAmount: this.taxAmount,
       discountAmount: this.discountAmount,
-      notes: this.notes
+      notes: this.notes,
     }
   }
 
@@ -141,7 +141,7 @@ export class Receipt implements ReceiptData {
   id?: string
   createdAt?: Date
   updatedAt?: Date
-  
+
   receiptNumber: string
   date: string
   lineItems: LineItemData[]
@@ -162,10 +162,10 @@ export class Receipt implements ReceiptData {
       this.createdAt = new Date()
     }
     this.updatedAt = new Date()
-    
+
     // Initialize lineItems if not provided (prevents crash in calculateTotals)
     this.lineItems = this.lineItems || []
-    
+
     // Calculate totals if not provided
     if (!this.totals) {
       this.calculateTotals()
@@ -196,7 +196,7 @@ export class Receipt implements ReceiptData {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     }
   }
 
@@ -213,7 +213,7 @@ export class Receipt implements ReceiptData {
    * Remove a line item
    */
   removeLineItem(itemId: string): void {
-    this.lineItems = this.lineItems.filter(item => item.id !== itemId)
+    this.lineItems = this.lineItems.filter((item) => item.id !== itemId)
     this.calculateTotals()
     this.updatedAt = new Date()
   }
@@ -222,7 +222,7 @@ export class Receipt implements ReceiptData {
    * Update a line item
    */
   updateLineItem(itemId: string, updates: Partial<LineItemData>): void {
-    const index = this.lineItems.findIndex(item => item.id === itemId)
+    const index = this.lineItems.findIndex((item) => item.id === itemId)
     if (index >= 0) {
       this.lineItems[index] = { ...this.lineItems[index], ...updates }
       const lineItem = new LineItem(this.lineItems[index])
@@ -244,11 +244,11 @@ export class Receipt implements ReceiptData {
     for (const item of this.lineItems) {
       const itemSubtotal = item.quantity * item.unitPrice
       subtotal += itemSubtotal
-      
+
       if (item.taxAmount) {
         totalTax += item.taxAmount
       }
-      
+
       if (item.discountAmount) {
         totalDiscount += item.discountAmount
       }
@@ -264,7 +264,7 @@ export class Receipt implements ReceiptData {
       totalDiscount,
       shippingAmount,
       handlingAmount,
-      grandTotal
+      grandTotal,
     }
 
     this.updatedAt = new Date()
@@ -306,7 +306,7 @@ export class Receipt implements ReceiptData {
       notes: this.notes,
       checkId: this.checkId,
       vendorId: this.vendorId,
-      customizationId: this.customizationId
+      customizationId: this.customizationId,
     }
   }
 

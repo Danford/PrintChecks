@@ -1,5 +1,5 @@
 // Receipt and line item type definitions
-import type { BaseEntity, Money } from './common'
+import type { BaseEntity } from './common'
 
 export interface LineItem extends BaseEntity {
   description: string
@@ -57,22 +57,22 @@ export interface ReceiptData extends BaseEntity {
   // Basic receipt information
   receiptNumber: string
   date: string
-  
+
   // Line items
   lineItems: LineItem[]
-  
+
   // Totals
   totals: ReceiptTotals
-  
+
   // Tax information
   taxes: TaxInfo[]
-  
+
   // Discounts
   discounts: DiscountInfo[]
-  
+
   // Payment metadata
   metadata: PaymentMetadata
-  
+
   // Billing information
   billTo: {
     name: string
@@ -84,7 +84,7 @@ export interface ReceiptData extends BaseEntity {
     email?: string
     phone?: string
   }
-  
+
   // Shipping information (optional)
   shipTo?: {
     name: string
@@ -96,7 +96,7 @@ export interface ReceiptData extends BaseEntity {
     shippingMethod?: string
     trackingNumber?: string
   }
-  
+
   // Payment information
   paymentInfo: {
     method: 'check' | 'cash' | 'credit' | 'debit' | 'transfer' | 'other'
@@ -105,7 +105,7 @@ export interface ReceiptData extends BaseEntity {
     currency: string
     exchangeRate?: number
   }
-  
+
   // Additional settings
   settings: {
     showLineNumbers: boolean
@@ -115,7 +115,7 @@ export interface ReceiptData extends BaseEntity {
     currency: string
     locale: string
   }
-  
+
   // Relationships
   checkId?: string
   customizationId?: string
@@ -129,34 +129,36 @@ export interface ReceiptTemplate extends BaseEntity {
   isDefault?: boolean
 }
 
+import type { CheckData } from './check'
+
 export interface PaymentRecord extends BaseEntity {
   // Combined check and receipt data
-  checkData: any // Will reference CheckData
+  checkData: CheckData
   receiptData?: ReceiptData
-  
+
   // Combined totals and validation
   totalAmount: number
   currency: string
-  
+
   // Status and metadata
   status: 'draft' | 'completed' | 'void' | 'cancelled'
   createdBy?: string
   approvedBy?: string
   approvedAt?: Date
-  
+
   // Print history
   printHistory: {
     printedAt: Date
     printType: 'check' | 'receipt' | 'combined'
     printedBy?: string
   }[]
-  
+
   // Audit trail
   auditTrail: {
     action: string
     timestamp: Date
     userId?: string
-    details?: any
+    details?: unknown
   }[]
 }
 

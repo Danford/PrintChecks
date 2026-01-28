@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { CSSProperties } from 'vue'
 import type { CustomizationSettings } from '@/types'
 import CheckRenderer from '@/components/CheckRenderer.vue'
 
@@ -20,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
   scale: 0.15
 })
 
-const wrapperStyle = computed(() => ({
+const wrapperStyle = computed<CSSProperties>(() => ({
   width: `${1200 * props.scale}px`,
   height: `${490 * props.scale}px`,
   display: 'inline-block',
@@ -28,7 +29,7 @@ const wrapperStyle = computed(() => ({
   overflow: 'hidden'
 }))
 
-const containerStyle = computed(() => ({
+const containerStyle = computed<CSSProperties>(() => ({
   width: '1200px',
   height: '490px',
   position: 'relative'
@@ -46,12 +47,13 @@ const sampleCheckData = computed(() => ({
   date: '12/10/2025',
   amount: '100.00',
   payTo: 'Sample Payee',
-  amountWords: 'One Hundred and <sup style="font-size: 0.7em;">00</sup>&frasl;<sub style="font-size: 0.7em;">100</sub>',
+  amountWords:
+    'One Hundred and <sup style="font-size: 0.7em;">00</sup>&frasl;<sub style="font-size: 0.7em;">100</sub>',
   memo: 'Sample memo',
   signature: 'John Doe',
   routingNumber: '123456789',
   bankAccountNumber: '000111222333',
-  lineLength: 250  // Adjusted to better match actual rendered width
+  lineLength: 250 // Adjusted to better match actual rendered width
 }))
 </script>
 

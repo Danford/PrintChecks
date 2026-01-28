@@ -21,6 +21,7 @@ PrintChecks is a fork of PrintMeChecks that dramatically expands its capabilitie
 ## ✨ Key Features
 
 ### 🏦 Professional Check Printing
+
 - Print checks on standard 8.5" x 11" paper
 - Official **E13B MICR font** for routing and account numbers
 - Automatic amount-to-words conversion
@@ -29,22 +30,26 @@ PrintChecks is a fork of PrintMeChecks that dramatically expands its capabilitie
 - Custom logo upload and positioning
 
 ### 📋 Receipt & Invoice Management
+
 - Create itemized receipts with line items
 - Automatic calculations (subtotal, tax, totals)
 - Professional formatting for business use
 
 ### 🎨 Customization Engine
+
 - **Font customization** for every check element
 - **Color schemes** and styling presets
 - **Logo upload** with positioning controls
 - **Preset system** for quick style switching
 
 ### 👥 Vendor Management
+
 - Store vendor information (name, address, email, phone)
 - Quick-fill vendor details on checks
 - Track payment history per vendor
 
 ### 📊 Payment Analytics
+
 - Payment volume tracking over time
 - Top vendors by payment amount
 - Monthly spending breakdowns
@@ -52,12 +57,14 @@ PrintChecks is a fork of PrintMeChecks that dramatically expands its capabilitie
 - Comprehensive payment history
 
 ### 📚 History & Documentation
+
 - Complete payment history tracking
 - Combined view of checks and receipts
 - Immutable payment records
 - **Coming Soon**: Search, filters, pagination, sorting, and data export
 
 ### 🔒 Privacy & Security
+
 - **100% Local**: All processing happens in your browser
 - **No Network Requests**: Zero external server communication
 - **Local Storage**: Data stays on your computer
@@ -68,16 +75,16 @@ PrintChecks is a fork of PrintMeChecks that dramatically expands its capabilitie
 
 ## 📸 Screenshots
 
-*New Check Creation*
+_New Check Creation_
 ![New Check Creation](docs/screenshots/print-checks-new-check.png)
 
-*Check Preview with MICR Font*
+_Check Preview with MICR Font_
 ![Check Preview with MICR Font](docs/screenshots/print-checks-preview.png)
 
-*Write New Check Modal*
+_Write New Check Modal_
 ![Write New Check Modal](docs/screenshots/print-checks-write-check.png)
 
-*Payment History & Analytics*
+_Payment History & Analytics_
 ![Payment History & Analytics](docs/screenshots/print-checks-history.png)
 
 ---
@@ -85,31 +92,36 @@ PrintChecks is a fork of PrintMeChecks that dramatically expands its capabilitie
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Node.js** (v18+ recommended)
 - **npm** or **yarn** package manager
 
 ### Installation
 
 1. **Clone the repository**
+
 ```bash
 git clone https://github.com/Danford/PrintChecks.git
 cd PrintChecks/printchecks
 ```
 
 2. **Install dependencies**
+
 ```bash
 npm install
 ```
 
 3. **Start the development server**
+
 ```bash
 npm run dev
 ```
 
 4. **Open in your browser**
-Navigate to `http://localhost:5173/`
+   Navigate to `http://localhost:5173/`
 
 ### Production Build
+
 ```bash
 npm run build
 ```
@@ -258,21 +270,25 @@ We welcome contributions! Here's how you can help:
 ## 🐛 Troubleshooting
 
 ### Fonts not loading correctly
+
 - Ensure the `expanded_fonts.js` file is present in the project root
 - Check browser console for font loading errors
 - Try clearing browser cache
 
 ### Print preview looks incorrect
+
 - Verify your browser's print settings (margins, scale)
 - Ensure "Background graphics" is enabled in print options
 - Use Chrome or Firefox for best results
 
 ### Data not persisting
+
 - Check that localStorage is enabled in your browser
 - Ensure you're not in private/incognito mode
 - Check browser console for storage errors
 
 ### Development server won't start
+
 - Delete `node_modules` and `package-lock.json`
 - Run `npm install` again
 - Ensure you're using Node.js v18+
@@ -298,7 +314,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ## 🔗 Links
 
 - **Original Project**: [PrintMeChecks](https://github.com/sktzofrenic/printmechecks)
-- **Demo**: [Live Demo](https://printmechecks.tiiny.site/) *(original version - may differ from this fork)*
+- **Demo**: [Live Demo](https://printmechecks.tiiny.site/) _(original version - may differ from this fork)_
 - **Issues**: [Report a bug or request a feature](https://github.com/Danford/PrintChecks/issues)
 
 ---
@@ -306,7 +322,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ## 💡 Tips for Best Results
 
 1. **Check Stock**: Use standard 8.5" x 11" blank check stock with MICR ink compatibility
-2. **Printer Settings**: 
+2. **Printer Settings**:
    - Disable margins or use minimal margins
    - Enable "Background graphics"
    - Use 100% scale (no fit-to-page)
