@@ -305,7 +305,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue'
 import type { CSSProperties } from 'vue'
-import type { CustomizationSettings } from '@/types'
+import type { CustomizationSettings, FontSettings } from '@/types'
 import { formatMoney } from '../utilities'
 
 interface CheckData {
@@ -501,15 +501,15 @@ const checkStyles = computed(() => {
 
   // Helper function to safely get font styles with fallbacks
   const getFontStyle = (
-    fontConfig: any,
+    fontConfig: FontSettings | undefined,
     fallback = { family: 'Arial, sans-serif', size: 16, weight: 'normal', color: '#000000' }
   ) => {
     // Apply adjustments if present
     const fontKey = Object.keys(fonts).find(
       (key) => fonts[key as keyof typeof fonts] === fontConfig
     )
-    const adjustment = fontKey ? (props.settings.adjustments as any)?.[fontKey] : undefined
-    const style: any = {
+    const adjustment = fontKey ? (props.settings.adjustments as Record<string, { x: number; y: number }>)?.[fontKey] : undefined
+    const style: CSSProperties = {
       fontFamily: fontConfig?.family || fallback.family,
       fontSize: `${fontConfig?.size || fallback.size}px`,
       fontWeight: fontConfig?.weight || fallback.weight,

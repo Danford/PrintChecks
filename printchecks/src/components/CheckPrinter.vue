@@ -919,25 +919,22 @@
 </template>
 
 <script setup lang="ts">
-import print from 'print-js'
 import { ToWords } from 'to-words'
 import { ref, reactive, nextTick, watch, onMounted, onUnmounted, computed } from 'vue'
 import type { CSSProperties } from 'vue'
 import { formatMoney } from '../utilities'
 import { useAppStore } from '../stores/app'
 import { useCustomizationStore } from '../stores/customization'
-import { useReceiptStore } from '../stores/receipt'
 import { useHistoryStore } from '../stores/history'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import type { RouteLocationRaw } from 'vue-router'
 import BankAccountModal from './BankAccountModal.vue'
 import VendorModal from './VendorModal.vue'
 import { secureStorage } from '../services/secureStorage'
-import type { Vendor, BankAccount, CheckData, ReceiptData, PaymentRecord } from '@/types'
+import type { Vendor, BankAccount, PaymentRecord } from '@/types'
 
 const state = useAppStore()
 const customizationStore = useCustomizationStore()
-const receiptStore = useReceiptStore()
 const historyStore = useHistoryStore()
 
 // Debug mode flag - ONLY enabled when npm run dev:clear is used
@@ -966,7 +963,7 @@ if (DEBUG_MODE.value) {
 
 // Expose debug toggle function to window for console access (for manual testing)
 if (typeof window !== 'undefined') {
-  ;(window as any).enablePrintChecksDebug = () => {
+  ;(window as Window & { enablePrintChecksDebug?: () => void }).enablePrintChecksDebug = () => {
     DEBUG_MODE.value = true
     console.log(
       '%c🐛 PrintChecks Debug Mode ENABLED',
@@ -974,7 +971,7 @@ if (typeof window !== 'undefined') {
     )
     console.log('%cTo disable: window.disablePrintChecksDebug()', 'color: gray; font-size: 12px;')
   }
-  ;(window as any).disablePrintChecksDebug = () => {
+  ;(window as Window & { disablePrintChecksDebug?: () => void }).disablePrintChecksDebug = () => {
     DEBUG_MODE.value = false
     console.log(
       '%c🐛 PrintChecks Debug Mode DISABLED',
@@ -1017,24 +1014,6 @@ const logoImageSrc = computed(() => {
   if (!currentSettings.value?.logo) return ''
   return currentSettings.value.logo.file?.url || currentSettings.value.logo.url || ''
 })
-const lineItems = computed(() => receiptStore.currentReceipt?.lineItems || [])
-const hasLineItems = computed(() => receiptStore.hasLineItems)
-const calculatedTotals = computed(() => receiptStore.calculatedTotals)
-
-// Test line items for demonstration
-const testLineItems = ref([
-  { id: 1, description: 'Professional Services', quantity: 1, rate: 150.0 },
-  { id: 2, description: 'Consultation Fee', quantity: 2, rate: 75.0 },
-  { id: 3, description: 'Materials & Supplies', quantity: 1, rate: 50.0 }
-])
-
-// Test totals for demonstration
-const testTotals = ref({
-  subtotal: 350.0,
-  taxAmount: 28.0,
-  shippingAmount: 0,
-  total: 378.0
-})
 
 // Bank and Vendor Data for Quick Check (read-only)
 const bankAccounts = ref<BankAccount[]>([])
@@ -1058,7 +1037,7 @@ const showVendorModal = ref(false)
 
 // Line Items Management
 const showLineItemForm = ref(false)
-const currentLineItems = ref<any[]>([])
+const currentLineItems = ref<{ id: number; description: string; quantity: number; rate: number }[]>([])
 const newLineItem = reactive({
   description: '',
   quantity: 1,
@@ -1290,7 +1269,7 @@ const paymentStats = computed(() => {
     })),
     ...historyStore.paymentRecords.map((payment: PaymentRecord) => ({
       amount: payment.totalAmount || 0,
-      date: new Date(payment.checkData?.date || (payment as any).createdAt || Date.now())
+      date: new Date(payment.checkData?.date || payment.createdAt || Date.now())
     }))
   ]
 
@@ -1325,7 +1304,7 @@ const enhancedPaymentStats = computed(() => {
     })),
     ...historyStore.paymentRecords.map((payment: PaymentRecord) => ({
       amount: payment.totalAmount || 0,
-      date: new Date(payment.checkData?.date || (payment as any).createdAt || Date.now()),
+      date: new Date(payment.checkData?.date || payment.createdAt || Date.now()),
       payTo:
         payment.checkData?.payTo || payment.receiptData?.billTo?.name || 'Unknown'
     }))
@@ -1344,9 +1323,6 @@ const enhancedPaymentStats = computed(() => {
     return paymentDate.getMonth() === lastMonth && paymentDate.getFullYear() === lastMonthYear
   })
 
-  const thisYearPayments = allPayments.filter(
-    (payment) => payment.date.getFullYear() === currentYear
-  )
 
   const lastYearPayments = allPayments.filter(
     (payment) => payment.date.getFullYear() === currentYear - 1
@@ -1404,7 +1380,7 @@ const checkStyles = computed(() => {
 
   // Helper function to safely get font styles with fallbacks
   const getFontStyle = (
-    fontConfig: any,
+    fontConfig: FontSettings | undefined,
     fallback = { family: 'Arial, sans-serif', size: 16, weight: 'normal', color: '#000000' }
   ) => {
     // Apply adjustments if present

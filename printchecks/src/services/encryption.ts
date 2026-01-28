@@ -33,7 +33,7 @@ async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey>
   return crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt,
+      salt: salt as BufferSource,
       iterations: ITERATIONS,
       hash: 'SHA-256'
     },
@@ -47,7 +47,7 @@ async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey>
 /**
  * Encrypts data with a password
  */
-export async function encrypt(data: any, password: string): Promise<string> {
+export async function encrypt(data: unknown, password: string): Promise<string> {
   try {
     // Generate random salt and IV
     const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH))
@@ -101,7 +101,7 @@ export async function encrypt(data: any, password: string): Promise<string> {
 /**
  * Decrypts data with a password
  */
-export async function decrypt(encryptedString: string, password: string): Promise<any> {
+export async function decrypt(encryptedString: string, password: string): Promise<unknown> {
   try {
     const encryptedData: EncryptedData = JSON.parse(encryptedString)
 

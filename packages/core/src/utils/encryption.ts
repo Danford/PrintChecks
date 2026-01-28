@@ -137,7 +137,7 @@ export async function encrypt(data: unknown, password: string): Promise<string> 
  * @param password - Password for decryption
  * @returns Decrypted data
  */
-export async function decrypt(encryptedString: string, password: string): Promise<any> {
+export async function decrypt(encryptedString: string, password: string): Promise<unknown> {
   if (!isCryptoAvailable()) {
     throw new Error('Web Crypto API is not available')
   }

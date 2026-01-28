@@ -24,8 +24,8 @@ export interface UsePrintChecksReturn {
   isInitialized: Ref<boolean>
 
   // Actions
-  exportData: () => Promise<any>
-  importData: (data: any) => Promise<any>
+  exportData: () => Promise<unknown>
+  importData: (data: unknown) => Promise<unknown>
   clearAllData: () => Promise<void>
   enableEncryption: (password: string) => Promise<void>
   disableEncryption: (password: string) => Promise<void>
@@ -72,7 +72,7 @@ export function usePrintChecks(config: PrintChecksCoreConfig = {}): UsePrintChec
     return core.exportData()
   }
 
-  async function importData(data: any) {
+  async function importData(data: unknown) {
     return core.importData(data)
   }
 

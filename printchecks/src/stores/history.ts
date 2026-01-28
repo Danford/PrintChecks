@@ -19,9 +19,14 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
   const currentPage = ref(1)
   const itemsPerPage = ref(10)
 
+  type HistoryItem =
+    | (CheckData & { type: 'check' })
+    | (ReceiptData & { type: 'receipt' })
+    | (PaymentRecord & { type: 'payment' })
+
   // Computed properties
   const filteredItems = computed(() => {
-    let items: any[] = []
+    let items: HistoryItem[] = []
 
     switch (filterBy.value) {
       case 'checks':
@@ -35,9 +40,9 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
         break
       default:
         items = [
-          ...checks.value.map((check) => ({ ...check, type: 'check' })),
-          ...receipts.value.map((receipt) => ({ ...receipt, type: 'receipt' })),
-          ...paymentRecords.value.map((payment) => ({ ...payment, type: 'payment' }))
+          ...checks.value.map((check) => ({ ...check, type: 'check' as const })),
+          ...receipts.value.map((receipt) => ({ ...receipt, type: 'receipt' as const })),
+          ...paymentRecords.value.map((payment) => ({ ...payment, type: 'payment' as const }))
         ]
     }
 
@@ -63,20 +68,32 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
 
     // Apply sorting
     items.sort((a, b) => {
-      let aValue: any, bValue: any
+      let aValue: string | number | Date, bValue: string | number | Date
+
+      type SortableItem = {
+        date?: string | Date
+        createdAt?: string | Date
+        amount?: string | number
+        totals?: { grandTotal: number }
+        payTo?: string
+        billTo?: { name: string }
+      }
+
+      const checkA = a as SortableItem
+      const checkB = b as SortableItem
 
       switch (sortBy.value) {
         case 'date':
-          aValue = new Date(a.date || a.createdAt)
-          bValue = new Date(b.date || b.createdAt)
+          aValue = new Date(checkA.date || checkA.createdAt || Date.now())
+          bValue = new Date(checkB.date || checkB.createdAt || Date.now())
           break
         case 'amount':
-          aValue = parseFloat(a.amount || a.totals?.grandTotal || 0)
-          bValue = parseFloat(b.amount || b.totals?.grandTotal || 0)
+          aValue = parseFloat(String(checkA.amount || checkA.totals?.grandTotal || 0))
+          bValue = parseFloat(String(checkB.amount || checkB.totals?.grandTotal || 0))
           break
         case 'payTo':
-          aValue = a.payTo || a.billTo?.name || ''
-          bValue = b.payTo || b.billTo?.name || ''
+          aValue = checkA.payTo || checkA.billTo?.name || ''
+          bValue = checkB.payTo || checkB.billTo?.name || ''
           break
         default:
           return 0
@@ -113,7 +130,7 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     try {
       const saved = await secureStorage.get('checkList')
       if (saved) {
-        checks.value = JSON.parse(saved)
+        checks.value = JSON.parse(saved as string)
       }
     } catch (e) {
       console.warn('Failed to load check history:', e)
@@ -124,7 +141,7 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     try {
       const saved = await secureStorage.get('printchecks_receipts')
       if (saved) {
-        receipts.value = JSON.parse(saved)
+        receipts.value = JSON.parse(saved as string)
       }
     } catch (e) {
       console.warn('Failed to load receipt history:', e)
@@ -135,7 +152,7 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     try {
       const saved = await secureStorage.get('printchecks_payments')
       if (saved) {
-        paymentRecords.value = JSON.parse(saved)
+        paymentRecords.value = JSON.parse(saved as string)
       }
     } catch (e) {
       console.warn('Failed to load payment records:', e)
@@ -158,7 +175,7 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
     await saveChecks()
   }
 
-  function deleteCheck(checkId: string) {
+  function deleteCheck(_checkId: string) {
     console.warn('Checks cannot be deleted. Use voidCheck() instead.')
     // checks.value = checks.value.filter(check => check.id !== checkId)
     // saveChecks()

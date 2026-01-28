@@ -13,7 +13,6 @@
 
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { spawn } = require('child_process')
-const fs = require('fs')
 
 console.log('\n🗑️  PrintChecks - Clear History Debug Mode\n')
 console.log('Starting dev server with VITE_DEBUG_MODE=true')

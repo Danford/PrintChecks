@@ -634,7 +634,7 @@ const logoPreviewStyle = computed<CSSProperties>(() => {
   return {
     width: `${Math.min(logo.size?.width || 100, 200)}px`,
     height: `${Math.min(logo.size?.height || 50, 100)}px`,
-    objectFit: (logo.objectFit as any) || 'contain',
+    objectFit: (logo.objectFit as CSSProperties['objectFit']) || 'contain',
     objectPosition: logo.objectPosition || 'center',
     opacity: logo.opacity || 1
   }
@@ -697,49 +697,11 @@ function getFontsByCategory(category: string) {
   return availableFonts.value.filter((font) => font.category === category)
 }
 
-function getSelectedFontDescription(fontKey: keyof CustomizationSettings['fonts']): string {
-  const selectedFamily = currentSettings.value?.fonts[fontKey]?.family
-  if (!selectedFamily) return ''
-
-  const font = availableFonts.value.find((f) => f.name === selectedFamily)
-  return font?.description || ''
-}
-
-function getFontPreviewStyle(fontKey: keyof CustomizationSettings['fonts']) {
-  const font = currentSettings.value?.fonts[fontKey]
-  if (!font) return {}
-
-  return {
-    fontFamily: font.family,
-    fontSize: `${Math.min(font.size, 24)}px`,
-    fontWeight: font.weight,
-    color: font.color,
-    fontStyle: font.style || 'normal'
-  }
-}
-
-
-
-function getFontPreviewText(fontKey: keyof CustomizationSettings['fonts']): string {
-  const previews: Record<string, string> = {
-    accountHolder: 'John Smith',
-    payTo: 'Michael Johnson',
-    amount: '$1,234.56',
-    amountWords: 'One Thousand Two Hundred Thirty-Four and 56/100',
-    memo: 'Rent Payment',
-    signature: 'John Smith',
-    bankInfo: 'a022303659a 000000000000c 100',
-    bankName: 'First National Bank',
-    checkNumber: '100',
-    date: '12/07/2025'
-  }
-  return previews[fontKey] || 'Sample Text'
-}
 
 function updateFont(
   element: keyof CustomizationSettings['fonts'],
   property: keyof FontSettings,
-  value: any
+  value: unknown
 ) {
   // Check if we're editing a built-in template
   if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
@@ -761,7 +723,7 @@ function updateFont(
   }
 }
 
-function updateLogo(property: string, value: any) {
+function updateLogo(property: string, value: unknown) {
   // Check if we're editing a built-in template
   if (currentPreset.value?.isBuiltIn && !hasCreatedCustomTemplate.value) {
     hasCreatedCustomTemplate.value = true
@@ -941,14 +903,6 @@ function resetToOriginalSize() {
   }
 }
 
-function getPresetPreviewStyle(preset: CustomizationPreset) {
-  return {
-    fontFamily: preset.settings.fonts.accountHolder.family,
-    fontSize: '14px',
-    color: preset.settings.colors.primary,
-    backgroundColor: preset.settings.colors.background
-  }
-}
 
 function applyPreset(preset: CustomizationPreset) {
   customizationStore.applyPreset(preset)

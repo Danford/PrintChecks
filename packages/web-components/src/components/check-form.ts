@@ -274,9 +274,8 @@ export class PrintChecksCheckForm extends PrintChecksComponent {
               />
             </div>
             
-            ${
-              !readonly
-                ? `
+            ${!readonly
+        ? `
               <div class="form-actions">
                 <button type="button" class="btn btn-secondary" part="reset-button" id="resetBtn">
                   Reset
@@ -289,8 +288,8 @@ export class PrintChecksCheckForm extends PrintChecksComponent {
                 </button>
               </div>
             `
-                : ''
-            }
+        : ''
+      }
           </form>
         </div>
       </div>
@@ -488,7 +487,7 @@ export class PrintChecksCheckForm extends PrintChecksComponent {
   }
 
   // Public methods
-  public async validate(): Promise<any> {
+  public async validate(): Promise<void> {
     await this.handleValidate()
   }
 

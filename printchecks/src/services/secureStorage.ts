@@ -53,7 +53,7 @@ class SecureStorage {
   /**
    * Get data from localStorage, automatically decrypting if needed
    */
-  async get(key: string): Promise<any> {
+  async get(key: string): Promise<unknown> {
     try {
       const rawValue = localStorage.getItem(key)
       if (!rawValue) {
@@ -92,11 +92,11 @@ class SecureStorage {
   /**
    * Set data in localStorage, automatically encrypting if needed
    */
-  async set(key: string, value: any): Promise<void> {
+  async set(key: string, value: unknown): Promise<void> {
     try {
       // Metadata keys are never encrypted
       if (METADATA_KEYS.includes(key)) {
-        localStorage.setItem(key, value)
+        localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value))
         return
       }
 
@@ -112,7 +112,7 @@ class SecureStorage {
         }
       } else {
         // Store as plain text
-        localStorage.setItem(key, value)
+        localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value))
       }
     } catch (error) {
       console.error('[SecureStorage] Error setting key:', key, error)

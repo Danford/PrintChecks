@@ -108,7 +108,7 @@ export const useCheckStore = defineStore('useCheckStore', () => {
   async function loadFromRecentCheck(check: CheckData) {
     try {
       const checkListData = await secureStorage.get('checkList')
-      const checkList = checkListData ? JSON.parse(checkListData) : []
+      const checkList = checkListData ? (JSON.parse(checkListData as string) as CheckData[]) : []
       const recentCheck = checkList[checkList.length - 1]
 
       if (recentCheck) {
@@ -182,10 +182,10 @@ export const useCheckStore = defineStore('useCheckStore', () => {
 
       // Save to history
       const checkListData = await secureStorage.get('checkList')
-      const checkList = checkListData ? JSON.parse(checkListData) : []
+      const checkList = checkListData ? (JSON.parse(checkListData as string) as CheckData[]) : []
 
       // Check if updating existing check
-      const existingIndex = checkList.findIndex((c: any) => c.id === currentCheck.value?.id)
+      const existingIndex = checkList.findIndex((c: CheckData) => c.id === currentCheck.value?.id)
       if (existingIndex >= 0) {
         checkList[existingIndex] = { ...currentCheck.value }
       } else {
@@ -217,8 +217,9 @@ export const useCheckStore = defineStore('useCheckStore', () => {
     hasUnsavedChanges.value = false
   }
 
-  function isLegacyCheck(check: any): check is LegacyCheckData {
-    return !check.id && !check.createdAt
+  function isLegacyCheck(check: unknown): check is LegacyCheckData {
+    if (typeof check !== 'object' || check === null) return false
+    return !('id' in check) && !('createdAt' in check)
   }
 
   function convertLegacyCheck(legacy: LegacyCheckData): CheckData {
@@ -312,7 +313,7 @@ export const useCheckStore = defineStore('useCheckStore', () => {
     try {
       const saved = await secureStorage.get('printchecks_templates')
       if (saved) {
-        templates.value = JSON.parse(saved)
+        templates.value = JSON.parse(saved as string)
       }
     } catch (e) {
       console.warn('Failed to load templates:', e)
