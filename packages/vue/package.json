@@ -1,6 +1,6 @@
 {
   "name": "@printchecks/vue",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vue 3 integration layer for PrintChecks core library",
   "type": "module",
   "main": "./dist/index.cjs",
