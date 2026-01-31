@@ -1,0 +1,521 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "PrintChecks Web Components - Framework-agnostic custom elements for check printing and financial document management",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "src/index.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "printchecks-check-form",
+          "declaration": {
+            "name": "PrintChecksCheckForm",
+            "module": "src/components/check-form.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "printchecks-check-preview",
+          "declaration": {
+            "name": "PrintChecksCheckPreview",
+            "module": "src/components/check-preview.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "printchecks-vendor-form",
+          "declaration": {
+            "name": "PrintChecksVendorForm",
+            "module": "src/components/vendor-form.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "printchecks-vendor-list",
+          "declaration": {
+            "name": "PrintChecksVendorList",
+            "module": "src/components/vendor-list.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "printchecks-bank-account-form",
+          "declaration": {
+            "name": "PrintChecksBankAccountForm",
+            "module": "src/components/bank-account-form.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "printchecks-bank-account-list",
+          "declaration": {
+            "name": "PrintChecksBankAccountList",
+            "module": "src/components/bank-account-list.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/check-form.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "PrintChecksCheckForm",
+          "tagName": "printchecks-check-form",
+          "customElement": true,
+          "description": "Interactive form for creating and editing checks with validation support",
+          "attributes": [
+            {
+              "name": "check-id",
+              "type": { "text": "string" },
+              "description": "ID of an existing check to load and edit"
+            },
+            {
+              "name": "bank-account-id",
+              "type": { "text": "string" },
+              "description": "Pre-selected bank account ID"
+            },
+            {
+              "name": "vendor-id",
+              "type": { "text": "string" },
+              "description": "Pre-selected vendor ID"
+            },
+            {
+              "name": "readonly",
+              "type": { "text": "boolean" },
+              "description": "When set, displays the form in read-only mode"
+            }
+          ],
+          "events": [
+            {
+              "name": "check-created",
+              "type": { "text": "CustomEvent<{ check: Check }>" },
+              "description": "Fired when a new check is successfully created"
+            },
+            {
+              "name": "check-updated",
+              "type": { "text": "CustomEvent<{ check: Check }>" },
+              "description": "Fired when an existing check is successfully updated"
+            },
+            {
+              "name": "check-validated",
+              "type": { "text": "CustomEvent<{ check: Check, validation: ValidationResult }>" },
+              "description": "Fired after check validation completes"
+            },
+            {
+              "name": "error",
+              "type": { "text": "CustomEvent<{ error: string }>" },
+              "description": "Fired when an error occurs"
+            }
+          ],
+          "members": [
+            {
+              "kind": "method",
+              "name": "validate",
+              "description": "Programmatically trigger form validation",
+              "return": { "type": { "text": "Promise<void>" } }
+            },
+            {
+              "kind": "method",
+              "name": "save",
+              "description": "Programmatically save the check",
+              "return": { "type": { "text": "Promise<Check | null>" } }
+            },
+            {
+              "kind": "method",
+              "name": "reset",
+              "description": "Reset the form to its initial state"
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--pc-primary-color",
+              "description": "Primary theme color",
+              "default": "#0d6efd"
+            },
+            {
+              "name": "--pc-spacing-lg",
+              "description": "Large spacing value",
+              "default": "24px"
+            },
+            {
+              "name": "--pc-border-radius",
+              "description": "Border radius for cards and inputs",
+              "default": "8px"
+            }
+          ],
+          "cssParts": [
+            {
+              "name": "submit-button",
+              "description": "The submit button element"
+            },
+            {
+              "name": "reset-button",
+              "description": "The reset button element"
+            },
+            {
+              "name": "validate-button",
+              "description": "The validate button element"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/check-preview.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "PrintChecksCheckPreview",
+          "tagName": "printchecks-check-preview",
+          "customElement": true,
+          "description": "Displays a check in print-ready format with MICR line",
+          "attributes": [
+            {
+              "name": "check-id",
+              "type": { "text": "string" },
+              "description": "ID of the check to display"
+            },
+            {
+              "name": "scale",
+              "type": { "text": "string" },
+              "description": "Scale factor for the check preview (e.g., '0.75')",
+              "default": "1"
+            }
+          ],
+          "events": [
+            {
+              "name": "check-printed",
+              "type": { "text": "CustomEvent<{ check: Check }>" },
+              "description": "Fired when the print action is triggered"
+            },
+            {
+              "name": "download-requested",
+              "type": { "text": "CustomEvent<{ check: Check }>" },
+              "description": "Fired when PDF download is requested"
+            },
+            {
+              "name": "error",
+              "type": { "text": "CustomEvent<{ error: string }>" },
+              "description": "Fired when an error occurs"
+            }
+          ],
+          "members": [
+            {
+              "kind": "method",
+              "name": "setCheck",
+              "description": "Set the check to display programmatically",
+              "parameters": [
+                {
+                  "name": "check",
+                  "type": { "text": "Check" }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "print",
+              "description": "Trigger the print dialog"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/vendor-form.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "PrintChecksVendorForm",
+          "tagName": "printchecks-vendor-form",
+          "customElement": true,
+          "description": "Interactive form for creating and editing vendors",
+          "attributes": [
+            {
+              "name": "vendor-id",
+              "type": { "text": "string" },
+              "description": "ID of an existing vendor to load and edit"
+            },
+            {
+              "name": "readonly",
+              "type": { "text": "boolean" },
+              "description": "When set, displays the form in read-only mode"
+            }
+          ],
+          "events": [
+            {
+              "name": "vendor-created",
+              "type": { "text": "CustomEvent<{ vendor: Vendor }>" },
+              "description": "Fired when a new vendor is successfully created"
+            },
+            {
+              "name": "vendor-updated",
+              "type": { "text": "CustomEvent<{ vendor: Vendor }>" },
+              "description": "Fired when an existing vendor is successfully updated"
+            },
+            {
+              "name": "error",
+              "type": { "text": "CustomEvent<{ error: string }>" },
+              "description": "Fired when an error occurs"
+            }
+          ],
+          "members": [
+            {
+              "kind": "method",
+              "name": "save",
+              "description": "Programmatically save the vendor",
+              "return": { "type": { "text": "Promise<Vendor | null>" } }
+            },
+            {
+              "kind": "method",
+              "name": "reset",
+              "description": "Reset the form to its initial state"
+            },
+            {
+              "kind": "method",
+              "name": "setVendor",
+              "description": "Set a vendor to edit programmatically",
+              "parameters": [
+                {
+                  "name": "vendor",
+                  "type": { "text": "Vendor" }
+                }
+              ]
+            }
+          ],
+          "cssParts": [
+            {
+              "name": "submit-button",
+              "description": "The submit button element"
+            },
+            {
+              "name": "reset-button",
+              "description": "The reset button element"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/vendor-list.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "PrintChecksVendorList",
+          "tagName": "printchecks-vendor-list",
+          "customElement": true,
+          "description": "Displays a searchable list of vendors with optional action buttons",
+          "attributes": [
+            {
+              "name": "show-actions",
+              "type": { "text": "boolean" },
+              "description": "When set, shows edit and delete action buttons for each vendor"
+            }
+          ],
+          "events": [
+            {
+              "name": "vendors-loaded",
+              "type": { "text": "CustomEvent<{ vendors: Vendor[] }>" },
+              "description": "Fired when vendors are loaded"
+            },
+            {
+              "name": "vendor-selected",
+              "type": { "text": "CustomEvent<{ vendor: Vendor }>" },
+              "description": "Fired when a vendor is clicked/selected"
+            },
+            {
+              "name": "edit-vendor",
+              "type": { "text": "CustomEvent<{ vendor: Vendor }>" },
+              "description": "Fired when edit button is clicked"
+            },
+            {
+              "name": "vendor-deleted",
+              "type": { "text": "CustomEvent<{ vendorId: string }>" },
+              "description": "Fired after a vendor is deleted"
+            },
+            {
+              "name": "add-vendor-clicked",
+              "type": { "text": "CustomEvent" },
+              "description": "Fired when the add vendor button is clicked"
+            },
+            {
+              "name": "error",
+              "type": { "text": "CustomEvent<{ error: string }>" },
+              "description": "Fired when an error occurs"
+            }
+          ],
+          "members": [
+            {
+              "kind": "method",
+              "name": "refresh",
+              "description": "Reload the vendor list from storage"
+            },
+            {
+              "kind": "method",
+              "name": "search",
+              "description": "Filter vendors by search term",
+              "parameters": [
+                {
+                  "name": "term",
+                  "type": { "text": "string" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/bank-account-form.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "PrintChecksBankAccountForm",
+          "tagName": "printchecks-bank-account-form",
+          "customElement": true,
+          "description": "Interactive form for creating and editing bank accounts",
+          "attributes": [
+            {
+              "name": "account-id",
+              "type": { "text": "string" },
+              "description": "ID of an existing bank account to load and edit"
+            },
+            {
+              "name": "readonly",
+              "type": { "text": "boolean" },
+              "description": "When set, displays the form in read-only mode"
+            }
+          ],
+          "events": [
+            {
+              "name": "account-created",
+              "type": { "text": "CustomEvent<{ account: BankAccount }>" },
+              "description": "Fired when a new bank account is successfully created"
+            },
+            {
+              "name": "account-updated",
+              "type": { "text": "CustomEvent<{ account: BankAccount }>" },
+              "description": "Fired when an existing bank account is successfully updated"
+            },
+            {
+              "name": "error",
+              "type": { "text": "CustomEvent<{ error: string }>" },
+              "description": "Fired when an error occurs"
+            }
+          ],
+          "members": [
+            {
+              "kind": "method",
+              "name": "save",
+              "description": "Programmatically save the bank account",
+              "return": { "type": { "text": "Promise<BankAccount | null>" } }
+            },
+            {
+              "kind": "method",
+              "name": "reset",
+              "description": "Reset the form to its initial state"
+            },
+            {
+              "kind": "method",
+              "name": "setAccount",
+              "description": "Set a bank account to edit programmatically",
+              "parameters": [
+                {
+                  "name": "account",
+                  "type": { "text": "BankAccount" }
+                }
+              ]
+            }
+          ],
+          "cssParts": [
+            {
+              "name": "submit-button",
+              "description": "The submit button element"
+            },
+            {
+              "name": "reset-button",
+              "description": "The reset button element"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/bank-account-list.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "PrintChecksBankAccountList",
+          "tagName": "printchecks-bank-account-list",
+          "customElement": true,
+          "description": "Displays a searchable list of bank accounts with optional action buttons",
+          "attributes": [
+            {
+              "name": "show-actions",
+              "type": { "text": "boolean" },
+              "description": "When set, shows edit and delete action buttons for each account"
+            }
+          ],
+          "events": [
+            {
+              "name": "accounts-loaded",
+              "type": { "text": "CustomEvent<{ accounts: BankAccount[] }>" },
+              "description": "Fired when bank accounts are loaded"
+            },
+            {
+              "name": "account-selected",
+              "type": { "text": "CustomEvent<{ account: BankAccount }>" },
+              "description": "Fired when an account is clicked/selected"
+            },
+            {
+              "name": "edit-account",
+              "type": { "text": "CustomEvent<{ account: BankAccount }>" },
+              "description": "Fired when edit button is clicked"
+            },
+            {
+              "name": "account-deleted",
+              "type": { "text": "CustomEvent<{ accountId: string }>" },
+              "description": "Fired after an account is deleted"
+            },
+            {
+              "name": "add-account-clicked",
+              "type": { "text": "CustomEvent" },
+              "description": "Fired when the add account button is clicked"
+            },
+            {
+              "name": "error",
+              "type": { "text": "CustomEvent<{ error: string }>" },
+              "description": "Fired when an error occurs"
+            }
+          ],
+          "members": [
+            {
+              "kind": "method",
+              "name": "refresh",
+              "description": "Reload the account list from storage"
+            },
+            {
+              "kind": "method",
+              "name": "search",
+              "description": "Filter accounts by search term",
+              "parameters": [
+                {
+                  "name": "term",
+                  "type": { "text": "string" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

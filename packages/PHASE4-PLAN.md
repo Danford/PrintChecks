@@ -25,10 +25,10 @@ We will use [Changesets](https://github.com/changesets/changesets) for managing 
 
 **Action Items:**
 
-- [ ] Install `@changesets/cli` in the root.
-- [ ] Initialize changesets config.
-- [ ] Configure npm publish access by setting `publishConfig.access: "public"` in each `@printchecks/*` package's `package.json`.
-- [ ] Add `changeset` script to root `package.json`.
+- [x] Install `@changesets/cli` in the root.
+- [x] Initialize changesets config.
+- [x] Configure npm publish access by setting `publishConfig.access: "public"` in each `@printchecks/*` package's `package.json`.
+- [x] Add `changeset` script to root `package.json`.
 
 ### 2. CI/CD Pipeline (GitHub Actions)
 
