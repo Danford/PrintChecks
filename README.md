@@ -89,7 +89,20 @@ _Payment History & Analytics_
 
 ---
 
+## 📖 Documentation
+
+**[View Full Documentation →](https://danford.github.io/PrintChecks/)**
+
+- [Getting Started Guide](https://danford.github.io/PrintChecks/getting-started)
+- [API Reference](https://danford.github.io/PrintChecks/api/core/printchecks-core)
+- [User Guide](https://danford.github.io/PrintChecks/guide/installation)
+- [Code Examples](https://danford.github.io/PrintChecks/examples/basic-check)
+
+---
+
 ## 🚀 Quick Start
+
+### For End Users (Main Application)
 
 ### Prerequisites
 
@@ -170,6 +183,70 @@ The production build will be in the `dist/` directory, ready to deploy to any st
 2. Review payment trends over time
 3. Identify top vendors by payment volume
 4. Analyze monthly spending patterns
+
+---
+
+## 🔧 For Developers
+
+PrintChecks is also available as modular npm packages for integration into your own applications:
+
+### Installation
+
+```bash
+# Core library (framework-agnostic)
+npm install @printchecks/core
+
+# Vue 3 integration
+npm install @printchecks/vue
+
+# Web Components (works with any framework)
+npm install @printchecks/web-components
+```
+
+### Quick Example
+
+```typescript
+import { PrintChecksCore } from '@printchecks/core'
+
+const printChecks = new PrintChecksCore()
+
+// Create a check
+const check = await printChecks.createCheck({
+  checkNumber: '1001',
+  date: new Date().toLocaleDateString(),
+  amount: 1250.00,
+  payTo: 'Acme Corporation',
+  memo: 'Invoice #12345',
+  // ... other fields
+})
+```
+
+**[View Full Documentation →](https://danford.github.io/PrintChecks/)**
+
+### Monorepo Development
+
+This repository uses a monorepo structure with pnpm workspaces:
+
+```bash
+# Install dependencies
+pnpm install
+
+# Build all packages
+pnpm build
+
+# Develop specific package
+pnpm dev:core
+pnpm dev:vue
+
+# Run documentation site
+pnpm docs:dev
+
+# Type checking
+pnpm type-check
+
+# Linting
+pnpm lint
+```
 
 ---
 

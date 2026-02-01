@@ -2,7 +2,7 @@
 
 Welcome to **PrintChecks**! This comprehensive guide will help you get the most out of the application.
 
-> 💡 **Tip**: For visual examples of the interface, check out the [screenshots in the main README](../README.md#-screenshots).
+> 💡 **Tip**: For visual examples of the interface, check out the [screenshots in the main README](https://github.com/Danford/PrintChecks.md#-screenshots).
 
 ---
 
@@ -658,7 +658,7 @@ If you encounter issues not covered here:
 
 For additional support:
 
-- 📖 **Documentation**: See the main [README](../README.md)
+- 📖 **Documentation**: See the main [README](https://github.com/Danford/PrintChecks.md)
 - 🐛 **Bug Reports**: [GitHub Issues](https://github.com/Danford/PrintChecks/issues)
 - 💬 **Questions**: [GitHub Discussions](https://github.com/Danford/PrintChecks/discussions)
 
