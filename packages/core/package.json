@@ -1,6 +1,6 @@
 {
   "name": "@printchecks/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Framework-agnostic core library for check printing, vendor management, and payment documentation",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
