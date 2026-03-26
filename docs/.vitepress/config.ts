@@ -83,7 +83,8 @@ export default defineConfig({
             { text: 'useChecks', link: '/api/vue/use-checks' },
             { text: 'useVendors', link: '/api/vue/use-vendors' },
             { text: 'useBankAccounts', link: '/api/vue/use-bank-accounts' },
-            { text: 'useReceipts', link: '/api/vue/use-receipts' }
+            { text: 'useReceipts', link: '/api/vue/use-receipts' },
+            { text: 'usePrintableCheckPage', link: '/api/vue/use-printable-check-page' }
           ]
         },
         {
@@ -92,6 +93,7 @@ export default defineConfig({
             { text: 'Overview', link: '/api/web-components/overview' },
             { text: 'check-form', link: '/api/web-components/check-form' },
             { text: 'check-preview', link: '/api/web-components/check-preview' },
+            { text: 'printable-check-page', link: '/api/web-components/printable-check-page' },
             { text: 'vendor-list', link: '/api/web-components/vendor-list' },
             { text: 'vendor-form', link: '/api/web-components/vendor-form' },
             { text: 'bank-account-list', link: '/api/web-components/bank-account-list' },
@@ -106,7 +108,8 @@ export default defineConfig({
           items: [
             { text: 'Basic Check', link: '/examples/basic-check' },
             { text: 'Vendor Management', link: '/examples/vendor-management' },
-            { text: 'Receipts with Line Items', link: '/examples/receipts' }
+            { text: 'Receipts with Line Items', link: '/examples/receipts' },
+            { text: 'Printable Check Page', link: '/examples/printable-check-page' }
           ]
         },
         {
@@ -170,7 +173,9 @@ export default defineConfig({
       alias: {
         '@printchecks/core': '../packages/core/src',
         '@printchecks/vue': '../packages/vue/src',
-        '@printchecks/web-components': '../packages/web-components/src'
+        '@printchecks/web-components': '../packages/web-components/src',
+        // Use full Vue build with template compiler for Playground component
+        'vue': 'vue/dist/vue.esm-bundler.js'
       }
     }
   }

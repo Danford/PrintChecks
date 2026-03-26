@@ -2,6 +2,16 @@
 
 Learn how to create your first check with PrintChecks.
 
+## 🎮 Live Interactive Demo
+
+Try it yourself! Edit the code below and see the results in real-time:
+
+<script setup>
+import { basicCheckCode } from './playground-codes'
+</script>
+
+<Playground :code="basicCheckCode" />
+
 ## Core Library
 
 ```typescript

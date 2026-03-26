@@ -2,6 +2,10 @@
 
 Use PrintChecks with React via the core library or web components.
 
+::: info Interactive Examples
+The code examples below show React usage with PrintChecks. Since our documentation uses Vue for interactive demos, React examples are shown as code only. You can copy these examples into your React project to try them out!
+:::
+
 ## With Core Library
 
 ```tsx

@@ -2,6 +2,16 @@
 
 Use PrintChecks with plain JavaScript.
 
+## 🎮 Interactive Demo
+
+Try using PrintChecks with vanilla JavaScript - **edit the code to experiment!**
+
+<script setup>
+import { vanillaJsCode } from './playground-codes'
+</script>
+
+<Playground :code="vanillaJsCode" />
+
 ## Basic Usage
 
 ```html

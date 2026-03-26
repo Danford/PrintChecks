@@ -2,6 +2,16 @@
 
 Create itemized receipts with automatic calculations.
 
+## 🎮 Interactive Demo
+
+Try building a receipt with line items - **edit the code to experiment!**
+
+<script setup>
+import { receiptsCode } from './playground-codes'
+</script>
+
+<Playground :code="receiptsCode" />
+
 ## Basic Receipt
 
 ```typescript

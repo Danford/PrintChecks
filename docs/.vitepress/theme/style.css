@@ -1,0 +1,197 @@
+/**
+ * Custom styles for PrintChecks documentation
+ */
+
+/* Demo component styles */
+.demo-container {
+  margin: 1.5rem 0;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.demo-preview {
+  padding: 2rem;
+  background: var(--vp-c-bg-soft);
+  min-height: 200px;
+}
+
+.demo-code {
+  border-top: 1px solid var(--vp-c-divider);
+  background: var(--vp-code-block-bg);
+}
+
+.demo-code pre {
+  margin: 0;
+  border-radius: 0;
+}
+
+.demo-toggle {
+  padding: 0.5rem 1rem;
+  background: var(--vp-c-bg);
+  border-top: 1px solid var(--vp-c-divider);
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.875rem;
+  color: var(--vp-c-brand-1);
+  transition: background-color 0.2s;
+}
+
+.demo-toggle:hover {
+  background: var(--vp-c-bg-soft);
+}
+
+/* Playground component styles */
+.playground-container {
+  margin: 1.5rem 0;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.playground-editor {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  min-height: 400px;
+}
+
+.playground-code {
+  border-bottom: 1px solid var(--vp-c-divider);
+  background: var(--vp-code-block-bg);
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+}
+
+.playground-code-header {
+  padding: 0.5rem 1rem;
+  background: var(--vp-c-bg);
+  border-bottom: 1px solid var(--vp-c-divider);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.playground-code textarea {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  background: transparent;
+  color: var(--vp-c-text-1);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  resize: none;
+  outline: none;
+}
+
+.playground-preview {
+  background: var(--vp-c-bg-soft);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.playground-preview-header {
+  padding: 0.5rem 1rem;
+  background: var(--vp-c-bg);
+  border-bottom: 1px solid var(--vp-c-divider);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+}
+
+.playground-preview-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-x: auto;
+  overflow-y: auto;
+  min-height: 400px;
+}
+
+.playground-error {
+  padding: 1rem;
+  background: var(--vp-c-danger-soft);
+  color: var(--vp-c-danger-1);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.875rem;
+  white-space: pre-wrap;
+}
+
+/* Remove mobile-specific rules since we stack by default now */
+
+/* Additional utility styles */
+.demo-label {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0.5rem;
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand-1);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Print styles - ONLY show printable-content */
+@media print {
+  @page {
+    margin: 0.5in;
+    size: letter portrait;
+  }
+
+  /* Hide ALL children of body */
+  body > * {
+    display: none !important;
+  }
+
+  /* Show only elements that contain or are printable-content */
+  body:has(.printable-content),
+  body:has(.printable-content) > *:has(.printable-content),
+  .printable-content {
+    display: block !important;
+  }
+
+  /* Fallback for browsers without :has() support */
+  body > #app,
+  #app > *:has(.printable-content),
+  .Layout:has(.printable-content),
+  .VPContent:has(.printable-content),
+  .container:has(.printable-content),
+  .vp-doc:has(.printable-content),
+  main:has(.printable-content),
+  div:has(> .printable-content) {
+    display: block !important;
+  }
+
+  /* Reset containers to clean white */
+  body,
+  html {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Make printable content take full width */
+  .printable-content {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: white !important;
+  }
+
+  /* Ensure colors print */
+  * {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+}

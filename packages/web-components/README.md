@@ -46,10 +46,57 @@ import '@printchecks/web-components'
 |-----------|-------------|
 | `<check-form>` | Form for creating/editing checks |
 | `<check-preview>` | Preview and print check |
+| `<printchecks-printable-page>` | **Standardized printable check page** with check, line items, and analytics |
 | `<vendor-list>` | List of vendors |
 | `<vendor-form>` | Form for creating/editing vendors |
 | `<bank-account-list>` | List of bank accounts |
 | `<bank-account-form>` | Form for creating/editing bank accounts |
+
+## Standardized Printable Check Page
+
+The `<printchecks-printable-page>` component provides a standardized, print-ready check page that includes:
+- **Check display** (top third) - Full check with all fields
+- **Line items table** (middle third) - Itemized payment details
+- **Analytics summary** (bottom third) - Payment statistics and totals
+
+This ensures consistent check printing across all deployments.
+
+### Usage
+
+```html
+<!-- Load by check ID -->
+<printchecks-printable-page check-id="check-123"></printchecks-printable-page>
+
+<!-- Customize sections -->
+<printchecks-printable-page
+  check-id="check-123"
+  show-analytics="true"
+  show-line-items="true">
+</printchecks-printable-page>
+```
+
+### Attributes
+
+- `check-id` - ID of the check to load
+- `show-analytics` - Show analytics section (default: `true`)
+- `show-line-items` - Show line items section (default: `true`)
+
+### Events
+
+- `check-loaded` - Fired when check data is loaded
+- `print-initiated` - Fired when print is triggered
+
+### Methods
+
+```javascript
+const printablePage = document.querySelector('printchecks-printable-page')
+
+// Set check data directly
+printablePage.setCheckData(check, lineItems, stats)
+
+// Trigger print
+printablePage.print()
+```
 
 ## Framework Integration
 

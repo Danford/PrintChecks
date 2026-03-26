@@ -12,3 +12,10 @@ export {
   type UseBankAccountsReturn,
 } from './useBankAccounts'
 export { useReceipts, type UseReceiptsOptions, type UseReceiptsReturn } from './useReceipts'
+export {
+  usePrintableCheckPage,
+  type UsePrintableCheckPageOptions,
+  type UsePrintableCheckPageReturn,
+  type LineItem,
+  type PaymentStats
+} from './usePrintableCheckPage'

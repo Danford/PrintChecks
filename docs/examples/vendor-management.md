@@ -2,6 +2,20 @@
 
 Manage vendors and link them to checks.
 
+## 🎮 Interactive Demo
+
+Try managing vendors and tracking payments - **edit the code to experiment!**
+
+::: tip
+Edit the code on the left to see live updates on the right!
+:::
+
+<script setup>
+import { vendorManagementCode } from './playground-codes'
+</script>
+
+<Playground :code="vendorManagementCode" />
+
 ## Creating Vendors
 
 ```typescript

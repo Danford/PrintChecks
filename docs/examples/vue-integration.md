@@ -2,6 +2,16 @@
 
 Complete Vue 3 application example.
 
+## 🎮 Live Demo - Interactive Playground
+
+Try the complete Vue integration:
+
+<script setup>
+import { vueIntegrationCode } from './playground-codes'
+</script>
+
+<Playground :code="vueIntegrationCode" />
+
 ## Full Example
 
 ```vue

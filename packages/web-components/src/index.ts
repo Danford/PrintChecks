@@ -6,6 +6,7 @@
 // Export components
 export { PrintChecksCheckForm } from './components/check-form'
 export { PrintChecksCheckPreview } from './components/check-preview'
+export { PrintChecksCheckPrintablePage } from './components/printable-check-page'
 export { PrintChecksVendorList } from './components/vendor-list'
 export { PrintChecksVendorForm } from './components/vendor-form'
 export { PrintChecksBankAccountList } from './components/bank-account-list'
