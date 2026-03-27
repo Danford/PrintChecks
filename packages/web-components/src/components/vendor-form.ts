@@ -261,6 +261,7 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
       this.errorMessage = null
       this.isLoading = true
       this.render()
+      this.attachEventListeners()
 
       let vendor: Vendor
       if (this.currentVendor) {
@@ -276,6 +277,7 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
       this.currentVendor = vendor
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
 
       // Optionally reset form after creation
       if (!this.currentVendor.id) {
@@ -285,18 +287,16 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
       this.errorMessage = error instanceof Error ? error.message : 'Failed to save vendor'
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
       this.emit('error', { error: this.errorMessage })
     }
   }
 
   private handleReset(): void {
-    const form = this.querySelector<HTMLFormElement>('#vendorForm')
-    if (form) {
-      form.reset()
-    }
     this.currentVendor = null
     this.errorMessage = null
     this.render()
+    this.attachEventListeners()
   }
 
   private getFormData(): Partial<VendorData> | null {
@@ -369,6 +369,7 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
       this.isLoading = true
       this.errorMessage = null
       this.render()
+      this.attachEventListeners()
 
       const vendor = await this.core.vendors.getVendor(vendorId)
       if (vendor) {
@@ -380,10 +381,12 @@ export class PrintChecksVendorForm extends PrintChecksComponent {
 
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
     } catch (error) {
       this.errorMessage = error instanceof Error ? error.message : 'Failed to load vendor'
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
       this.emit('error', { error: this.errorMessage })
     }
   }

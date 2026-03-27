@@ -19,15 +19,14 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
   }
 
   connectedCallback() {
-    this.render()
-    this.attachEventListeners()
-
     // Load receipt if receipt-id is provided
     const receiptId = this.getAttribute('receipt-id')
     if (receiptId) {
+      this.render()
+      this.attachEventListeners()
       this.loadReceipt(receiptId)
     } else {
-      // Initialize with one empty line item
+      // Initialize with one empty line item before first render
       this.lineItems = [
         {
           description: '',
@@ -40,6 +39,8 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
           discountAmount: 0,
         },
       ]
+      this.render()
+      this.attachEventListeners()
     }
   }
 
@@ -734,6 +735,7 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
       this.errorMessage = null
       this.isLoading = true
       this.render()
+      this.attachEventListeners()
 
       let receipt: Receipt
       if (this.currentReceipt) {
@@ -749,6 +751,7 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
       this.currentReceipt = receipt
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
 
       // Optionally reset form after creation
       if (!this.currentReceipt.id) {
@@ -758,20 +761,12 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
       this.errorMessage = error instanceof Error ? error.message : 'Failed to save receipt'
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
       this.emit('error', { error: this.errorMessage })
     }
   }
 
   private handleReset(): void {
-    const form = this.querySelector<HTMLFormElement>('#receiptForm')
-    if (form) {
-      form.reset()
-      // Reset date to today
-      const dateInput = this.querySelector<HTMLInputElement>('#date')
-      if (dateInput) {
-        dateInput.value = new Date().toISOString().split('T')[0]
-      }
-    }
     this.currentReceipt = null
     this.errorMessage = null
     this.lineItems = [
@@ -787,6 +782,12 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
       },
     ]
     this.render()
+    this.attachEventListeners()
+    // Reset date to today after re-render
+    const dateInput = this.querySelector<HTMLInputElement>('#date')
+    if (dateInput) {
+      dateInput.value = new Date().toISOString().split('T')[0]
+    }
   }
 
   private getFormData(): Partial<ReceiptData> | null {
@@ -853,27 +854,28 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
     if (!form) return
 
     // Populate receipt fields
-    this.setInputValue('receiptNumber', receipt.receiptNumber)
-    this.setInputValue('date', receipt.date)
+    this.setInputValue('receiptNumber', receipt.receiptNumber || '')
+    this.setInputValue('date', receipt.date || '')
     this.setInputValue('notes', receipt.notes || '')
 
     // Populate BillToInfo fields
-    this.setInputValue('billToName', receipt.billTo.name)
-    this.setInputValue('billToAddress', receipt.billTo.address)
-    this.setInputValue('billToCity', receipt.billTo.city)
-    this.setInputValue('billToState', receipt.billTo.state)
-    this.setInputValue('billToZip', receipt.billTo.zip)
-    this.setInputValue('billToEmail', receipt.billTo.email || '')
+    if (receipt.billTo) {
+      this.setInputValue('billToName', receipt.billTo.name)
+      this.setInputValue('billToAddress', receipt.billTo.address)
+      this.setInputValue('billToCity', receipt.billTo.city)
+      this.setInputValue('billToState', receipt.billTo.state)
+      this.setInputValue('billToZip', receipt.billTo.zip)
+      this.setInputValue('billToEmail', receipt.billTo.email || '')
+    }
 
     // Populate PaymentInfo fields
-    const methodSelect = this.querySelector<HTMLSelectElement>('#paymentMethod')
-    if (methodSelect) {
-      methodSelect.value = receipt.paymentInfo.method
+    if (receipt.paymentInfo) {
+      const methodSelect = this.querySelector<HTMLSelectElement>('#paymentMethod')
+      if (methodSelect) {
+        methodSelect.value = receipt.paymentInfo.method
+      }
+      this.setInputValue('paymentCheckNumber', receipt.paymentInfo.checkNumber || '')
     }
-    this.setInputValue('paymentCheckNumber', receipt.paymentInfo.checkNumber || '')
-
-    // Populate line items
-    this.lineItems = receipt.lineItems || []
 
     // Populate totals
     if (receipt.totals) {
@@ -901,10 +903,12 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
       this.isLoading = true
       this.errorMessage = null
       this.render()
+      this.attachEventListeners()
 
       const receipt = await this.core.receipts.getReceipt(receiptId)
       if (receipt) {
         this.currentReceipt = receipt
+        this.lineItems = receipt.lineItems || []
         this.receiptId = receiptId
       } else {
         this.errorMessage = 'Receipt not found'
@@ -912,10 +916,12 @@ export class PrintChecksReceiptForm extends PrintChecksComponent {
 
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
     } catch (error) {
       this.errorMessage = error instanceof Error ? error.message : 'Failed to load receipt'
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
       this.emit('error', { error: this.errorMessage })
     }
   }

@@ -338,6 +338,7 @@ export class PrintChecksCheckForm extends PrintChecksComponent {
       this.errorMessage = null
       this.isLoading = true
       this.render()
+      this.attachEventListeners()
 
       let check: Check
       if (this.currentCheck) {
@@ -353,6 +354,7 @@ export class PrintChecksCheckForm extends PrintChecksComponent {
       this.currentCheck = check
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
 
       // Optionally reset form after creation
       if (!this.currentCheck.id) {
@@ -362,23 +364,21 @@ export class PrintChecksCheckForm extends PrintChecksComponent {
       this.errorMessage = error instanceof Error ? error.message : 'Failed to save check'
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
       this.emit('error', { error: this.errorMessage })
     }
   }
 
   private handleReset(): void {
-    const form = this.querySelector<HTMLFormElement>('#checkForm')
-    if (form) {
-      form.reset()
-      // Reset date to today
-      const dateInput = this.querySelector<HTMLInputElement>('#date')
-      if (dateInput) {
-        dateInput.value = new Date().toISOString().split('T')[0]
-      }
-    }
     this.currentCheck = null
     this.errorMessage = null
     this.render()
+    this.attachEventListeners()
+    // Reset date to today after re-render
+    const dateInput = this.querySelector<HTMLInputElement>('#date')
+    if (dateInput) {
+      dateInput.value = new Date().toISOString().split('T')[0]
+    }
   }
 
   private async handleValidate(): Promise<void> {
@@ -467,6 +467,7 @@ export class PrintChecksCheckForm extends PrintChecksComponent {
       this.isLoading = true
       this.errorMessage = null
       this.render()
+      this.attachEventListeners()
 
       const check = await this.core.checks.getCheck(checkId)
       if (check) {
@@ -478,10 +479,12 @@ export class PrintChecksCheckForm extends PrintChecksComponent {
 
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
     } catch (error) {
       this.errorMessage = error instanceof Error ? error.message : 'Failed to load check'
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
       this.emit('error', { error: this.errorMessage })
     }
   }

@@ -301,6 +301,7 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
       this.errorMessage = null
       this.isLoading = true
       this.render()
+      this.attachEventListeners()
 
       let account: BankAccount
       if (this.currentAccount) {
@@ -316,6 +317,7 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
       this.currentAccount = account
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
 
       // Optionally reset form after creation
       if (!this.currentAccount.id) {
@@ -325,18 +327,16 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
       this.errorMessage = error instanceof Error ? error.message : 'Failed to save account'
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
       this.emit('error', { error: this.errorMessage })
     }
   }
 
   private handleReset(): void {
-    const form = this.querySelector<HTMLFormElement>('#accountForm')
-    if (form) {
-      form.reset()
-    }
     this.currentAccount = null
     this.errorMessage = null
     this.render()
+    this.attachEventListeners()
   }
 
   private getFormData(): Partial<BankAccountData> | null {
@@ -395,6 +395,7 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
       this.isLoading = true
       this.errorMessage = null
       this.render()
+      this.attachEventListeners()
 
       const account = await this.core.bankAccounts.getBankAccount(accountId)
       if (account) {
@@ -406,10 +407,12 @@ export class PrintChecksBankAccountForm extends PrintChecksComponent {
 
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
     } catch (error) {
       this.errorMessage = error instanceof Error ? error.message : 'Failed to load account'
       this.isLoading = false
       this.render()
+      this.attachEventListeners()
       this.emit('error', { error: this.errorMessage })
     }
   }
