@@ -11,8 +11,7 @@ export { PrintChecksVendorList } from './components/vendor-list'
 export { PrintChecksVendorForm } from './components/vendor-form'
 export { PrintChecksBankAccountList } from './components/bank-account-list'
 export { PrintChecksBankAccountForm } from './components/bank-account-form'
-// TODO: Fix receipt-form to match Receipt model structure (BillToInfo, PaymentInfo, ReceiptTotals)
-// export { PrintChecksReceiptForm } from './components/receipt-form'
+export { PrintChecksReceiptForm } from './components/receipt-form'
 
 // Export base classes and utilities
 export { PrintChecksComponent, PrintChecksConfig } from './utils/component-base'
