@@ -4,17 +4,17 @@
   "description": "Vue 3 integration layer for PrintChecks core library",
   "type": "module",
   "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
     "./composables": {
       "types": "./dist/composables/index.d.ts",
-      "import": "./dist/composables/index.mjs",
+      "import": "./dist/composables/index.js",
       "require": "./dist/composables/index.cjs"
     }
   },

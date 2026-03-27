@@ -2,34 +2,34 @@
   "name": "@printchecks/core",
   "version": "1.0.0",
   "description": "Framework-agnostic core library for check printing, vendor management, and payment documentation",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.js"
     },
     "./models": {
       "types": "./dist/models/index.d.ts",
       "import": "./dist/models/index.mjs",
-      "require": "./dist/models/index.cjs"
+      "require": "./dist/models/index.js"
     },
     "./services": {
       "types": "./dist/services/index.d.ts",
       "import": "./dist/services/index.mjs",
-      "require": "./dist/services/index.cjs"
+      "require": "./dist/services/index.js"
     },
     "./storage": {
       "types": "./dist/storage/index.d.ts",
       "import": "./dist/storage/index.mjs",
-      "require": "./dist/storage/index.cjs"
+      "require": "./dist/storage/index.js"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils/index.mjs",
-      "require": "./dist/utils/index.cjs"
+      "require": "./dist/utils/index.js"
     }
   },
   "files": [

@@ -119,8 +119,8 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
       this.lineItems = (check as any).lineItems || []
 
       // Load payment statistics
-      const allStats = await this.core.getAllStatistics()
-      this.paymentStats = this.calculatePaymentStats(allStats.checks)
+      const allChecks = await this.core.getChecks()
+      this.paymentStats = this.calculatePaymentStats(allChecks)
 
       this.isLoading = false
       this.render()
@@ -142,36 +142,36 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
     const currentYear = now.getFullYear()
     const currentQuarter = Math.floor(currentMonth / 3)
 
-    const amounts = checks.map(c => c.amount)
+    const amounts = checks.map(c => Number(c.amount))
     const total = amounts.reduce((sum, amt) => sum + amt, 0)
 
     // Filter by time periods
     const thisMonth = checks.filter(c => {
       const d = new Date(c.date)
       return d.getMonth() === currentMonth && d.getFullYear() === currentYear
-    }).reduce((sum, c) => sum + c.amount, 0)
+    }).reduce((sum, c) => sum + Number(c.amount), 0)
 
     const lastMonth = checks.filter(c => {
       const d = new Date(c.date)
       const lastMonthDate = new Date(currentYear, currentMonth - 1, 1)
       return d.getMonth() === lastMonthDate.getMonth() && d.getFullYear() === lastMonthDate.getFullYear()
-    }).reduce((sum, c) => sum + c.amount, 0)
+    }).reduce((sum, c) => sum + Number(c.amount), 0)
 
     const thisYear = checks.filter(c => {
       const d = new Date(c.date)
       return d.getFullYear() === currentYear
-    }).reduce((sum, c) => sum + c.amount, 0)
+    }).reduce((sum, c) => sum + Number(c.amount), 0)
 
     const lastYear = checks.filter(c => {
       const d = new Date(c.date)
       return d.getFullYear() === currentYear - 1
-    }).reduce((sum, c) => sum + c.amount, 0)
+    }).reduce((sum, c) => sum + Number(c.amount), 0)
 
     const thisQuarter = checks.filter(c => {
       const d = new Date(c.date)
       const checkQuarter = Math.floor(d.getMonth() / 3)
       return checkQuarter === currentQuarter && d.getFullYear() === currentYear
-    }).reduce((sum, c) => sum + c.amount, 0)
+    }).reduce((sum, c) => sum + Number(c.amount), 0)
 
     return {
       thisMonth,
@@ -235,12 +235,6 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
     }
 
     return result
-  }
-
-  private escapeHtml(text: string): string {
-    const div = document.createElement('div')
-    div.textContent = text
-    return div.innerHTML
   }
 
   protected render(): void {
@@ -705,7 +699,7 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
     if (!this.currentCheck) return ''
 
     const check = this.currentCheck
-    const amountWords = this.amountToWords(check.amount)
+    const amountWords = this.amountToWords(Number(check.amount))
 
     return `
       <!-- Section 1: Check Display -->
@@ -742,7 +736,7 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
             </div>
             <div class="amount-box">
               <div class="amount-box-label">$</div>
-              <div class="amount-box-value">${check.amount.toFixed(2)}</div>
+              <div class="amount-box-value">${Number(check.amount).toFixed(2)}</div>
             </div>
           </div>
 

@@ -3,7 +3,7 @@
  * Provides helper methods to work with the printchecks-printable-page web component
  */
 
-import { ref, computed, type Ref } from 'vue'
+import { ref, shallowRef, type Ref, type ShallowRef } from 'vue'
 import { PrintChecksCore } from '@printchecks/core'
 import type { Check } from '@printchecks/core/models'
 
@@ -37,7 +37,7 @@ export interface UsePrintableCheckPageOptions {
 export interface UsePrintableCheckPageReturn {
   // State
   currentCheckId: Ref<string | null>
-  checkData: Ref<Check | null>
+  checkData: ShallowRef<Check | null>
   lineItems: Ref<LineItem[]>
   paymentStats: Ref<PaymentStats | null>
   isLoading: Ref<boolean>
@@ -96,7 +96,7 @@ export function usePrintableCheckPage(options: UsePrintableCheckPageOptions): Us
 
   // State
   const currentCheckId = ref<string | null>(null)
-  const checkData = ref<Check | null>(null)
+  const checkData = shallowRef<Check | null>(null)
   const lineItems = ref<LineItem[]>([])
   const paymentStats = ref<PaymentStats | null>(null)
   const isLoading = ref(false)
@@ -176,8 +176,8 @@ export function usePrintableCheckPage(options: UsePrintableCheckPageOptions): Us
    */
   async function refreshStats(): Promise<void> {
     try {
-      const allStats = await core.getAllStatistics()
-      paymentStats.value = calculatePaymentStats(allStats.checks)
+      const allChecks = await core.getChecks()
+      paymentStats.value = calculatePaymentStats(allChecks)
     } catch (e: any) {
       error.value = 'Failed to load payment statistics'
       console.error('Failed to refresh stats:', e)
@@ -193,36 +193,36 @@ export function usePrintableCheckPage(options: UsePrintableCheckPageOptions): Us
     const currentYear = now.getFullYear()
     const currentQuarter = Math.floor(currentMonth / 3)
 
-    const amounts = checks.map(c => c.amount)
+    const amounts = checks.map(c => Number(c.amount))
     const total = amounts.reduce((sum, amt) => sum + amt, 0)
 
     // Filter by time periods
     const thisMonth = checks.filter(c => {
       const d = new Date(c.date)
       return d.getMonth() === currentMonth && d.getFullYear() === currentYear
-    }).reduce((sum, c) => sum + c.amount, 0)
+    }).reduce((sum, c) => sum + Number(c.amount), 0)
 
     const lastMonth = checks.filter(c => {
       const d = new Date(c.date)
       const lastMonthDate = new Date(currentYear, currentMonth - 1, 1)
       return d.getMonth() === lastMonthDate.getMonth() && d.getFullYear() === lastMonthDate.getFullYear()
-    }).reduce((sum, c) => sum + c.amount, 0)
+    }).reduce((sum, c) => sum + Number(c.amount), 0)
 
     const thisYear = checks.filter(c => {
       const d = new Date(c.date)
       return d.getFullYear() === currentYear
-    }).reduce((sum, c) => sum + c.amount, 0)
+    }).reduce((sum, c) => sum + Number(c.amount), 0)
 
     const lastYear = checks.filter(c => {
       const d = new Date(c.date)
       return d.getFullYear() === currentYear - 1
-    }).reduce((sum, c) => sum + c.amount, 0)
+    }).reduce((sum, c) => sum + Number(c.amount), 0)
 
     const thisQuarter = checks.filter(c => {
       const d = new Date(c.date)
       const checkQuarter = Math.floor(d.getMonth() / 3)
       return checkQuarter === currentQuarter && d.getFullYear() === currentYear
-    }).reduce((sum, c) => sum + c.amount, 0)
+    }).reduce((sum, c) => sum + Number(c.amount), 0)
 
     return {
       thisMonth,
@@ -231,7 +231,7 @@ export function usePrintableCheckPage(options: UsePrintableCheckPageOptions): Us
       lastYear,
       thisQuarter,
       averagePayment: amounts.length > 0 ? total / amounts.length : 0,
-      monthlyAverage: thisMonth, // Simplified - could calculate across all months
+      monthlyAverage: thisMonth,
       largestPayment: amounts.length > 0 ? Math.max(...amounts) : 0,
       smallestPayment: amounts.length > 0 ? Math.min(...amounts) : 0,
       totalCount: checks.length,
