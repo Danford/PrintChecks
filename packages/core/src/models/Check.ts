@@ -3,6 +3,7 @@
  */
 
 import type { BaseEntity, Currency } from './common'
+import { validateRoutingNumber } from '../utils/validation'
 
 export type CheckStatus = 'draft' | 'ready' | 'printed' | 'void' | 'cancelled'
 
@@ -136,10 +137,10 @@ export class Check implements CheckData {
   }
 
   /**
-   * Validate routing number format
+   * Validate routing number format and ABA checksum
    */
   private isValidRoutingNumber(): boolean {
-    return /^\d{9}$/.test(this.routingNumber)
+    return validateRoutingNumber(this.routingNumber)
   }
 
   /**

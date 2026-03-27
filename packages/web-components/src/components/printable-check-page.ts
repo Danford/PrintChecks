@@ -47,6 +47,7 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
   private paymentStats: PaymentStats | null = null
   private isLoading = false
   private errorMessage: string | null = null
+  private printBlockedErrors: string[] | null = null
 
   static get observedAttributes() {
     return ['check-id', 'show-analytics', 'show-line-items']
@@ -83,9 +84,24 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
   }
 
   /**
-   * Trigger print dialog
+   * Trigger print dialog — validates check data first and blocks print if invalid
    */
   print() {
+    if (!this.currentCheck) return
+
+    const validation = this.currentCheck.validate()
+    if (!validation.isValid) {
+      this.dispatchEvent(new CustomEvent('print-blocked', {
+        detail: { errors: validation.errors },
+        bubbles: true
+      }))
+      this.printBlockedErrors = validation.errors
+      this.render()
+      return
+    }
+
+    this.printBlockedErrors = null
+    this.render()
     this.dispatchEvent(new CustomEvent('print-initiated', {
       detail: { checkId: this.checkId },
       bubbles: true
@@ -681,6 +697,7 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
       <div class="printable-page-container">
         ${this.isLoading ? '<div class="loading-state">Loading check data...</div>' : ''}
         ${this.errorMessage ? `<div class="error-state">Error: ${this.escapeHtml(this.errorMessage)}</div>` : ''}
+        ${this.printBlockedErrors ? `<div class="error-state print-validation-errors"><strong>Cannot print — check has validation errors:</strong><ul>${this.printBlockedErrors.map(e => `<li>${this.escapeHtml(e)}</li>`).join('')}</ul></div>` : ''}
         ${!this.isLoading && !this.errorMessage && this.currentCheck ? this.renderCheckPage(showLineItems, showAnalytics) : ''}
         ${!this.isLoading && !this.errorMessage && this.currentCheck ? '<button class="print-button" id="print-btn">🖨️ Print Check</button>' : ''}
       </div>

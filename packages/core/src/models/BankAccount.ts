@@ -3,6 +3,7 @@
  */
 
 import type { BaseEntity, FileUpload } from './common'
+import { validateRoutingNumber } from '../utils/validation'
 
 export interface BankAccountData extends BaseEntity {
   // Account holder information
@@ -102,10 +103,10 @@ export class BankAccount implements BankAccountData {
   }
 
   /**
-   * Validate routing number format
+   * Validate routing number format and ABA checksum
    */
   private isValidRoutingNumber(): boolean {
-    return /^\d{9}$/.test(this.routingNumber)
+    return validateRoutingNumber(this.routingNumber)
   }
 
   /**
