@@ -70,7 +70,7 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 - [x] MEDIUM: MICR line validation edge cases — added validateBankAccountNumber (digits-only, 1–17) and validateMICRLineLength (≤43 chars); wired into Check.validate() and BankAccount.validate(); 34 new edge-case tests
 - [x] HIGH: Dev-dependency security audit — reduced 23→13 vulns: updated typescript-eslint (8.54→8.57.2), @changesets/cli (2.29.8→2.30.0); added pnpm.overrides for picomatch@2/4, flatted, brace-expansion@1, ajv@6; remaining 13 need major version upgrades (eslint 9→10, Vite 4→5, VitePress)
 - [x] HIGH: Upgrade Vite 4→5 in printchecks app — vite 5.4.21 + @vitejs/plugin-vue 5.2.4 installed; build and type-check pass; audit reduced 13→8 (rollup HIGH + vite LOW/MOD chains resolved); remaining 8 in eslint/vitepress/vue-tsc chains
-- [ ] HIGH: Update VitePress in docs — fixes rollup arbitrary-file-write (HIGH) + esbuild CORS (MOD) via docs>vitepress>vite chain
+- [x] HIGH: Update VitePress in docs — VitePress 1.6.4 is already latest stable; added pnpm.overrides for rollup@>=4.0.0<4.59.0→4.59.0 and esbuild@<=0.24.2→0.25.0; vulns reduced 8→6; remaining 6 require vue-tsc 1→2 or eslint 9→10
 - [ ] MEDIUM: Upgrade vue-tsc 1→2 in printchecks app — fixes minimatch@9 (HIGH×2) + vue-template-compiler (MOD) via printchecks>vue-tsc chain
 - [ ] MEDIUM: Upgrade eslint 9→10 — fixes minimatch@3.x ReDoS (HIGH) in dev chain that cannot be resolved via overrides; also picks up flatted/ajv/brace-expansion fixes; check breaking rule changes first
 - [ ] HIGH: Add receipt-form API doc page — `receipt-form.ts` is shipped and has 25 tests but `docs/api/web-components/receipt-form.md` does not exist; model after check-form.md
