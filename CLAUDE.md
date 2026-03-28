@@ -66,7 +66,7 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 ## Priority Queue
 
 - [x] HIGH: Post-release coverage gaps identified after v1.0.1 — added 193 new tests across validation.ts, formatting.ts, BankAccount model, CheckService (213 core tests total; all pass)
-- [ ] MEDIUM: UX review — check rendering consistency
+- [x] MEDIUM: UX review — check rendering consistency — fixed MICR delimiter mismatch across 3 components (⑆/⑈ canonical), removed XSS risk (v-html→text on amountWords)
 - [ ] MEDIUM: MICR line validation edge cases
 - [ ] LOW: VitePress documentation completeness
 - [ ] LOW: Web component API surface review

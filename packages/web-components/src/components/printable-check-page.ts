@@ -770,7 +770,7 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
           </div>
 
           <div class="micr-line">
-            ⑆${this.escapeHtml(check.routingNumber || '000000000')}⑆ ${this.escapeHtml(check.bankAccountNumber || '0000000000')}⑈ ${this.escapeHtml(check.checkNumber)}⑆
+            ⑆${this.escapeHtml(check.routingNumber || '000000000')}⑆ ${this.escapeHtml(check.bankAccountNumber || '0000000000')}⑈ ${this.escapeHtml(check.checkNumber)}
           </div>
         </div>
       </div>

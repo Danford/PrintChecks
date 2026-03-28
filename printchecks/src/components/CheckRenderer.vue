@@ -162,7 +162,7 @@
       }"
     >
       ***
-      <span v-html="checkData.amountWords"></span>
+      <span>{{ checkData.amountWords }}</span>
       ***
     </div>
     <div
@@ -266,9 +266,9 @@
         textAlign: 'center'
       }"
     >
-      <div class="routing" style="display: inline">a{{ checkData.routingNumber }}a</div>
-      <div class="bank-account" style="display: inline">{{ checkData.bankAccountNumber }}c</div>
-      <div class="check-number" style="display: inline; margin-left: 20px">
+      <div class="routing" style="display: inline">⑆{{ checkData.routingNumber }}⑆ </div>
+      <div class="bank-account" style="display: inline">{{ checkData.bankAccountNumber }}⑈ </div>
+      <div class="check-number" style="display: inline">
         {{ checkData.checkNumber }}
       </div>
     </div>
