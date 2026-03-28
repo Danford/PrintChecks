@@ -68,8 +68,15 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 - [x] HIGH: Post-release coverage gaps identified after v1.0.1 — added 193 new tests across validation.ts, formatting.ts, BankAccount model, CheckService (213 core tests total; all pass)
 - [x] MEDIUM: UX review — check rendering consistency — fixed MICR delimiter mismatch across 3 components (⑆/⑈ canonical), removed XSS risk (v-html→text on amountWords)
 - [x] MEDIUM: MICR line validation edge cases — added validateBankAccountNumber (digits-only, 1–17) and validateMICRLineLength (≤43 chars); wired into Check.validate() and BankAccount.validate(); 34 new edge-case tests
-- [ ] LOW: VitePress documentation completeness
-- [ ] LOW: Web component API surface review
+- [ ] HIGH: Dev-dependency security audit — `pnpm audit` shows 23 vulns (12 HIGH) tracing to typescript-eslint→picomatch; update typescript-eslint 8.54→8.57.2 (patch) to pull in patched picomatch ≥4.0.4; re-run audit to confirm
+- [ ] HIGH: Add receipt-form API doc page — `receipt-form.ts` is shipped and has 25 tests but `docs/api/web-components/receipt-form.md` does not exist; model after check-form.md
+- [ ] MEDIUM: Test remaining core services — VendorService, BankAccountService, ReceiptService untested; MemoryStorage pattern from CheckService.test.ts is ready to reuse
+- [ ] MEDIUM: Test check-preview web component — only component in `@printchecks/web-components` with zero tests; observes `check-id` and `scale` attributes; model after printable-check-page.test.ts
+- [ ] MEDIUM: Update changelog — `docs/reference/changelog.md` stuck at v1.0.0 (2024-01-31); add v1.0.1 entry and a v1.0.2-dev entry covering MICR fixes, XSS fix, account-number validation
+- [ ] MEDIUM: Fill in stub component docs — `docs/components/receipt-builder.md` (8 lines), `bank-account-manager.md` (12 lines), `vendor-management.md` (12 lines) are near-empty placeholders
+- [ ] LOW: Test SecureStorageAdapter — complex encryption/decryption logic with zero coverage; needs stubs for the Web Crypto API or a jsdom environment
+- [ ] LOW: ESLint major-version upgrade — eslint 9→10, eslint-plugin-vue 9→10, globals 15→17 all have major bumps; upgrade after confirming no breaking rule changes affect the codebase
+- [ ] LOW: Vue composable tests — @printchecks/vue has 6 untested composables (useChecks, useBankAccounts, useVendors, useReceipts, usePrintChecks, usePrintableCheckPage); requires Vue test-utils setup
 
 ### Memory Maintenance
 
