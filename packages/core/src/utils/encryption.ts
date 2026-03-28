@@ -126,7 +126,8 @@ export async function encrypt(data: unknown, password: string): Promise<string> 
     return JSON.stringify(encryptedData)
   } catch (error) {
     throw new Error(
-      `Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      { cause: error }
     )
   }
 }
@@ -184,11 +185,11 @@ export async function decrypt(encryptedString: string, password: string): Promis
   } catch (error) {
     if (error instanceof Error) {
       if (error.message.includes('OperationError') || error.name === 'OperationError') {
-        throw new Error('Incorrect password')
+        throw new Error('Incorrect password', { cause: error })
       }
-      throw new Error(`Decryption failed: ${error.message}`)
+      throw new Error(`Decryption failed: ${error.message}`, { cause: error })
     }
-    throw new Error('Decryption failed: Unknown error')
+    throw new Error('Decryption failed: Unknown error', { cause: error })
   }
 }
 

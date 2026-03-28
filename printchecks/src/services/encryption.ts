@@ -94,7 +94,7 @@ export async function encrypt(data: unknown, password: string): Promise<string> 
     return JSON.stringify(encryptedData)
   } catch (error) {
     console.error('Encryption error:', error)
-    throw new Error('Failed to encrypt data')
+    throw new Error('Failed to encrypt data', { cause: error })
   }
 }
 
@@ -140,9 +140,9 @@ export async function decrypt(encryptedString: string, password: string): Promis
   } catch (error) {
     console.error('Decryption error:', error)
     if (error instanceof Error && error.message.includes('OperationError')) {
-      throw new Error('Incorrect password')
+      throw new Error('Incorrect password', { cause: error })
     }
-    throw new Error('Failed to decrypt data')
+    throw new Error('Failed to decrypt data', { cause: error })
   }
 }
 

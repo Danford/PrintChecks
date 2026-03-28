@@ -72,7 +72,7 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 - [x] HIGH: Upgrade Vite 4→5 in printchecks app — vite 5.4.21 + @vitejs/plugin-vue 5.2.4 installed; build and type-check pass; audit reduced 13→8 (rollup HIGH + vite LOW/MOD chains resolved); remaining 8 in eslint/vitepress/vue-tsc chains
 - [x] HIGH: Update VitePress in docs — VitePress 1.6.4 is already latest stable; added pnpm.overrides for rollup@>=4.0.0<4.59.0→4.59.0 and esbuild@<=0.24.2→0.25.0; vulns reduced 8→6; remaining 6 require vue-tsc 1→2 or eslint 9→10; also fixed 3 pre-existing CI failures (TS unused vars, mock type annotation, ESLint cache exclusion, docs dead links, vue-alias SSR incompatibility)
 - [x] MEDIUM: Upgrade vue-tsc 1→2 in printchecks app — vue-tsc ^1.6.5→^2.2.12, TypeScript ~5.0.4→~5.4.5 (TS 5.0 had ScriptKind eval error with vue-tsc 2); added pnpm.overrides for minimatch@9 and brace-expansion@2; also fixed minimatch@3 override (<3.1.3 → <3.1.4); vulns: 6→0
-- [ ] MEDIUM: Upgrade eslint 9→10 — fixes minimatch@3.x ReDoS (HIGH) in dev chain that cannot be resolved via overrides; also picks up flatted/ajv/brace-expansion fixes; check breaking rule changes first
+- [x] MEDIUM: Upgrade eslint 9→10 — eslint+@eslint/js→10.x, eslint-plugin-vue→10.8.0, eslint-config-prettier→10.x, globals→16.x; removed dead eslint 8 from printchecks workspace; fixed preserve-caught-error in encryption.ts files (3 files, 9 fixes); no-useless-assignment downgraded to warn (39 violations in app views, fix separately)
 - [x] HIGH: Add receipt-form API doc page — created `docs/api/web-components/receipt-form.md` with attributes, events, methods, form fields, 4 examples, CSS vars; added to sidebar
 - [x] MEDIUM: Test remaining core services — added 99 new tests (346 total); VendorService (41), BankAccountService (31), ReceiptService (35); all pass. Key quirks: BankAccount.isDefault is undefined not false until explicitly set; Receipt date uses toLocaleDateString(); ReceiptFilters.fromDate/toDate require Date objects; lineItems need explicit id in input since Receipt.addLineItem pushes raw data
 - [x] MEDIUM: Test check-preview web component — 27 tests added (133 total in web-components); covers setCheck(), print(), scale CSS transform, check-id async load, error/throw handling, button events. Key quirk: setting check-id before appendChild causes loadCheck to fire twice — use append-first then setAttribute pattern for tests requiring exactly one load.
@@ -81,6 +81,7 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 - [ ] LOW: Test SecureStorageAdapter — complex encryption/decryption logic with zero coverage; needs stubs for the Web Crypto API or a jsdom environment
 - [ ] LOW: ESLint major-version upgrade — eslint 9→10, eslint-plugin-vue 9→10, globals 15→17 all have major bumps; upgrade after confirming no breaking rule changes affect the codebase
 - [ ] LOW: Vue composable tests — @printchecks/vue has 6 untested composables (useChecks, useBankAccounts, useVendors, useReceipts, usePrintChecks, usePrintableCheckPage); requires Vue test-utils setup
+- [ ] LOW: Fix no-useless-assignment warnings — 39 violations across printchecks app views (AnalyticsView, HistoryView, ImportExportView, VendorsView and others); assignments made then never read, likely dead code from refactoring
 
 ### Memory Maintenance
 

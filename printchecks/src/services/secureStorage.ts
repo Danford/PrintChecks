@@ -77,7 +77,7 @@ class SecureStorage {
           return typeof decrypted === 'string' ? decrypted : JSON.stringify(decrypted)
         } catch (error) {
           console.error('[SecureStorage] Decryption failed for key:', key, error)
-          throw new Error(`Failed to decrypt ${key}. Wrong password or corrupted data.`)
+          throw new Error(`Failed to decrypt ${key}. Wrong password or corrupted data.`, { cause: error })
         }
       }
 
@@ -108,7 +108,7 @@ class SecureStorage {
           console.log('[SecureStorage] Encrypted and stored:', key)
         } catch (error) {
           console.error('[SecureStorage] Encryption failed for key:', key, error)
-          throw new Error(`Failed to encrypt ${key}`)
+          throw new Error(`Failed to encrypt ${key}`, { cause: error })
         }
       } else {
         // Store as plain text
