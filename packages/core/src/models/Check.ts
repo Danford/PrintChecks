@@ -154,13 +154,6 @@ export class Check implements CheckData {
   }
 
   /**
-   * Validate bank account number is MICR-safe (digits only, 1–17)
-   */
-  private isValidAccountNumber(): boolean {
-    return validateBankAccountNumber(this.bankAccountNumber)
-  }
-
-  /**
    * Validate amount
    */
   private isValidAmount(): boolean {

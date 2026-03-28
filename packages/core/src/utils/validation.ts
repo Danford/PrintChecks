@@ -271,7 +271,7 @@ export function validateBankAccountNumber(accountNumber: string): boolean {
  * Format: ⑆ROUTING⑆ ACCOUNT⑈ CHECKNUM  (14 overhead chars + field lengths)
  */
 export function validateMICRLineLength(
-  routingNumber: string,
+  _routingNumber: string,
   accountNumber: string,
   checkNumber: string
 ): boolean {
