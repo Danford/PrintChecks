@@ -76,7 +76,7 @@ export class Check {
   accountHolderState = ''
   accountHolderZip = ''
 
-  validate() {
+  validate(): { isValid: boolean; errors: string[] } {
     return { isValid: true, errors: [] }
   }
 }
