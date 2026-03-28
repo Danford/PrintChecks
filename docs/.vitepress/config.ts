@@ -175,11 +175,25 @@ export default defineConfig({
       alias: [
         { find: '@printchecks/core', replacement: '../packages/core/src' },
         { find: '@printchecks/vue', replacement: '../packages/vue/src' },
-        { find: '@printchecks/web-components', replacement: '../packages/web-components/src' },
-        // Use full Vue build with template compiler for the Playground component.
-        // Regex prevents this alias from matching subpath imports like vue/server-renderer.
-        { find: /^vue$/, replacement: 'vue/dist/vue.esm-bundler.js' }
+        { find: '@printchecks/web-components', replacement: '../packages/web-components/src' }
       ]
-    }
+    },
+    plugins: [
+      // Alias vue → full build (with template compiler) for client builds only.
+      // The SSR build must NOT use this alias: Node.js 18 cannot import named exports
+      // from vue.esm-bundler.js via dynamic ESM semantics.
+      {
+        name: 'client-vue-full-build',
+        config(_, env) {
+          if (!env.isSsrBuild) {
+            return {
+              resolve: {
+                alias: [{ find: /^vue$/, replacement: 'vue/dist/vue.esm-bundler.js' }]
+              }
+            }
+          }
+        }
+      }
+    ]
   }
 })
