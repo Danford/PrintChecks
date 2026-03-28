@@ -69,7 +69,9 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 - [x] MEDIUM: UX review — check rendering consistency — fixed MICR delimiter mismatch across 3 components (⑆/⑈ canonical), removed XSS risk (v-html→text on amountWords)
 - [x] MEDIUM: MICR line validation edge cases — added validateBankAccountNumber (digits-only, 1–17) and validateMICRLineLength (≤43 chars); wired into Check.validate() and BankAccount.validate(); 34 new edge-case tests
 - [x] HIGH: Dev-dependency security audit — reduced 23→13 vulns: updated typescript-eslint (8.54→8.57.2), @changesets/cli (2.29.8→2.30.0); added pnpm.overrides for picomatch@2/4, flatted, brace-expansion@1, ajv@6; remaining 13 need major version upgrades (eslint 9→10, Vite 4→5, VitePress)
-- [ ] HIGH: Upgrade Vite 4→5 in printchecks app — fixes rollup arbitrary-file-write (HIGH) + vite middleware vulns (LOW/MOD); also fixes vue-tsc minimatch@9 chain; test after upgrade
+- [x] HIGH: Upgrade Vite 4→5 in printchecks app — vite 5.4.21 + @vitejs/plugin-vue 5.2.4 installed; build and type-check pass; audit reduced 13→8 (rollup HIGH + vite LOW/MOD chains resolved); remaining 8 in eslint/vitepress/vue-tsc chains
+- [ ] HIGH: Update VitePress in docs — fixes rollup arbitrary-file-write (HIGH) + esbuild CORS (MOD) via docs>vitepress>vite chain
+- [ ] MEDIUM: Upgrade vue-tsc 1→2 in printchecks app — fixes minimatch@9 (HIGH×2) + vue-template-compiler (MOD) via printchecks>vue-tsc chain
 - [ ] MEDIUM: Upgrade eslint 9→10 — fixes minimatch@3.x ReDoS (HIGH) in dev chain that cannot be resolved via overrides; also picks up flatted/ajv/brace-expansion fixes; check breaking rule changes first
 - [ ] HIGH: Add receipt-form API doc page — `receipt-form.ts` is shipped and has 25 tests but `docs/api/web-components/receipt-form.md` does not exist; model after check-form.md
 - [ ] MEDIUM: Test remaining core services — VendorService, BankAccountService, ReceiptService untested; MemoryStorage pattern from CheckService.test.ts is ready to reuse
