@@ -74,7 +74,7 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 - [ ] MEDIUM: Upgrade vue-tsc 1→2 in printchecks app — fixes minimatch@9 (HIGH×2) + vue-template-compiler (MOD) via printchecks>vue-tsc chain
 - [ ] MEDIUM: Upgrade eslint 9→10 — fixes minimatch@3.x ReDoS (HIGH) in dev chain that cannot be resolved via overrides; also picks up flatted/ajv/brace-expansion fixes; check breaking rule changes first
 - [x] HIGH: Add receipt-form API doc page — created `docs/api/web-components/receipt-form.md` with attributes, events, methods, form fields, 4 examples, CSS vars; added to sidebar
-- [ ] MEDIUM: Test remaining core services — VendorService, BankAccountService, ReceiptService untested; MemoryStorage pattern from CheckService.test.ts is ready to reuse
+- [x] MEDIUM: Test remaining core services — added 99 new tests (346 total); VendorService (41), BankAccountService (31), ReceiptService (35); all pass. Key quirks: BankAccount.isDefault is undefined not false until explicitly set; Receipt date uses toLocaleDateString(); ReceiptFilters.fromDate/toDate require Date objects; lineItems need explicit id in input since Receipt.addLineItem pushes raw data
 - [ ] MEDIUM: Test check-preview web component — only component in `@printchecks/web-components` with zero tests; observes `check-id` and `scale` attributes; model after printable-check-page.test.ts
 - [ ] MEDIUM: Update changelog — `docs/reference/changelog.md` stuck at v1.0.0 (2024-01-31); add v1.0.1 entry and a v1.0.2-dev entry covering MICR fixes, XSS fix, account-number validation
 - [ ] MEDIUM: Fill in stub component docs — `docs/components/receipt-builder.md` (8 lines), `bank-account-manager.md` (12 lines), `vendor-management.md` (12 lines) are near-empty placeholders
