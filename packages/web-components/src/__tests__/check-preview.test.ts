@@ -248,7 +248,7 @@ describe('PrintChecksCheckPreview', () => {
     document.body.appendChild(el)
 
     const errors: CustomEvent[] = []
-    el.addEventListener('error', (e: CustomEvent) => errors.push(e))
+    el.addEventListener('error', (e: Event) => errors.push(e as CustomEvent))
 
     el.setAttribute('check-id', 'bad')
     await new Promise((resolve) => setTimeout(resolve, 0))
