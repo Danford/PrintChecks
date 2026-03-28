@@ -66,6 +66,7 @@
     "to-words": "^4.1.0"
   },
   "devDependencies": {
+    "jsdom": "^26.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.4",
     "vitest": "^3.0.0"
