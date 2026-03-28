@@ -82,7 +82,7 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 - [x] LOW: ESLint major-version upgrade — duplicate of MEDIUM item above; completed in same cycle
 - [ ] LOW: Vue composable tests — @printchecks/vue has 6 untested composables (useChecks, useBankAccounts, useVendors, useReceipts, usePrintChecks, usePrintableCheckPage); requires Vue test-utils setup
 - [ ] LOW: Fix no-useless-assignment warnings — 39 violations across printchecks app views (AnalyticsView, HistoryView, ImportExportView, VendorsView and others); assignments made then never read, likely dead code from refactoring
-- [ ] MEDIUM: Add PrintChecksCore integration tests — zero coverage on the main public API entry point; `exportData`, `importData`, `clearAllData`, `getAllStatistics` involve multi-service orchestration not exercised by existing service tests; can reuse MemoryStorage pattern
+- [x] MEDIUM: Add PrintChecksCore integration tests — 47 tests added (393 total); covers construction, full CRUD delegation for all 4 services, exportData, importData, clearAllData, getAllStatistics, export→import round-trip; key fix: field is `isVoid` not `isVoided`, stats use `total` not `totalChecks`
 - [ ] LOW: Test LocalStorageAdapter — needs jsdom environment; `getStorageStats`, `getMany`, `setMany`, `keys`, `has` all untested; StorageError thrown for quota exceeded also untested
 - [ ] LOW: Test Receipt model totals calculation — `calculateTotals()` logic (subtotal→discount→tax→shipping/handling→grandTotal) is tested only indirectly via ReceiptService; direct unit tests would catch rounding/ordering edge cases
 - [ ] LOW: Upgrade globals v16→v17 — only outdated dep (16.5.0 vs 17.4.0 latest); check for breaking changes before upgrading
