@@ -76,10 +76,10 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 - [x] HIGH: Add receipt-form API doc page — created `docs/api/web-components/receipt-form.md` with attributes, events, methods, form fields, 4 examples, CSS vars; added to sidebar
 - [x] MEDIUM: Test remaining core services — added 99 new tests (346 total); VendorService (41), BankAccountService (31), ReceiptService (35); all pass. Key quirks: BankAccount.isDefault is undefined not false until explicitly set; Receipt date uses toLocaleDateString(); ReceiptFilters.fromDate/toDate require Date objects; lineItems need explicit id in input since Receipt.addLineItem pushes raw data
 - [x] MEDIUM: Test check-preview web component — 27 tests added (133 total in web-components); covers setCheck(), print(), scale CSS transform, check-id async load, error/throw handling, button events. Key quirk: setting check-id before appendChild causes loadCheck to fire twice — use append-first then setAttribute pattern for tests requiring exactly one load.
-- [ ] MEDIUM: Update changelog — `docs/reference/changelog.md` stuck at v1.0.0 (2024-01-31); add v1.0.1 entry and a v1.0.2-dev entry covering MICR fixes, XSS fix, account-number validation
+- [x] MEDIUM: Update changelog — added v1.0.1 (2026-03-27) and [Unreleased] sections to `docs/reference/changelog.md`; covers MICR fixes, XSS fix, account-number/MICR-length validation, pre-print gate, ABA checksum, receipt-form docs, error cause chaining, ESLint 10 upgrade
 - [ ] MEDIUM: Fill in stub component docs — `docs/components/receipt-builder.md` (8 lines), `bank-account-manager.md` (12 lines), `vendor-management.md` (12 lines) are near-empty placeholders
 - [ ] LOW: Test SecureStorageAdapter — complex encryption/decryption logic with zero coverage; needs stubs for the Web Crypto API or a jsdom environment
-- [ ] LOW: ESLint major-version upgrade — eslint 9→10, eslint-plugin-vue 9→10, globals 15→17 all have major bumps; upgrade after confirming no breaking rule changes affect the codebase
+- [x] LOW: ESLint major-version upgrade — duplicate of MEDIUM item above; completed in same cycle
 - [ ] LOW: Vue composable tests — @printchecks/vue has 6 untested composables (useChecks, useBankAccounts, useVendors, useReceipts, usePrintChecks, usePrintableCheckPage); requires Vue test-utils setup
 - [ ] LOW: Fix no-useless-assignment warnings — 39 violations across printchecks app views (AnalyticsView, HistoryView, ImportExportView, VendorsView and others); assignments made then never read, likely dead code from refactoring
 
