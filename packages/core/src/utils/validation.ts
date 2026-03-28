@@ -255,6 +255,33 @@ export function validateStateCode(state: string): boolean {
 }
 
 /**
+ * Validate bank account number for MICR printing.
+ * MICR E-13B encoding only supports digits; letters or symbols in an account
+ * number would silently corrupt the printed MICR line.
+ * Accepts 1–17 digits (US banks vary from 4 to 17 digits).
+ */
+export function validateBankAccountNumber(accountNumber: string): boolean {
+  const cleaned = accountNumber.trim()
+  return /^\d{1,17}$/.test(cleaned)
+}
+
+/**
+ * Validate that the assembled MICR line fits within the standard 43-character
+ * field printed at the bottom of a US personal check (ANSI X9.100-160).
+ * Format: ⑆ROUTING⑆ ACCOUNT⑈ CHECKNUM  (14 overhead chars + field lengths)
+ */
+export function validateMICRLineLength(
+  routingNumber: string,
+  accountNumber: string,
+  checkNumber: string
+): boolean {
+  // Overhead: ⑆(1) routing(9) ⑆(1) space(1) account on-us ⑈(1) space(1) checknum
+  const overhead = 1 + 9 + 1 + 1 + 1 + 1 // = 14
+  const total = overhead + accountNumber.trim().length + checkNumber.trim().length
+  return total <= 43
+}
+
+/**
  * Create validation result helper
  */
 export function createValidationResult(

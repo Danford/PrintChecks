@@ -3,7 +3,7 @@
  */
 
 import type { BaseEntity, FileUpload } from './common'
-import { validateRoutingNumber } from '../utils/validation'
+import { validateRoutingNumber, validateBankAccountNumber } from '../utils/validation'
 
 export interface BankAccountData extends BaseEntity {
   // Account holder information
@@ -94,6 +94,8 @@ export class BankAccount implements BankAccountData {
     }
     if (!this.accountNumber?.trim()) {
       errors.push('Account number is required')
+    } else if (!validateBankAccountNumber(this.accountNumber)) {
+      errors.push('Account number must contain only digits (1–17)')
     }
 
     return {

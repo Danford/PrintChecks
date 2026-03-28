@@ -3,7 +3,7 @@
  */
 
 import type { BaseEntity, Currency } from './common'
-import { validateRoutingNumber } from '../utils/validation'
+import { validateRoutingNumber, validateBankAccountNumber, validateMICRLineLength } from '../utils/validation'
 
 export type CheckStatus = 'draft' | 'ready' | 'printed' | 'void' | 'cancelled'
 
@@ -116,9 +116,19 @@ export class Check implements CheckData {
     }
     if (!this.bankAccountNumber?.trim()) {
       errors.push('Bank account number is required')
+    } else if (!validateBankAccountNumber(this.bankAccountNumber)) {
+      errors.push('Bank account number must contain only digits (1–17)')
     }
     if (!this.checkNumber?.trim()) {
       errors.push('Check number is required')
+    }
+    if (
+      this.routingNumber &&
+      this.bankAccountNumber?.trim() &&
+      this.checkNumber?.trim() &&
+      !validateMICRLineLength(this.routingNumber, this.bankAccountNumber, this.checkNumber)
+    ) {
+      errors.push('MICR line exceeds 43-character field limit; shorten account or check number')
     }
     if (!this.payTo?.trim()) {
       errors.push('Payee name is required')
@@ -141,6 +151,13 @@ export class Check implements CheckData {
    */
   private isValidRoutingNumber(): boolean {
     return validateRoutingNumber(this.routingNumber)
+  }
+
+  /**
+   * Validate bank account number is MICR-safe (digits only, 1–17)
+   */
+  private isValidAccountNumber(): boolean {
+    return validateBankAccountNumber(this.bankAccountNumber)
   }
 
   /**
