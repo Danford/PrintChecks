@@ -772,23 +772,23 @@ export const printableCheckPageCode = `<template>
             <div style="font-size: 10pt;">
               <div style="display: flex; justify-content: space-between; margin-bottom: 5px; padding: 4px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
                 <span style="font-weight: 500; color: #333;">This Month:</span>
-                <strong style="color: #2e7d32; font-size: 11pt;">\$5,240.00</strong>
+                <strong style="color: #2e7d32; font-size: 11pt;">$5,240.00</strong>
               </div>
               <div style="display: flex; justify-content: space-between; margin-bottom: 5px; padding: 4px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
                 <span style="font-weight: 500; color: #333;">Last Month:</span>
-                <strong style="color: #2e7d32; font-size: 11pt;">\$4,875.00</strong>
+                <strong style="color: #2e7d32; font-size: 11pt;">$4,875.00</strong>
               </div>
               <div style="display: flex; justify-content: space-between; margin-bottom: 5px; padding: 4px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
                 <span style="font-weight: 500; color: #333;">This Year:</span>
-                <strong style="color: #2e7d32; font-size: 11pt;">\$58,920.00</strong>
+                <strong style="color: #2e7d32; font-size: 11pt;">$58,920.00</strong>
               </div>
               <div style="display: flex; justify-content: space-between; margin-bottom: 5px; padding: 4px 0; border-bottom: 1px solid rgba(56, 142, 60, 0.2);">
                 <span style="font-weight: 500; color: #333;">This Quarter:</span>
-                <strong style="color: #2e7d32; font-size: 11pt;">\$15,340.00</strong>
+                <strong style="color: #2e7d32; font-size: 11pt;">$15,340.00</strong>
               </div>
               <div style="display: flex; justify-content: space-between; padding: 6px 0;">
                 <span style="font-weight: 500; color: #333;">Last Year:</span>
-                <strong style="color: #2e7d32; font-size: 11pt;">\$52,680.00</strong>
+                <strong style="color: #2e7d32; font-size: 11pt;">$52,680.00</strong>
               </div>
             </div>
           </div>
@@ -799,19 +799,19 @@ export const printableCheckPageCode = `<template>
             <div style="font-size: 10pt;">
               <div style="display: flex; justify-content: space-between; margin-bottom: 5px; padding: 4px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
                 <span style="font-weight: 500; color: #333;">Average Payment:</span>
-                <strong style="color: #e65100; font-size: 11pt;">\$1,240.00</strong>
+                <strong style="color: #e65100; font-size: 11pt;">$1,240.00</strong>
               </div>
               <div style="display: flex; justify-content: space-between; margin-bottom: 5px; padding: 4px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
                 <span style="font-weight: 500; color: #333;">Monthly Average:</span>
-                <strong style="color: #e65100; font-size: 11pt;">\$4,910.00</strong>
+                <strong style="color: #e65100; font-size: 11pt;">$4,910.00</strong>
               </div>
               <div style="display: flex; justify-content: space-between; margin-bottom: 5px; padding: 4px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
                 <span style="font-weight: 500; color: #333;">Largest Payment:</span>
-                <strong style="color: #e65100; font-size: 11pt;">\$5,500.00</strong>
+                <strong style="color: #e65100; font-size: 11pt;">$5,500.00</strong>
               </div>
               <div style="display: flex; justify-content: space-between; margin-bottom: 5px; padding: 4px 0; border-bottom: 1px solid rgba(245, 124, 0, 0.2);">
                 <span style="font-weight: 500; color: #333;">Smallest Payment:</span>
-                <strong style="color: #e65100; font-size: 11pt;">\$125.00</strong>
+                <strong style="color: #e65100; font-size: 11pt;">$125.00</strong>
               </div>
               <div style="display: flex; justify-content: space-between; padding: 6px 0;">
                 <span style="font-weight: 500; color: #333;">Total Payments:</span>
@@ -824,7 +824,7 @@ export const printableCheckPageCode = `<template>
         <!-- All Time Total Banner -->
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 10px; border-radius: 8px; text-align: center; color: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
           <div style="font-size: 10pt; opacity: 0.95; margin-bottom: 2px;">All Time Total</div>
-          <div style="font-size: 18pt; font-weight: bold; line-height: 1;">\$111,600.00</div>
+          <div style="font-size: 18pt; font-weight: bold; line-height: 1;">$111,600.00</div>
         </div>
           </div>
         </div>
