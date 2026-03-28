@@ -73,7 +73,7 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 - [x] HIGH: Update VitePress in docs — VitePress 1.6.4 is already latest stable; added pnpm.overrides for rollup@>=4.0.0<4.59.0→4.59.0 and esbuild@<=0.24.2→0.25.0; vulns reduced 8→6; remaining 6 require vue-tsc 1→2 or eslint 9→10; also fixed 3 pre-existing CI failures (TS unused vars, mock type annotation, ESLint cache exclusion, docs dead links, vue-alias SSR incompatibility)
 - [ ] MEDIUM: Upgrade vue-tsc 1→2 in printchecks app — fixes minimatch@9 (HIGH×2) + vue-template-compiler (MOD) via printchecks>vue-tsc chain
 - [ ] MEDIUM: Upgrade eslint 9→10 — fixes minimatch@3.x ReDoS (HIGH) in dev chain that cannot be resolved via overrides; also picks up flatted/ajv/brace-expansion fixes; check breaking rule changes first
-- [ ] HIGH: Add receipt-form API doc page — `receipt-form.ts` is shipped and has 25 tests but `docs/api/web-components/receipt-form.md` does not exist; model after check-form.md
+- [x] HIGH: Add receipt-form API doc page — created `docs/api/web-components/receipt-form.md` with attributes, events, methods, form fields, 4 examples, CSS vars; added to sidebar
 - [ ] MEDIUM: Test remaining core services — VendorService, BankAccountService, ReceiptService untested; MemoryStorage pattern from CheckService.test.ts is ready to reuse
 - [ ] MEDIUM: Test check-preview web component — only component in `@printchecks/web-components` with zero tests; observes `check-id` and `scale` attributes; model after printable-check-page.test.ts
 - [ ] MEDIUM: Update changelog — `docs/reference/changelog.md` stuck at v1.0.0 (2024-01-31); add v1.0.1 entry and a v1.0.2-dev entry covering MICR fixes, XSS fix, account-number validation

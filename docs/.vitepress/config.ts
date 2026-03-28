@@ -99,7 +99,8 @@ export default defineConfig({
             { text: 'vendor-list', link: '/api/web-components/vendor-list' },
             { text: 'vendor-form', link: '/api/web-components/vendor-form' },
             { text: 'bank-account-list', link: '/api/web-components/bank-account-list' },
-            { text: 'bank-account-form', link: '/api/web-components/bank-account-form' }
+            { text: 'bank-account-form', link: '/api/web-components/bank-account-form' },
+            { text: 'receipt-form', link: '/api/web-components/receipt-form' }
           ]
         }
       ],
