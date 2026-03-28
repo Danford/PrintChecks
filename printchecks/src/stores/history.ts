@@ -26,7 +26,7 @@ export const useHistoryStore = defineStore('useHistoryStore', () => {
 
   // Computed properties
   const filteredItems = computed(() => {
-    let items: HistoryItem[] = []
+    let items: HistoryItem[]
 
     switch (filterBy.value) {
       case 'checks':

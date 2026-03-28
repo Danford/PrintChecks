@@ -20,7 +20,7 @@ export default tseslint.config(
     },
     {
         rules: {
-            'no-useless-assignment': 'warn', // 39 violations in printchecks app views — fix separately
+            'no-useless-assignment': 'warn',
             'vue/multi-word-component-names': 'off',
             '@typescript-eslint/no-explicit-any': 'warn',
             '@typescript-eslint/no-unused-vars': [
@@ -32,6 +32,14 @@ export default tseslint.config(
                 },
             ],
             'no-undef': 'off', // TypeScript handles this better
+        },
+    },
+    {
+        // vue-eslint-parser doesn't expose template variable reads to no-useless-assignment,
+        // so <script setup> variables used only in the template appear as false positives.
+        files: ['**/*.vue'],
+        rules: {
+            'no-useless-assignment': 'off',
         },
     },
     prettierConfig
