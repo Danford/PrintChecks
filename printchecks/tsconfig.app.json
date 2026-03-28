@@ -5,6 +5,7 @@
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
+    "lib": ["ES2020", "ES2022.Error", "DOM", "DOM.Iterable"],
     "paths": {
       "@/*": ["./src/*"]
     }
