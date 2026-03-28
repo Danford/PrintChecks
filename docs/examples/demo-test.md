@@ -47,7 +47,7 @@ export default {
     }
   }
 }
-</script>
+<\/script>
 `" />
 
 ## PrintChecks Demo

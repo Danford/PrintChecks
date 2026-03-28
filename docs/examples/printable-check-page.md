@@ -390,4 +390,4 @@ The component includes a built-in print button that is hidden during printing:
 
 - [Web Components Guide](/api/web-components/overview)
 - [Check Preview Component](/api/web-components/check-preview)
-- [Vue Composables](/api/vue/composables)
+- [Vue Composables](/api/vue/use-printable-check-page)

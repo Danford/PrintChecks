@@ -6,6 +6,8 @@ export default defineConfig({
 
   base: '/PrintChecks/',
 
+  ignoreDeadLinks: [/^http:\/\/localhost/],
+
   head: [
     ['link', { rel: 'icon', href: '/PrintChecks/favicon.ico' }],
     ['meta', { name: 'theme-color', content: '#3eaf7c' }],
@@ -170,13 +172,14 @@ export default defineConfig({
 
   vite: {
     resolve: {
-      alias: {
-        '@printchecks/core': '../packages/core/src',
-        '@printchecks/vue': '../packages/vue/src',
-        '@printchecks/web-components': '../packages/web-components/src',
-        // Use full Vue build with template compiler for Playground component
-        'vue': 'vue/dist/vue.esm-bundler.js'
-      }
+      alias: [
+        { find: '@printchecks/core', replacement: '../packages/core/src' },
+        { find: '@printchecks/vue', replacement: '../packages/vue/src' },
+        { find: '@printchecks/web-components', replacement: '../packages/web-components/src' },
+        // Use full Vue build with template compiler for the Playground component.
+        // Regex prevents this alias from matching subpath imports like vue/server-renderer.
+        { find: /^vue$/, replacement: 'vue/dist/vue.esm-bundler.js' }
+      ]
     }
   }
 })
