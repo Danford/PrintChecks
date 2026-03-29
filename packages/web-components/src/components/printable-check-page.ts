@@ -204,7 +204,7 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
     }
   }
 
-  private amountToWords(num: number): string {
+  private amountToWords(num: number, recursive = false): string {
     const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
     const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety']
     const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen']
@@ -217,13 +217,13 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
 
     if (dollars >= 1000000) {
       const millions = Math.floor(dollars / 1000000)
-      result += this.amountToWords(millions) + ' Million '
+      result += this.amountToWords(millions, true) + ' Million '
       dollars %= 1000000
     }
 
     if (dollars >= 1000) {
       const thousands = Math.floor(dollars / 1000)
-      result += this.amountToWords(thousands) + ' Thousand '
+      result += this.amountToWords(thousands, true) + ' Thousand '
       dollars %= 1000
     }
 
@@ -244,10 +244,13 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
       result += ones[dollars] + ' '
     }
 
-    result = result.trim() + ' Dollars'
+    result = result.trim()
 
-    if (cents > 0) {
-      result += ' and ' + cents + '/100'
+    if (!recursive) {
+      result += ' Dollars'
+      if (cents > 0) {
+        result += ' and ' + cents + '/100'
+      }
     }
 
     return result

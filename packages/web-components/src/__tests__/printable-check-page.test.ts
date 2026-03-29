@@ -324,6 +324,30 @@ describe('PrintChecksCheckPrintablePage', () => {
       const text = el.shadowRoot?.querySelector('.amount-words-value')?.textContent?.trim() ?? ''
       expect(text).toContain('Zero')
     })
+
+    it('renders "One Thousand Five Hundred Dollars" for amount 1500 (regression: no "Dollars" in middle)', () => {
+      const el = createElement() as any
+      el.setCheckData(makeCheck({ amount: '1500.00' }))
+      const text = el.shadowRoot?.querySelector('.amount-words-value')?.textContent?.trim() ?? ''
+      expect(text).toBe('One Thousand Five Hundred Dollars')
+    })
+
+    it('renders "Two Million Five Hundred Thousand Dollars" for large amounts', () => {
+      const el = createElement() as any
+      el.setCheckData(makeCheck({ amount: '2500000.00' }))
+      const text = el.shadowRoot?.querySelector('.amount-words-value')?.textContent?.trim() ?? ''
+      expect(text).toBe('Two Million Five Hundred Thousand Dollars')
+    })
+
+    it('handles thousands with cents correctly', () => {
+      const el = createElement() as any
+      el.setCheckData(makeCheck({ amount: '1234.56' }))
+      const text = el.shadowRoot?.querySelector('.amount-words-value')?.textContent?.trim() ?? ''
+      expect(text).toContain('Thousand')
+      expect(text).toContain('and 56/100')
+      // Must not contain "Dollars" before "Thousand"
+      expect(text).not.toMatch(/Dollars.*Thousand/)
+    })
   })
 
   // ---------------------------------------------------------------------------
