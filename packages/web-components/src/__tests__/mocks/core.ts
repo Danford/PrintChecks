@@ -43,6 +43,9 @@ export class PrintChecksCore {
   vendors = mockVendors
   checks = mockChecks
   bankAccounts = mockBankAccounts
+  // Convenience methods used by components (delegates to service objects in real core)
+  getChecks = vi.fn()
+  getVendors = vi.fn()
 
   constructor(_config?: unknown) {}
 }
