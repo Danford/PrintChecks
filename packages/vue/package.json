@@ -24,7 +24,9 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [
     "printchecks",
@@ -56,6 +58,7 @@
     "@types/node": "^20.10.0",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3",
+    "vitest": "^3.0.0",
     "vue": "^3.3.10"
   }
 }

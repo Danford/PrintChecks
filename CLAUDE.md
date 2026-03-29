@@ -80,12 +80,12 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 - [x] MEDIUM: Fill in stub component docs — expanded all 3 stubs with intro, components table, 3–4 practical code examples each, and See Also links; receipt-builder (57 lines), bank-account-manager (87 lines), vendor-management (84 lines)
 - [ ] LOW: Test SecureStorageAdapter — complex encryption/decryption logic with zero coverage; needs stubs for the Web Crypto API or a jsdom environment
 - [x] LOW: ESLint major-version upgrade — duplicate of MEDIUM item above; completed in same cycle
-- [ ] LOW: Vue composable tests — @printchecks/vue has 6 untested composables (useChecks, useBankAccounts, useVendors, useReceipts, usePrintChecks, usePrintableCheckPage); requires Vue test-utils setup
+- [x] LOW: Vue composable tests — 123 tests added for all 6 composables (useChecks 28, useVendors 23, useBankAccounts 19, useReceipts 24, usePrintChecks 9, usePrintableCheckPage 20); no Vue test-utils needed since composables use plain reactivity; vitest added to @printchecks/vue devDeps
 - [x] LOW: Fix no-useless-assignment warnings — 38/39 were false positives (vue-eslint-parser doesn't expose template reads to this rule); fixed by adding a post-global-rules vue-files override setting the rule to 'off'; the 1 genuine case (history.ts let items = []) fixed by removing the useless initializer
 - [x] MEDIUM: Add PrintChecksCore integration tests — 47 tests added (393 total); covers construction, full CRUD delegation for all 4 services, exportData, importData, clearAllData, getAllStatistics, export→import round-trip; key fix: field is `isVoid` not `isVoided`, stats use `total` not `totalChecks`
 - [x] LOW: Test LocalStorageAdapter — 33 tests added (468 total in core); covers get/set/remove/clear/keys/has/getMany/setMany/getStorageStats, prefix isolation, custom serialization, StorageError paths, QuotaExceededError; added jsdom devDep to @printchecks/core; key: must add afterEach(vi.restoreAllMocks) when spying on Storage.prototype.setItem to prevent mock bleed
 - [x] LOW: Test Receipt model totals calculation — 42 tests added (435 total); covers LineItem.calculateTotal() (tax, discount, both together), Receipt.calculateTotals() (subtotal, tax accumulation, discount accumulation, shipping/handling preservation, grandTotal formula), setters, addLineItem/removeLineItem/updateLineItem, validate(), and construction; key: totals preserved when provided in constructor (calculateTotals not called)
-- [ ] LOW: Upgrade globals v16→v17 — only outdated dep (16.5.0 vs 17.4.0 latest); check for breaking changes before upgrading
+- [x] LOW: Upgrade globals v16→v17 — root package.json already at ^17.0.0 (globals@17.4.0 installed); was already done in eslint 9→10 cycle
 
 ### Memory Maintenance
 
