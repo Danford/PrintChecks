@@ -1,7 +1,7 @@
 /**
  * Tests for useBankAccounts composable
  */
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useBankAccounts } from '../composables/useBankAccounts'
 import type { StorageAdapter } from '@printchecks/core/storage'
 

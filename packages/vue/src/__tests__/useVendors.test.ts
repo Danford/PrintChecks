@@ -1,8 +1,9 @@
 /**
  * Tests for useVendors composable
  */
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useVendors } from '../composables/useVendors'
+import type { VendorData } from '@printchecks/core/models'
 import type { StorageAdapter } from '@printchecks/core/storage'
 
 class MemoryStorage implements StorageAdapter {
@@ -35,9 +36,17 @@ class MemoryStorage implements StorageAdapter {
   }
 }
 
-// VendorData only requires `name`; all other fields are optional
-function validVendorData(overrides: Record<string, unknown> = {}) {
-  return { name: 'Acme Corp', ...overrides }
+// VendorData TypeScript type requires address/city/state/zip even though
+// the service's runtime validation only enforces `name`.
+function validVendorData(overrides: Partial<VendorData> = {}): VendorData {
+  return {
+    name: 'Acme Corp',
+    address: '1 Industrial Ave',
+    city: 'Springfield',
+    state: 'IL',
+    zip: '62701',
+    ...overrides,
+  }
 }
 
 describe('useVendors', () => {

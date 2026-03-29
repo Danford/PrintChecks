@@ -106,7 +106,7 @@ describe('usePrintChecks', () => {
     const storage = new MemoryStorage()
     const { checks, vendors, clearAllData } = usePrintChecks({ storage })
     await checks.createCheck(validCheckData())
-    await vendors.createVendor({ name: 'Acme Corp' })
+    await vendors.createVendor({ name: 'Acme Corp', address: '1 Main St', city: 'Austin', state: 'TX', zip: '78701' })
     await clearAllData()
     expect(checks.checks.value.length).toBe(0)
     expect(vendors.vendors.value.length).toBe(0)
@@ -135,7 +135,7 @@ describe('usePrintChecks', () => {
 
   it('vendors sub-composable can create and load vendors', async () => {
     const { vendors } = usePrintChecks({ storage: new MemoryStorage() })
-    await vendors.createVendor({ name: 'Test Vendor' })
+    await vendors.createVendor({ name: 'Test Vendor', address: '2 Ave', city: 'Town', state: 'NY', zip: '10001' })
     expect(vendors.vendors.value.length).toBe(1)
   })
 })

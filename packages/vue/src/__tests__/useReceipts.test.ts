@@ -1,7 +1,7 @@
 /**
  * Tests for useReceipts composable
  */
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useReceipts } from '../composables/useReceipts'
 import type { StorageAdapter } from '@printchecks/core/storage'
 
