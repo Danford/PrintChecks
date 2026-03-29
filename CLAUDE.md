@@ -96,7 +96,7 @@ Audit findings (0 vulns, all packages up-to-date):
 - printable-check-page.ts (898 lines): only 14 tests — render paths, check-format variants, MICR layout untested
 - printchecks app (main app): Pinia stores and services entirely untested
 
-- [ ] MEDIUM: Test Check model methods — markAsPrinted, void/canVoid/voidReason, duplicate (copy-with-new-id), toJSON/fromJSON round-trip; Check.validate.test.ts has 20 tests but model has many more branches
+- [x] MEDIUM: Test Check model methods — 51 tests added (578 core total); Check.model.test.ts covers constructor defaults, getNumericAmount, markAsPrinted, void (with/without reason), canBeVoided, getFullAddress, duplicate (id/checkNumber/state resets), toJSON, fromJSON round-trip
 - [ ] MEDIUM: Test Vendor model — no dedicated test; Vendor.ts has constructor, validate, tag management, address handling, toJSON; mirrors Receipt.model.test.ts pattern
 - [ ] MEDIUM: Test utils/encryption.ts — encrypt/decrypt/isEncrypted/verifyPassword/generatePassword/isCryptoAvailable; can use real Web Crypto via `// @vitest-environment node` (crypto.subtle is available in Node 18+) without mocking
 - [ ] LOW: Expand printable-check-page tests — 898-line component with only 14 tests; gaps include check-format switching, MICR line rendering per format, multi-check layout, scale transforms
