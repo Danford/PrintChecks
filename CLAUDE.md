@@ -87,6 +87,21 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 - [x] LOW: Test Receipt model totals calculation — 42 tests added (435 total); covers LineItem.calculateTotal() (tax, discount, both together), Receipt.calculateTotals() (subtotal, tax accumulation, discount accumulation, shipping/handling preservation, grandTotal formula), setters, addLineItem/removeLineItem/updateLineItem, validate(), and construction; key: totals preserved when provided in constructor (calculateTotals not called)
 - [x] LOW: Upgrade globals v16→v17 — root package.json already at ^17.0.0 (globals@17.4.0 installed); was already done in eslint 9→10 cycle
 
+### Research Phase — 2026-03-29
+
+Audit findings (0 vulns, all packages up-to-date):
+- Check model (305 lines): only `validate()` is tested — `markAsPrinted`, `void`, `canVoid`, `duplicate`, `toJSON`, `fromJSON` have zero direct coverage
+- Vendor model (234 lines): no dedicated test file at all
+- utils/encryption.ts (245 lines): completely untested; exported `encrypt`, `decrypt`, `isEncrypted`, `verifyPassword`, `generatePassword`, `isCryptoAvailable`
+- printable-check-page.ts (898 lines): only 14 tests — render paths, check-format variants, MICR layout untested
+- printchecks app (main app): Pinia stores and services entirely untested
+
+- [ ] MEDIUM: Test Check model methods — markAsPrinted, void/canVoid/voidReason, duplicate (copy-with-new-id), toJSON/fromJSON round-trip; Check.validate.test.ts has 20 tests but model has many more branches
+- [ ] MEDIUM: Test Vendor model — no dedicated test; Vendor.ts has constructor, validate, tag management, address handling, toJSON; mirrors Receipt.model.test.ts pattern
+- [ ] MEDIUM: Test utils/encryption.ts — encrypt/decrypt/isEncrypted/verifyPassword/generatePassword/isCryptoAvailable; can use real Web Crypto via `// @vitest-environment node` (crypto.subtle is available in Node 18+) without mocking
+- [ ] LOW: Expand printable-check-page tests — 898-line component with only 14 tests; gaps include check-format switching, MICR line rendering per format, multi-check layout, scale transforms
+- [ ] LOW: Test printchecks app Pinia stores — stores/checks.ts, stores/vendors.ts etc. are completely untested; use `createPinia` + `setActivePinia` pattern from Pinia test docs
+
 ### Memory Maintenance
 
 At the end of every self-review cycle, update your memory files to capture what you learned:
