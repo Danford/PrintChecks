@@ -104,7 +104,23 @@ Audit findings (0 vulns, all packages up-to-date):
 - [x] HIGH: Fix amountToWords bug in printable-check-page.ts — added `recursive=false` param; skip ' Dollars'/cents suffix on recursive calls; added 3 regression tests ($1,500, $2.5M, $1,234.56 with cents); all 164 web-component tests pass
 - [x] MEDIUM: Add Vitest to printchecks app and test useFormatting.ts composable — vitest ^3.2.4 added to app devDeps; vitest.config.ts created with @-alias and @vitejs/plugin-vue; 87 tests across all 16 functions; no Pinia/Vue mount needed since functions are pure
 - [x] MEDIUM: Test Pinia stores with Vitest — 208 tests added (useCheckStore 47, useHistoryStore 36, useReceiptStore 38, useFormatting 87); uses vi.mock for secureStorage + createPinia/setActivePinia; no @pinia/testing needed; key quirk: createNewReceipt() returns reactive proxy — use toStrictEqual not toBe for identity check
-- [ ] LOW: Test checkFilters.ts utility — 3 trivial filter functions (filterActiveChecks, filterActivePayments, filterActivePaymentData); easy to add once Vitest is set up in the app
+- [x] LOW: Test checkFilters.ts utility — 9 tests added (217 app total); filterActiveChecks removes isVoid=true, filterActivePayments is a pass-through (same reference), filterActivePaymentData combines both; pure functions with no mocks needed
+
+### Research Phase — 2026-03-30
+
+Audit findings (0 vulns, all packages up-to-date, 1155 total passing tests):
+- `useAppStore` (112 lines): completely untested — setLoading, addError/clearErrors, updateSettings/loadSettings, setCurrentView, toggleSidebar, isDarkMode/hasErrors computeds
+- `useCustomizationStore` (1393 lines): completely untested — large store with font/color/logo/layout mutation, preset CRUD, validation, CSS variable generation
+- `useSessionTimeout` (225 lines): completely untested — timer-based inactivity logic, window event listeners, localStorage/sessionStorage integration
+- Service API docs (bank-account-service.md, vendor-service.md, check-service.md, receipt-service.md): stub-level only — list method names but have no parameter docs, return types, descriptions, or examples
+- Vue view components (AnalyticsView 305 lines, ImportExportView 582 lines): significant business logic but require @vue/test-utils + DOM; lower ROI than store tests
+- `utilities.ts` formatMoney: single function re-export, trivially testable (5 tests max)
+
+- [ ] MEDIUM: Test useAppStore — setLoading (loading state + message), addError/clearErrors (array management, error ref sync), updateSettings (merges partial, persists to secureStorage), loadSettings (JSON parse, graceful failure on bad JSON), setCurrentView, toggleSidebar, isDarkMode/hasErrors computeds; mock secureStorage same as other stores; ~20 tests
+- [ ] MEDIUM: Test useCustomizationStore — initializeCustomization (first-time default creation), updateFont/updateColors/updateLogo/updateLayout (field merging), validateSettings (color hex regex, font size bounds, logo URL format), applyPreset/saveAsPreset/deletePreset/renamePreset, resetToDefault, cssVariables computed (CSS var output shape); mock secureStorage; ~40 tests
+- [ ] MEDIUM: Expand service API docs — bank-account-service.md, vendor-service.md, check-service.md, receipt-service.md are all stubs; expand each to match the pattern of printchecks-core.md: full method signatures, parameter tables, return types, code examples, filter/options interface docs
+- [ ] LOW: Test useSessionTimeout composable — requires vi.useFakeTimers() + vi.stubGlobal for localStorage/sessionStorage/window; test resetInactivityTimer guard conditions (encryption disabled, no password), showWarningPrompt triggers countdown, lockSession clears storage and calls reload, handleVisibilityChange sleep detection
+- [ ] LOW: Test utilities.ts formatMoney — 5 tests: integer input, string input, 2-decimal rounding, large number with commas, zero
 
 ### Memory Maintenance
 
