@@ -66,7 +66,7 @@ Update the Priority Queue — mark done items, add new discoveries, re-prioritiz
 ## Priority Queue
 
 - [x] MEDIUM: Fix git stat bar colors — set `color.diff.new=bold green` and `color.diff.old=bold red` in global ~/.gitconfig (also set locally); additions now render bold green, deletions bold red in all git stat/log/diff output. Also set `color.ui=auto` globally.
-- [ ] MEDIUM: Fix "Add" item textbox and the filter text box should be the same. No need for two text boxes here because one could be used for both.
+- [x] MEDIUM: Fix "Add" item textbox and filter textbox — vendor-list.ts now shows an inline "Add [searchTerm] as a new vendor" button in the empty-state (when show-actions is set), so one textbox serves both filter and add-name purposes; `add-vendor-clicked` event now passes `{ suggestedName: searchTerm }` for parent pre-population; 3 new tests added (167 web-component total)
 - [x] HIGH: Post-release coverage gaps identified after v1.0.1 — added 193 new tests across validation.ts, formatting.ts, BankAccount model, CheckService (213 core tests total; all pass)
 - [x] MEDIUM: UX review — check rendering consistency — fixed MICR delimiter mismatch across 3 components (⑆/⑈ canonical), removed XSS risk (v-html→text on amountWords)
 - [x] MEDIUM: MICR line validation edge cases — added validateBankAccountNumber (digits-only, 1–17) and validateMICRLineLength (≤43 chars); wired into Check.validate() and BankAccount.validate(); 34 new edge-case tests
