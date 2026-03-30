@@ -9,14 +9,21 @@ Vue composable for managing checks.
 import { useChecks } from '@printchecks/vue'
 
 const {
-  items,
+  checks,
+  currentCheck,
   isLoading,
   error,
+  isValid,
+  amountInWords,
+  nextCheckNumber,
+  loadChecks,
   createCheck,
   updateCheck,
-  deleteCheck,
+  saveCheck,
   markAsPrinted,
-  voidCheck
+  voidCheck,
+  validateCheck,
+  clearCurrentCheck
 } = useChecks()
 </script>
 ```
@@ -26,40 +33,72 @@ const {
 ```typescript
 interface UseChecksReturn {
   // State
-  items: Ref<Check[]>
+  currentCheck: Ref<Check | null>        // the currently loaded/edited check
+  checks: Ref<Check[]>                   // all loaded checks
   isLoading: Ref<boolean>
-  error: Ref<Error | null>
+  error: Ref<string | null>
+  hasUnsavedChanges: Ref<boolean>
+
+  // Computed
+  isValid: ComputedRef<boolean>           // true when currentCheck passes validation
+  amountInWords: ComputedRef<string>      // currentCheck.amount as English words
+  nextCheckNumber: ComputedRef<string>    // next auto-incremented check number
 
   // Actions
   loadChecks: () => Promise<void>
+  loadCheck: (id: string) => Promise<void>
   createCheck: (data: Partial<CheckData>) => Promise<Check>
   updateCheck: (id: string, updates: Partial<CheckData>) => Promise<Check>
+  saveCheck: () => Promise<boolean>
   deleteCheck: (id: string) => Promise<void>
-  getCheck: (id: string) => Promise<Check | null>
   markAsPrinted: (id: string) => Promise<Check>
   voidCheck: (id: string, reason?: string) => Promise<Check>
   duplicateCheck: (id: string, newCheckNumber?: string) => Promise<Check>
-  getNextCheckNumber: () => Promise<string>
+  validateCheck: () => boolean
+  clearCurrentCheck: () => void
 }
 ```
+
+## Key Behaviours
+
+- `checks` is the reactive list of all loaded checks; call `loadChecks()` to populate it.
+- `currentCheck` holds the check being viewed or edited. Use `loadCheck(id)` to set it.
+- `saveCheck()` persists `currentCheck` to storage; returns `false` when `currentCheck` is null.
+- `validateCheck()` validates `currentCheck` and writes any errors to `error`; returns a boolean.
+- `amountInWords` and `isValid` are computed from `currentCheck` and update reactively.
 
 ## Example
 
 ```vue
 <script setup>
 import { useChecks, useBankAccounts } from '@printchecks/vue'
+import { onMounted } from 'vue'
 
-const { items: checks, createCheck } = useChecks()
-const { items: bankAccounts } = useBankAccounts()
+const {
+  checks,
+  currentCheck,
+  isValid,
+  amountInWords,
+  createCheck,
+  loadChecks,
+  markAsPrinted,
+  voidCheck
+} = useChecks()
+
+const { accounts, loadAccounts } = useBankAccounts()
+
+onMounted(async () => {
+  await Promise.all([loadChecks(), loadAccounts()])
+})
 
 const handleCreate = async () => {
   await createCheck({
-    checkNumber: '1001',
-    date: new Date().toLocaleDateString(),
-    amount: 1000.00,
     payTo: 'Acme Corp',
-    bankAccountId: bankAccounts.value[0].id
+    amount: 1250.00,
+    memo: 'Invoice #12345',
+    bankAccountId: accounts.value[0]?.id
   })
+  await loadChecks()
 }
 </script>
 
@@ -68,10 +107,16 @@ const handleCreate = async () => {
     <h2>Checks ({{ checks.length }})</h2>
     <ul>
       <li v-for="check in checks" :key="check.id">
-        Check #{{ check.checkNumber }} - {{ check.payTo }} - ${{ check.amount }}
+        #{{ check.checkNumber }} — {{ check.payTo }} — ${{ check.amount }}
+        <button @click="markAsPrinted(check.id)">Mark Printed</button>
+        <button @click="voidCheck(check.id, 'Duplicate')">Void</button>
       </li>
     </ul>
-    <button @click="handleCreate">Create Check</button>
+    <div v-if="currentCheck">
+      <p>Amount in words: {{ amountInWords }}</p>
+      <p>Valid: {{ isValid }}</p>
+    </div>
+    <button @click="handleCreate">New Check</button>
   </div>
 </template>
 ```
@@ -79,4 +124,5 @@ const handleCreate = async () => {
 ## See Also
 
 - [usePrintChecks](/api/vue/use-printchecks)
+- [CheckService](/api/core/check-service)
 - [Checks Guide](/guide/checks)
