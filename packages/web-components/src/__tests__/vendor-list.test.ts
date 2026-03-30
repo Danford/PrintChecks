@@ -129,6 +129,59 @@ describe('PrintChecksVendorList', () => {
     expect(events).toHaveLength(1)
   })
 
+  it('includes current searchTerm as suggestedName in add-vendor-clicked event', async () => {
+    const el = createElement({ 'show-actions': '' })
+    await new Promise((resolve) => setTimeout(resolve, 20))
+
+    const events: CustomEvent[] = []
+    el.addEventListener('add-vendor-clicked', (e) => events.push(e as CustomEvent))
+
+    const searchInput = el.querySelector<HTMLInputElement>('#searchInput')
+    if (searchInput) {
+      searchInput.value = 'New Vendor Name'
+      searchInput.dispatchEvent(new Event('input', { bubbles: true }))
+    }
+    await new Promise((resolve) => setTimeout(resolve, 10))
+
+    el.querySelector<HTMLButtonElement>('#addVendorBtn')?.click()
+    expect(events[0].detail).toMatchObject({ suggestedName: 'New Vendor Name' })
+  })
+
+  it('shows "add from search" button in empty state when show-actions is set', async () => {
+    mockVendors.getVendors.mockResolvedValue(sampleVendors)
+    const el = createElement({ 'show-actions': '' })
+    await new Promise((resolve) => setTimeout(resolve, 20))
+
+    const searchInput = el.querySelector<HTMLInputElement>('#searchInput')
+    if (searchInput) {
+      searchInput.value = 'zzznomatch'
+      searchInput.dispatchEvent(new Event('input', { bubbles: true }))
+    }
+    await new Promise((resolve) => setTimeout(resolve, 10))
+
+    expect(el.querySelector('#addVendorFromSearchBtn')).not.toBeNull()
+  })
+
+  it('emits add-vendor-clicked with suggestedName from "add from search" button', async () => {
+    mockVendors.getVendors.mockResolvedValue(sampleVendors)
+    const el = createElement({ 'show-actions': '' })
+    await new Promise((resolve) => setTimeout(resolve, 20))
+
+    const searchInput = el.querySelector<HTMLInputElement>('#searchInput')
+    if (searchInput) {
+      searchInput.value = 'NewCo'
+      searchInput.dispatchEvent(new Event('input', { bubbles: true }))
+    }
+    await new Promise((resolve) => setTimeout(resolve, 10))
+
+    const events: CustomEvent[] = []
+    el.addEventListener('add-vendor-clicked', (e) => events.push(e as CustomEvent))
+    el.querySelector<HTMLButtonElement>('#addVendorFromSearchBtn')?.click()
+
+    expect(events).toHaveLength(1)
+    expect(events[0].detail).toMatchObject({ suggestedName: 'NewCo' })
+  })
+
   it('emits edit-vendor when edit button is clicked', async () => {
     mockVendors.getVendors.mockResolvedValue(sampleVendors)
     const el = createElement({ 'show-actions': '' })

@@ -167,21 +167,28 @@ export class PrintChecksVendorList extends PrintChecksComponent {
   }
 
   private renderVendorGrid(): string {
+    const showActions = this.getBooleanAttribute('show-actions')
     if (this.filteredVendors.length === 0) {
       return `
         <div class="empty-state">
           <div class="empty-state-icon">📋</div>
           <div>
             ${this.searchTerm
-          ? `No vendors found matching "${this.searchTerm}"`
+          ? `No vendors found matching "${this.escapeHtml(this.searchTerm)}".`
           : 'No vendors yet. Add your first vendor to get started.'
         }
           </div>
+          ${this.searchTerm && showActions
+          ? `
+          <button type="button" class="btn btn-primary btn-sm" id="addVendorFromSearchBtn" style="margin-top:8px">
+            ➕ Add "${this.escapeHtml(this.searchTerm)}" as a new vendor
+          </button>
+          `
+          : ''
+        }
         </div>
       `
     }
-
-    const showActions = this.getBooleanAttribute('show-actions')
 
     return `
       <div class="vendor-grid">
@@ -255,6 +262,7 @@ export class PrintChecksVendorList extends PrintChecksComponent {
   private attachEventListeners(): void {
     const searchInput = this.querySelector<HTMLInputElement>('#searchInput')
     const addVendorBtn = this.querySelector('#addVendorBtn')
+    const addVendorFromSearchBtn = this.querySelector('#addVendorFromSearchBtn')
     const vendorCards = this.querySelectorAll('.vendor-card')
     const editBtns = this.querySelectorAll('.edit-vendor-btn')
     const deleteBtns = this.querySelectorAll('.delete-vendor-btn')
@@ -268,7 +276,13 @@ export class PrintChecksVendorList extends PrintChecksComponent {
 
     if (addVendorBtn) {
       addVendorBtn.addEventListener('click', () => {
-        this.emit('add-vendor-clicked')
+        this.emit('add-vendor-clicked', { suggestedName: this.searchTerm })
+      })
+    }
+
+    if (addVendorFromSearchBtn) {
+      addVendorFromSearchBtn.addEventListener('click', () => {
+        this.emit('add-vendor-clicked', { suggestedName: this.searchTerm })
       })
     }
 
