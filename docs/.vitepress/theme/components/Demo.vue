@@ -17,7 +17,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useData } from 'vitepress'
 
 const props = defineProps<{
   title?: string
