@@ -5,14 +5,15 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import '../components/check-preview'
+import { PrintChecksCheckPreview } from '../components/check-preview'
 import { Check, mockChecks } from './mocks/core'
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function createElement(attrs: Record<string, string> = {}): HTMLElement {
-  const el = document.createElement('printchecks-check-preview')
+function createElement(attrs: Record<string, string> = {}): PrintChecksCheckPreview {
+  const el = document.createElement('printchecks-check-preview') as unknown as PrintChecksCheckPreview
   for (const [k, v] of Object.entries(attrs)) {
     el.setAttribute(k, v)
   }
@@ -76,50 +77,50 @@ describe('PrintChecksCheckPreview', () => {
   // --- setCheck() ---
 
   it('setCheck() renders the check preview container', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheck(makeCheck())
     expect(el.shadowRoot?.querySelector('.check-preview')).not.toBeNull()
   })
 
   it('setCheck() shows print and download buttons', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheck(makeCheck())
     expect(el.shadowRoot?.querySelector('#printBtn')).not.toBeNull()
     expect(el.shadowRoot?.querySelector('#downloadBtn')).not.toBeNull()
   })
 
   it('renders payee name in .pay-to-value', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheck(makeCheck({ payTo: 'Globex Corporation' }))
     expect(el.shadowRoot?.querySelector('.pay-to-value')?.textContent).toBe('Globex Corporation')
   })
 
   it('renders formatted amount in .amount-numeric', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheck(makeCheck({ amount: '250.00' }))
     expect(el.shadowRoot?.querySelector('.amount-numeric')?.textContent).toContain('250.00')
   })
 
   it('renders account holder name in .account-name', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheck(makeCheck({ accountHolderName: 'Jane Smith' }))
     expect(el.shadowRoot?.querySelector('.account-name')?.textContent).toBe('Jane Smith')
   })
 
   it('renders bank name in .bank-name', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheck(makeCheck({ bankName: 'First National' }))
     expect(el.shadowRoot?.querySelector('.bank-name')?.textContent).toBe('First National')
   })
 
   it('renders memo text in .memo-value', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheck(makeCheck({ memo: 'Invoice #42' }))
     expect(el.shadowRoot?.querySelector('.memo-value')?.textContent).toBe('Invoice #42')
   })
 
   it('renders VOID watermark on check', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheck(makeCheck())
     expect(el.shadowRoot?.querySelector('.watermark')?.textContent?.trim()).toBe('VOID')
   })
@@ -127,19 +128,19 @@ describe('PrintChecksCheckPreview', () => {
   // --- MICR line ---
 
   it('MICR line contains routing number', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheck(makeCheck({ routingNumber: '021000021' }))
     expect(el.shadowRoot?.querySelector('.micr-line')?.textContent).toContain('021000021')
   })
 
   it('MICR line contains bank account number', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheck(makeCheck({ bankAccountNumber: '987654321' }))
     expect(el.shadowRoot?.querySelector('.micr-line')?.textContent).toContain('987654321')
   })
 
   it('MICR line contains check number', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheck(makeCheck({ checkNumber: '5555' }))
     expect(el.shadowRoot?.querySelector('.micr-line')?.textContent).toContain('5555')
   })
@@ -165,7 +166,7 @@ describe('PrintChecksCheckPreview', () => {
   // --- print() method ---
 
   it('print() calls window.print()', () => {
-    const el = createElement() as any
+    const el = createElement()
     const spy = vi.spyOn(window, 'print').mockImplementation(() => {})
     el.setCheck(makeCheck())
     el.print()
@@ -173,7 +174,7 @@ describe('PrintChecksCheckPreview', () => {
   })
 
   it('print() emits check-printed event with check in detail', () => {
-    const el = createElement() as any
+    const el = createElement()
     vi.spyOn(window, 'print').mockImplementation(() => {})
     const check = makeCheck()
     el.setCheck(check)
@@ -189,7 +190,7 @@ describe('PrintChecksCheckPreview', () => {
   // --- Button event listeners ---
 
   it('clicking #printBtn calls window.print()', () => {
-    const el = createElement() as any
+    const el = createElement()
     const spy = vi.spyOn(window, 'print').mockImplementation(() => {})
     el.setCheck(makeCheck())
     el.shadowRoot?.querySelector('#printBtn')?.dispatchEvent(new MouseEvent('click'))
@@ -197,7 +198,7 @@ describe('PrintChecksCheckPreview', () => {
   })
 
   it('clicking #downloadBtn emits download-requested event', () => {
-    const el = createElement() as any
+    const el = createElement()
     vi.spyOn(window, 'print').mockImplementation(() => {})
     el.setCheck(makeCheck())
 
@@ -209,7 +210,7 @@ describe('PrintChecksCheckPreview', () => {
   })
 
   it('clicking #downloadBtn also calls window.print()', () => {
-    const el = createElement() as any
+    const el = createElement()
     const spy = vi.spyOn(window, 'print').mockImplementation(() => {})
     el.setCheck(makeCheck())
     el.shadowRoot?.querySelector('#downloadBtn')?.dispatchEvent(new MouseEvent('click'))

@@ -9,7 +9,9 @@
       "Bash(npm run build:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(npm run docs:dev:*)"
+      "Bash(npm run docs:dev:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx --yes typescript tsc --project packages/web-components/tsconfig.json --noEmit)"
     ]
   }
 }

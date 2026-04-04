@@ -4,6 +4,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { CheckService } from '../services/CheckService'
 import type { StorageAdapter } from '../storage/StorageAdapter'
+import type { CheckData } from '../models/Check'
 
 // ---------------------------------------------------------------------------
 // In-memory StorageAdapter for testing
@@ -194,7 +195,7 @@ describe('CheckService', () => {
   it('cannot overwrite id via update', async () => {
     const check = await service.createCheck(validCheckInput())
     const originalId = check.id!
-    await service.updateCheck(originalId, { id: 'injected-id' } as any)
+    await service.updateCheck(originalId, { id: 'injected-id' } as Partial<CheckData>)
     const found = await service.getCheck(originalId)
     expect(found).not.toBeNull()
   })
@@ -337,8 +338,8 @@ describe('CheckService', () => {
     expect(recent!.bankName).toBe('Second Bank')
     expect(recent!.routingNumber).toBe('021000021')
     // Should NOT expose check-specific fields
-    expect((recent as any).payTo).toBeUndefined()
-    expect((recent as any).amount).toBeUndefined()
+    expect(recent!.payTo).toBeUndefined()
+    expect(recent!.amount).toBeUndefined()
   })
 
   // --- clearAll ---

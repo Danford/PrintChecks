@@ -4,6 +4,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { ReceiptService } from '../services/ReceiptService'
 import type { StorageAdapter } from '../storage/StorageAdapter'
+import type { ReceiptData } from '../models/Receipt'
 
 // ---------------------------------------------------------------------------
 // In-memory StorageAdapter for testing
@@ -372,8 +373,8 @@ describe('ReceiptService', () => {
 
   it('importReceipts creates multiple receipts', async () => {
     const result = await service.importReceipts([
-      validReceiptInput() as any,
-      { ...validReceiptInput(), receiptNumber: 'R-1001' } as any,
+      validReceiptInput() as unknown as ReceiptData,
+      { ...validReceiptInput(), receiptNumber: 'R-1001' } as unknown as ReceiptData,
     ])
     expect(result.success).toBe(2)
     expect(result.failed).toBe(0)

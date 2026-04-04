@@ -132,7 +132,7 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
 
       // Extract line items from check if available
       // Note: Line items are stored in the check's lineItems property
-      this.lineItems = (check as any).lineItems || []
+      this.lineItems = (check as Check & { lineItems?: LineItem[] }).lineItems ?? []
 
       // Load payment statistics
       const allChecks = await this.core.getChecks()
@@ -145,8 +145,8 @@ export class PrintChecksCheckPrintablePage extends PrintChecksComponent {
         detail: { check, lineItems: this.lineItems, stats: this.paymentStats },
         bubbles: true
       }))
-    } catch (error: any) {
-      this.errorMessage = error.message
+    } catch (error: unknown) {
+      this.errorMessage = error instanceof Error ? error.message : 'Unknown error'
       this.isLoading = false
       this.render()
     }

@@ -35,11 +35,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, shallowRef, useSlots, onErrorCaptured } from 'vue'
+import { ref, onMounted, watch, shallowRef, useSlots, onErrorCaptured, type Component } from 'vue'
 
 const props = defineProps<{
   code?: string
-  imports?: Record<string, any>
+  imports?: Record<string, unknown>
 }>()
 
 const slots = useSlots()
@@ -61,7 +61,7 @@ const getInitialCode = () => {
 
 const initialCode = getInitialCode()
 const currentCode = ref(initialCode)
-const compiledComponent = shallowRef<any>(null)
+const compiledComponent = shallowRef<Component | null>(null)
 const error = ref('')
 const componentKey = ref(0)
 let debounceTimer: ReturnType<typeof setTimeout>
@@ -96,7 +96,7 @@ function updatePreview() {
     const script = scriptMatch ? scriptMatch[1].trim() : ''
 
     // Create a component definition
-    const componentDef: any = {
+    const componentDef: Component & Record<string, unknown> = {
       template: template
     }
 
@@ -112,9 +112,9 @@ function updatePreview() {
           const setupObj = setupFunc();
           Object.assign(componentDef, setupObj);
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.error('Script parse error:', e)
-        error.value = 'Script compilation error: ' + e.message
+        error.value = 'Script compilation error: ' + (e instanceof Error ? e.message : String(e))
         return
       }
     }
@@ -122,9 +122,9 @@ function updatePreview() {
     // Force component recreation by updating key
     componentKey.value++
     compiledComponent.value = componentDef
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Template error:', e)
-    error.value = 'Template error: ' + e.message
+    error.value = 'Template error: ' + (e instanceof Error ? e.message : String(e))
   }
 }
 

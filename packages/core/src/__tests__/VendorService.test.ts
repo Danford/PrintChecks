@@ -4,6 +4,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { VendorService } from '../services/VendorService'
 import type { StorageAdapter } from '../storage/StorageAdapter'
+import type { VendorData } from '../models/Vendor'
 
 // ---------------------------------------------------------------------------
 // In-memory StorageAdapter for testing
@@ -309,8 +310,8 @@ describe('VendorService', () => {
 
   it('importVendors creates multiple vendors', async () => {
     const result = await service.importVendors([
-      { name: 'Import A' } as any,
-      { name: 'Import B' } as any,
+      { name: 'Import A' } as unknown as VendorData,
+      { name: 'Import B' } as unknown as VendorData,
     ])
     expect(result.success).toBe(2)
     expect(result.failed).toBe(0)

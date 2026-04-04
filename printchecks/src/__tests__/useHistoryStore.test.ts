@@ -139,7 +139,7 @@ describe('filteredItems: search', () => {
     store.checks = [makeCheck({ payTo: 'Acme Corp' }), makeCheck({ payTo: 'Globex' })]
     store.setSearch('acme')
     expect(store.filteredItems).toHaveLength(1)
-    expect((store.filteredItems[0] as any).payTo).toBe('Acme Corp')
+    expect((store.filteredItems[0] as CheckData).payTo).toBe('Acme Corp')
   })
 
   it('filters checks by memo', () => {
@@ -194,7 +194,7 @@ describe('filteredItems: sorting', () => {
       makeCheck({ date: '2026-06-01', payTo: 'New' }),
     ]
     // default: sortBy=date, sortOrder=desc
-    expect((store.filteredItems[0] as any).payTo).toBe('New')
+    expect((store.filteredItems[0] as CheckData).payTo).toBe('New')
   })
 
   it('sorts checks by date ascending', () => {
@@ -204,7 +204,7 @@ describe('filteredItems: sorting', () => {
       makeCheck({ date: '2026-01-01', payTo: 'Old' }),
     ]
     store.setSort('date', 'asc')
-    expect((store.filteredItems[0] as any).payTo).toBe('Old')
+    expect((store.filteredItems[0] as CheckData).payTo).toBe('Old')
   })
 
   it('sorts checks by amount descending', () => {
@@ -214,7 +214,7 @@ describe('filteredItems: sorting', () => {
       makeCheck({ amount: '999.00', payTo: 'Large' }),
     ]
     store.setSort('amount', 'desc')
-    expect((store.filteredItems[0] as any).payTo).toBe('Large')
+    expect((store.filteredItems[0] as CheckData).payTo).toBe('Large')
   })
 
   it('sorts checks by amount ascending', () => {
@@ -224,7 +224,7 @@ describe('filteredItems: sorting', () => {
       makeCheck({ amount: '100.00', payTo: 'Small' }),
     ]
     store.setSort('amount', 'asc')
-    expect((store.filteredItems[0] as any).payTo).toBe('Small')
+    expect((store.filteredItems[0] as CheckData).payTo).toBe('Small')
   })
 
   it('sorts checks by payTo alphabetically ascending', () => {
@@ -234,7 +234,7 @@ describe('filteredItems: sorting', () => {
       makeCheck({ payTo: 'Alpha Corp' }),
     ]
     store.setSort('payTo', 'asc')
-    expect((store.filteredItems[0] as any).payTo).toBe('Alpha Corp')
+    expect((store.filteredItems[0] as CheckData).payTo).toBe('Alpha Corp')
   })
 })
 

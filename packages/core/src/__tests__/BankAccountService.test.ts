@@ -4,6 +4,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { BankAccountService } from '../services/BankAccountService'
 import type { StorageAdapter } from '../storage/StorageAdapter'
+import type { BankAccountData } from '../models/BankAccount'
 
 // ---------------------------------------------------------------------------
 // In-memory StorageAdapter for testing
@@ -318,8 +319,8 @@ describe('BankAccountService', () => {
 
   it('importBankAccounts creates multiple accounts', async () => {
     const result = await service.importBankAccounts([
-      validAccountInput() as any,
-      { ...validAccountInput(), accountNumber: '111111111' } as any,
+      validAccountInput() as unknown as BankAccountData,
+      { ...validAccountInput(), accountNumber: '111111111' } as unknown as BankAccountData,
     ])
     expect(result.success).toBe(2)
     expect(result.failed).toBe(0)

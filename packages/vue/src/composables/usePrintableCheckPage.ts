@@ -124,12 +124,12 @@ export function usePrintableCheckPage(options: UsePrintableCheckPageOptions): Us
       checkData.value = check
 
       // Extract line items from check if available
-      lineItems.value = (check as any).lineItems || []
+      lineItems.value = (check as Check & { lineItems?: LineItem[] }).lineItems ?? []
 
       // Load payment statistics
       await refreshStats()
-    } catch (e: any) {
-      error.value = e.message || 'Failed to load check for printing'
+    } catch (e: unknown) {
+      error.value = e instanceof Error ? e.message : 'Failed to load check for printing'
       throw e
     } finally {
       isLoading.value = false
@@ -178,7 +178,7 @@ export function usePrintableCheckPage(options: UsePrintableCheckPageOptions): Us
     try {
       const allChecks = await core.getChecks()
       paymentStats.value = calculatePaymentStats(allChecks)
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = 'Failed to load payment statistics'
       console.error('Failed to refresh stats:', e)
     }

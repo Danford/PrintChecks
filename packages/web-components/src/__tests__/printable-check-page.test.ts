@@ -5,10 +5,16 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import '../components/printable-check-page'
+import { PrintChecksCheckPrintablePage } from '../components/printable-check-page'
 import { Check } from './mocks/core'
 
-function createElement(attrs: Record<string, string> = {}): HTMLElement {
-  const el = document.createElement('printchecks-printable-page')
+// Type for the 3 loadCheck tests that need access to the mocked core instance
+type PrintablePageWithCore = PrintChecksCheckPrintablePage & {
+  core: { getChecks: ReturnType<typeof vi.fn> }
+}
+
+function createElement(attrs: Record<string, string> = {}): PrintChecksCheckPrintablePage {
+  const el = document.createElement('printchecks-printable-page') as unknown as PrintChecksCheckPrintablePage
   for (const [k, v] of Object.entries(attrs)) {
     el.setAttribute(k, v)
   }
@@ -65,20 +71,20 @@ describe('PrintChecksCheckPrintablePage', () => {
   })
 
   it('renders check content and print button after setCheckData()', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheckData(makeCheck())
     expect(el.shadowRoot?.querySelector('#print-btn')).not.toBeNull()
     expect(el.shadowRoot?.querySelector('.check-display')).not.toBeNull()
   })
 
   it('renders the payee name in the check display', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheckData(makeCheck({ payTo: 'Globex Corporation' }))
     expect(el.shadowRoot?.innerHTML).toContain('Globex Corporation')
   })
 
   it('renders the MICR line with routing and account numbers', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheckData(makeCheck({ routingNumber: '021000021', bankAccountNumber: '987654321' }))
     const micrEl = el.shadowRoot?.querySelector('.micr-line')
     expect(micrEl?.textContent).toContain('021000021')
@@ -90,7 +96,7 @@ describe('PrintChecksCheckPrintablePage', () => {
   // ---------------------------------------------------------------------------
 
   it('fires print-initiated and calls window.print() when check is valid', () => {
-    const el = createElement() as any
+    const el = createElement()
     const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {})
     const check = makeCheck()
     check.validate = () => ({ isValid: true, errors: [] })
@@ -106,7 +112,7 @@ describe('PrintChecksCheckPrintablePage', () => {
   })
 
   it('fires print-blocked and does NOT call window.print() when check is invalid', () => {
-    const el = createElement() as any
+    const el = createElement()
     const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {})
     const check = makeCheck()
     check.validate = () => ({
@@ -126,7 +132,7 @@ describe('PrintChecksCheckPrintablePage', () => {
   })
 
   it('renders validation errors inline when print is blocked', () => {
-    const el = createElement() as any
+    const el = createElement()
     vi.spyOn(window, 'print').mockImplementation(() => {})
     const check = makeCheck()
     check.validate = () => ({
@@ -142,7 +148,7 @@ describe('PrintChecksCheckPrintablePage', () => {
   })
 
   it('clears validation errors on a subsequent valid print attempt', () => {
-    const el = createElement() as any
+    const el = createElement()
     vi.spyOn(window, 'print').mockImplementation(() => {})
 
     const check = makeCheck()
@@ -159,7 +165,7 @@ describe('PrintChecksCheckPrintablePage', () => {
   })
 
   it('does nothing when print() is called with no check loaded', () => {
-    const el = createElement() as any
+    const el = createElement()
     const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {})
     el.print()
     expect(printSpy).not.toHaveBeenCalled()
@@ -170,25 +176,25 @@ describe('PrintChecksCheckPrintablePage', () => {
   // ---------------------------------------------------------------------------
 
   it('hides analytics section when show-analytics="false"', () => {
-    const el = createElement({ 'show-analytics': 'false' }) as any
+    const el = createElement({ 'show-analytics': 'false' })
     el.setCheckData(makeCheck())
     expect(el.shadowRoot?.querySelector('.analytics-section')).toBeNull()
   })
 
   it('hides line items section when show-line-items="false"', () => {
-    const el = createElement({ 'show-line-items': 'false' }) as any
+    const el = createElement({ 'show-line-items': 'false' })
     el.setCheckData(makeCheck())
     expect(el.shadowRoot?.querySelector('.line-items-section')).toBeNull()
   })
 
   it('shows line items section by default', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheckData(makeCheck())
     expect(el.shadowRoot?.querySelector('.line-items-section')).not.toBeNull()
   })
 
   it('renders provided line items in the table', () => {
-    const el = createElement() as any
+    const el = createElement()
     el.setCheckData(makeCheck(), [{ description: 'Web Design', quantity: 2, unitPrice: 150 }])
     expect(el.shadowRoot?.innerHTML).toContain('Web Design')
   })
@@ -199,43 +205,43 @@ describe('PrintChecksCheckPrintablePage', () => {
 
   describe('check display fields', () => {
     it('renders check number in .check-number-value', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ checkNumber: '5050' }))
       expect(el.shadowRoot?.querySelector('.check-number-value')?.textContent?.trim()).toBe('5050')
     })
 
     it('renders date in .date-value', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ date: '2026-06-01' }))
       expect(el.shadowRoot?.querySelector('.date-value')?.textContent?.trim()).toBe('2026-06-01')
     })
 
     it('renders amount in .amount-box-value formatted to 2 decimals', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ amount: '750.50' }))
       expect(el.shadowRoot?.querySelector('.amount-box-value')?.textContent?.trim()).toBe('750.50')
     })
 
     it('renders memo in .memo-value', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ memo: 'office supplies' }))
       expect(el.shadowRoot?.querySelector('.memo-value')?.textContent?.trim()).toBe('office supplies')
     })
 
     it('renders signature in .signature-value', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ signature: 'Jane Smith' }))
       expect(el.shadowRoot?.querySelector('.signature-value')?.textContent?.trim()).toBe('Jane Smith')
     })
 
     it('renders accountHolderName in .account-info h3', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ accountHolderName: 'Bob Jones' }))
       expect(el.shadowRoot?.querySelector('.account-info h3')?.textContent?.trim()).toBe('Bob Jones')
     })
 
     it('falls back to "Account Holder" when accountHolderName is empty', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ accountHolderName: '' }))
       expect(el.shadowRoot?.querySelector('.account-info h3')?.textContent?.trim()).toBe('Account Holder')
     })
@@ -247,21 +253,21 @@ describe('PrintChecksCheckPrintablePage', () => {
 
   describe('MICR line delimiters', () => {
     it('wraps the routing number with ⑆ on both sides', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ routingNumber: '021000021' }))
       const text = el.shadowRoot?.querySelector('.micr-line')?.textContent ?? ''
       expect(text).toContain('⑆021000021⑆')
     })
 
     it('places ⑈ after the account number', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ bankAccountNumber: '98765432' }))
       const text = el.shadowRoot?.querySelector('.micr-line')?.textContent ?? ''
       expect(text).toContain('98765432⑈')
     })
 
     it('appends check number after ⑈', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ checkNumber: '2002' }))
       const text = el.shadowRoot?.querySelector('.micr-line')?.textContent ?? ''
       expect(text).toContain('⑈ 2002')
@@ -274,7 +280,7 @@ describe('PrintChecksCheckPrintablePage', () => {
 
   describe('XSS escaping', () => {
     it('escapes HTML tags in payTo field', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ payTo: '<script>alert(1)</script>' }))
       const inner = el.shadowRoot?.innerHTML ?? ''
       expect(inner).not.toContain('<script>')
@@ -282,7 +288,7 @@ describe('PrintChecksCheckPrintablePage', () => {
     })
 
     it('escapes HTML tags in memo field', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ memo: '<img src=x onerror=alert(1)>' }))
       const inner = el.shadowRoot?.innerHTML ?? ''
       expect(inner).not.toContain('<img ')
@@ -296,7 +302,7 @@ describe('PrintChecksCheckPrintablePage', () => {
 
   describe('amountToWords rendering', () => {
     it('renders "Five Hundred Dollars" for amount 500.00', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ amount: '500.00' }))
       const text = el.shadowRoot?.querySelector('.amount-words-value')?.textContent?.trim() ?? ''
       expect(text).toContain('Five Hundred')
@@ -304,7 +310,7 @@ describe('PrintChecksCheckPrintablePage', () => {
     })
 
     it('renders "Fifteen Dollars" for amount 15.00', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ amount: '15.00' }))
       const text = el.shadowRoot?.querySelector('.amount-words-value')?.textContent?.trim() ?? ''
       expect(text).toContain('Fifteen')
@@ -312,35 +318,35 @@ describe('PrintChecksCheckPrintablePage', () => {
     })
 
     it('includes "and N/100" for amounts with cents', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ amount: '500.50' }))
       const text = el.shadowRoot?.querySelector('.amount-words-value')?.textContent?.trim() ?? ''
       expect(text).toContain('and 50/100')
     })
 
     it('renders "Zero" for amount 0', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ amount: '0' }))
       const text = el.shadowRoot?.querySelector('.amount-words-value')?.textContent?.trim() ?? ''
       expect(text).toContain('Zero')
     })
 
     it('renders "One Thousand Five Hundred Dollars" for amount 1500 (regression: no "Dollars" in middle)', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ amount: '1500.00' }))
       const text = el.shadowRoot?.querySelector('.amount-words-value')?.textContent?.trim() ?? ''
       expect(text).toBe('One Thousand Five Hundred Dollars')
     })
 
     it('renders "Two Million Five Hundred Thousand Dollars" for large amounts', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ amount: '2500000.00' }))
       const text = el.shadowRoot?.querySelector('.amount-words-value')?.textContent?.trim() ?? ''
       expect(text).toBe('Two Million Five Hundred Thousand Dollars')
     })
 
     it('handles thousands with cents correctly', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck({ amount: '1234.56' }))
       const text = el.shadowRoot?.querySelector('.amount-words-value')?.textContent?.trim() ?? ''
       expect(text).toContain('Thousand')
@@ -356,25 +362,25 @@ describe('PrintChecksCheckPrintablePage', () => {
 
   describe('analytics section', () => {
     it('shows .analytics-section when stats are provided', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck(), [], makeStats())
       expect(el.shadowRoot?.querySelector('.analytics-section')).not.toBeNull()
     })
 
     it('hides .analytics-section when stats are null', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck(), [], null)
       expect(el.shadowRoot?.querySelector('.analytics-section')).toBeNull()
     })
 
     it('displays allTimeTotal in .all-time-total', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck(), [], makeStats())
       expect(el.shadowRoot?.querySelector('.all-time-total')?.textContent).toContain('99999.99')
     })
 
     it('hides .analytics-section when show-analytics="false" even with stats', () => {
-      const el = createElement({ 'show-analytics': 'false' }) as any
+      const el = createElement({ 'show-analytics': 'false' })
       el.setCheckData(makeCheck(), [], makeStats())
       expect(el.shadowRoot?.querySelector('.analytics-section')).toBeNull()
     })
@@ -386,25 +392,25 @@ describe('PrintChecksCheckPrintablePage', () => {
 
   describe('line items table', () => {
     it('shows "No line items added" when line items array is empty', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck(), [])
       expect(el.shadowRoot?.querySelector('.no-items')?.textContent).toContain('No line items added')
     })
 
     it('renders a tfoot total row when items are present', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck(), [{ description: 'Design', quantity: 2, unitPrice: 100 }])
       expect(el.shadowRoot?.querySelector('tfoot')).not.toBeNull()
     })
 
     it('calculates line item total as qty * unitPrice', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck(), [{ description: 'Work', quantity: 3, unitPrice: 50 }])
       expect(el.shadowRoot?.querySelector('tfoot')?.textContent).toContain('150.00')
     })
 
     it('renders multiple line items as separate tbody rows', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck(), [
         { description: 'Alpha', quantity: 1, unitPrice: 10 },
         { description: 'Beta', quantity: 2, unitPrice: 20 },
@@ -414,7 +420,7 @@ describe('PrintChecksCheckPrintablePage', () => {
     })
 
     it('sums multiple line items in the tfoot total', () => {
-      const el = createElement() as any
+      const el = createElement()
       el.setCheckData(makeCheck(), [
         { description: 'Alpha', quantity: 1, unitPrice: 10 },
         { description: 'Beta', quantity: 2, unitPrice: 20 },
@@ -434,7 +440,7 @@ describe('PrintChecksCheckPrintablePage', () => {
     })
 
     it('renders check content after successful load', async () => {
-      const el = document.createElement('printchecks-printable-page') as any
+      const el = document.createElement('printchecks-printable-page') as unknown as PrintablePageWithCore
       document.body.appendChild(el)
       const check = makeCheck({ id: 'load-test' })
       el.core.getChecks.mockResolvedValueOnce([check])
@@ -445,7 +451,7 @@ describe('PrintChecksCheckPrintablePage', () => {
     })
 
     it('shows error state when check is not found', async () => {
-      const el = document.createElement('printchecks-printable-page') as any
+      const el = document.createElement('printchecks-printable-page') as unknown as PrintablePageWithCore
       document.body.appendChild(el)
       el.core.getChecks.mockResolvedValueOnce([])
       el.setAttribute('check-id', 'missing-id')
@@ -455,7 +461,7 @@ describe('PrintChecksCheckPrintablePage', () => {
     })
 
     it('fires check-loaded event with check data after successful load', async () => {
-      const el = document.createElement('printchecks-printable-page') as any
+      const el = document.createElement('printchecks-printable-page') as unknown as PrintablePageWithCore
       document.body.appendChild(el)
       const check = makeCheck({ id: 'ev-test' })
       el.core.getChecks.mockResolvedValueOnce([check])
