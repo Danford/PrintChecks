@@ -5,15 +5,20 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import '../components/check-preview'
-import { PrintChecksCheckPreview } from '../components/check-preview'
 import { Check, mockChecks } from './mocks/core'
+
+// Minimal test interface — uses unknown params to avoid mock/real-class mismatch
+interface CheckPreviewEl extends HTMLElement {
+  setCheck(check: unknown): void
+  print(): void
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function createElement(attrs: Record<string, string> = {}): PrintChecksCheckPreview {
-  const el = document.createElement('printchecks-check-preview') as unknown as PrintChecksCheckPreview
+function createElement(attrs: Record<string, string> = {}): CheckPreviewEl {
+  const el = document.createElement('printchecks-check-preview') as unknown as CheckPreviewEl
   for (const [k, v] of Object.entries(attrs)) {
     el.setAttribute(k, v)
   }
@@ -180,7 +185,7 @@ describe('PrintChecksCheckPreview', () => {
     el.setCheck(check)
 
     const events: CustomEvent[] = []
-    el.addEventListener('check-printed', (e: CustomEvent) => events.push(e))
+    el.addEventListener('check-printed', ((e: CustomEvent) => { events.push(e) }) as EventListener)
     el.print()
 
     expect(events).toHaveLength(1)
@@ -203,7 +208,7 @@ describe('PrintChecksCheckPreview', () => {
     el.setCheck(makeCheck())
 
     const events: CustomEvent[] = []
-    el.addEventListener('download-requested', (e: CustomEvent) => events.push(e))
+    el.addEventListener('download-requested', ((e: CustomEvent) => { events.push(e) }) as EventListener)
     el.shadowRoot?.querySelector('#downloadBtn')?.dispatchEvent(new MouseEvent('click'))
 
     expect(events).toHaveLength(1)

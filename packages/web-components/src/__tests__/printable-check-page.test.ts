@@ -5,16 +5,21 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import '../components/printable-check-page'
-import { PrintChecksCheckPrintablePage } from '../components/printable-check-page'
 import { Check } from './mocks/core'
 
+// Minimal test interface — uses unknown params to avoid mock/real-class mismatch
+interface PrintablePageEl extends HTMLElement {
+  setCheckData(check: unknown, lineItems?: unknown[], stats?: unknown): void
+  print(): void
+}
+
 // Type for the 3 loadCheck tests that need access to the mocked core instance
-type PrintablePageWithCore = PrintChecksCheckPrintablePage & {
+type PrintablePageWithCore = PrintablePageEl & {
   core: { getChecks: ReturnType<typeof vi.fn> }
 }
 
-function createElement(attrs: Record<string, string> = {}): PrintChecksCheckPrintablePage {
-  const el = document.createElement('printchecks-printable-page') as unknown as PrintChecksCheckPrintablePage
+function createElement(attrs: Record<string, string> = {}): PrintablePageEl {
+  const el = document.createElement('printchecks-printable-page') as unknown as PrintablePageEl
   for (const [k, v] of Object.entries(attrs)) {
     el.setAttribute(k, v)
   }
@@ -103,7 +108,7 @@ describe('PrintChecksCheckPrintablePage', () => {
     el.setCheckData(check)
 
     const events: CustomEvent[] = []
-    el.addEventListener('print-initiated', (e: CustomEvent) => events.push(e))
+    el.addEventListener('print-initiated', ((e: CustomEvent) => { events.push(e) }) as EventListener)
 
     el.print()
 
@@ -122,7 +127,7 @@ describe('PrintChecksCheckPrintablePage', () => {
     el.setCheckData(check)
 
     const blocked: CustomEvent[] = []
-    el.addEventListener('print-blocked', (e: CustomEvent) => blocked.push(e))
+    el.addEventListener('print-blocked', ((e: CustomEvent) => { blocked.push(e) }) as EventListener)
 
     el.print()
 
@@ -467,7 +472,7 @@ describe('PrintChecksCheckPrintablePage', () => {
       el.core.getChecks.mockResolvedValueOnce([check])
       el.core.getChecks.mockResolvedValueOnce([check])
       const events: CustomEvent[] = []
-      el.addEventListener('check-loaded', (e: CustomEvent) => events.push(e))
+      el.addEventListener('check-loaded', ((e: CustomEvent) => { events.push(e) }) as EventListener)
       el.setAttribute('check-id', 'ev-test')
       await new Promise(resolve => setTimeout(resolve, 0))
       expect(events).toHaveLength(1)
